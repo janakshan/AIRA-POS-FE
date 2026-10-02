@@ -1,0 +1,11 @@
+{
+  // Must match the Worker name in the Cloudflare dashboard.
+  "name": "aira-pos-fe",
+  "compatibility_date": "2026-10-01",
+  // Static-only deploy of the Vite build; no Worker script.
+  "assets": {
+    "directory": "./apps/web/dist",
+    // createBrowserRouter: serve index.html for unknown paths so deep links work.
+    "not_found_handling": "single-page-application"
+  }
+}
