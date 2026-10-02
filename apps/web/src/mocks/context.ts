@@ -48,6 +48,9 @@ export function resolveContext(
   const tenantUserId = parseToken(request.headers.get('Authorization'));
   const tenantUser = state.tenantUsers.find((t) => t.id === tenantUserId);
   if (!tenantUser) throw new MockHttpError('UNAUTHENTICATED', 401, 'Not signed in');
+  // SET-003: a deactivated login is signed out on its next request.
+  if (tenantUser.status === 'INACTIVE')
+    throw new MockHttpError('UNAUTHENTICATED', 401, 'This sign-in has been deactivated');
 
   const tenant = state.tenants.find((t) => t.id === tenantUser.tenantId);
   const user = state.users.find((u) => u.id === tenantUser.userId);
@@ -83,6 +86,7 @@ export function resolveContext(
       (d) =>
         d.id === deviceHeader &&
         d.tenantId === tenant.id &&
+        d.isActive &&
         (!currentLocation || d.locationId === currentLocation.id),
     ) ?? null;
 

@@ -20,6 +20,7 @@ import { recordAudit } from '../audit';
 import { type MockContext, requirePermission, resolveContext } from '../context';
 import { db } from '../db';
 import { API, handle, MockHttpError, paginate, parseBody } from '../http';
+import { paymentMethodOn } from '../payments';
 
 /** POS-003 lookup / quick create and CUS-001…005 customer management. */
 
@@ -404,6 +405,11 @@ export const customerHandlers = [
       if (!ctx.permissions.has('pos.drawer.open')) requirePermission(ctx, 'customer.manage');
       const customer = findCustomer(ctx, String(params.id));
       const input = await parseBody(request, receiveCustomerPaymentSchema);
+      if (!paymentMethodOn(ctx.me.tenant.id, input.method)) {
+        throw new MockHttpError('VALIDATION_FAILED', 400, `${input.method} is turned off`, {
+          fieldErrors: { method: 'validation.methodOff' },
+        });
+      }
       if (input.amount.amount > customer.outstanding.amount) {
         throw new MockHttpError('VALIDATION_FAILED', 400, 'More than the customer owes', {
           fieldErrors: { amount: 'validation.amountTooHigh' },

@@ -21,6 +21,6 @@ export const GUIDE_SECTIONS: GuideSection[] = [
 ];
 
 /** Screens that exist in the menu but are not built yet (still on PlaceholderPage). */
-export const COMING_SOON = ['orders', 'staffReport', 'settings'] as const;
+export const COMING_SOON = ['settings'] as const;
 
 export const shotUrl = (shot: string) => `/guide/shots/${shot}.jpg`;

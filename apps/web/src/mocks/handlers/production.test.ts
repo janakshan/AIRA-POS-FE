@@ -34,6 +34,8 @@ const BUTTER_CAKE = 'prd_01B02';
 const CHOC_CAKE = 'prd_01B01';
 const FLOUR = 'ing_01FLOUR';
 const COCOA = 'ing_01COCOA';
+const SUGAR = 'ing_01SUGAR';
+const YEAST = 'ing_01YEAST';
 
 const onHand = async (productId: string) =>
   (await api.inventory.get(productId)).levels.find((l) => l.locationId === BAKERY)?.onHand ?? 0;
@@ -279,5 +281,150 @@ describe('mock production: state machine and guards', () => {
     expect(await fail(api.production.batches.list())).toMatchObject({ code: 'FORBIDDEN' });
     await signInAs('cashier@pilot.demo', 'loc_01MAIN', 'dev_01');
     expect(await fail(api.production.finishedGoods())).toMatchObject({ code: 'FORBIDDEN' });
+  });
+});
+
+describe('mock production: A-309 formula editing', () => {
+  it('lists stock-only raw materials and rejects lines that break the rules', async () => {
+    await signInAs('manager@pilot.demo');
+    const materials = await api.production.materials(BAKERY);
+    expect(materials.map((m) => m.id)).toEqual(expect.arrayContaining([FLOUR, COCOA, 'ing_01EGG']));
+    expect(materials.find((m) => m.id === FLOUR)).toMatchObject({ code: 'M01', onHand: 18 });
+    expect(materials.some((m) => m.id === BREAD)).toBe(false);
+
+    const save = (body: {
+      yieldQuantity: number;
+      lines: { ingredientId: string; quantity: number }[];
+    }) => fail(api.production.saveFormula(BREAD, body, BAKERY));
+    const flour = { ingredientId: FLOUR, quantity: 10 };
+    expect(await save({ yieldQuantity: 0, lines: [flour] })).toMatchObject({
+      status: 400,
+      details: { fieldErrors: { yieldQuantity: 'validation.quantityPositive' } },
+    });
+    expect(await save({ yieldQuantity: 2.5, lines: [flour] })).toMatchObject({
+      details: { fieldErrors: { yieldQuantity: 'validation.wholeUnits' } },
+    });
+    expect(await save({ yieldQuantity: 20, lines: [] })).toMatchObject({
+      details: { fieldErrors: { lines: 'validation.formulaEmpty' } },
+    });
+    expect(
+      await save({ yieldQuantity: 20, lines: [{ ingredientId: FLOUR, quantity: 0 }] }),
+    ).toMatchObject({
+      details: { fieldErrors: { 'lines.0.quantity': 'validation.quantityPositive' } },
+    });
+    expect(
+      await save({ yieldQuantity: 20, lines: [flour, { ...flour, quantity: 2 }] }),
+    ).toMatchObject({
+      details: { fieldErrors: { 'lines.1.ingredientId': 'validation.materialTwice' } },
+    });
+    // A finished product (not stock-only) can't be a raw material.
+    expect(
+      await save({ yieldQuantity: 20, lines: [flour, { ingredientId: CHOC_CAKE, quantity: 1 }] }),
+    ).toMatchObject({
+      details: { fieldErrors: { 'lines.1.ingredientId': 'validation.itemRequired' } },
+    });
+    expect(
+      await fail(api.production.saveFormula('prd_nope', { yieldQuantity: 1, lines: [flour] })),
+    ).toMatchObject({ status: 404 });
+    // Nothing changed, nothing audited.
+    expect((await api.audit.list({ entity: 'production-formula' })).items).toHaveLength(0);
+  });
+
+  it('audits the change and applies it to plans confirmed afterwards only', async () => {
+    await signInAs('manager@pilot.demo');
+    // Bread: 20 a run (10 flour, 1 sugar, 2 butter, 4 yeast). 30 loaves = 2 runs.
+    const early = await api.production.plans.confirm(
+      (
+        await api.production.plans.create({
+          locationId: BAKERY,
+          planDate: today(),
+          lines: [{ productId: BREAD, plannedQuantity: 30 }],
+        })
+      ).id,
+    );
+    const draft = await api.production.plans.create({
+      locationId: BAKERY,
+      planDate: today(),
+      lines: [{ productId: BREAD, plannedQuantity: 30 }],
+    });
+    expect(draft.lines[0]).toMatchObject({ runs: 2, expectedQuantity: 40 });
+
+    const saved = await api.production.saveFormula(
+      BREAD,
+      {
+        yieldQuantity: 30,
+        lines: [
+          { ingredientId: FLOUR, quantity: 12 },
+          { ingredientId: YEAST, quantity: 3 },
+        ],
+      },
+      BAKERY,
+    );
+    expect(saved).toMatchObject({
+      productId: BREAD,
+      yieldQuantity: 30,
+      updatedBy: expect.any(String),
+      lines: [
+        expect.objectContaining({ ingredientId: FLOUR, quantity: 12, name: 'Wheat Flour' }),
+        expect.objectContaining({ ingredientId: YEAST, quantity: 3 }),
+      ],
+    });
+    expect(
+      (await api.production.formulas(BAKERY)).find((f) => f.productId === BREAD),
+    ).toMatchObject({ yieldQuantity: 30 });
+
+    const [event] = (await api.audit.list({ entity: 'production-formula', entityId: BREAD })).items;
+    expect(event).toMatchObject({
+      action: 'production.formula.update',
+      before: {
+        yieldQuantity: 20,
+        lines: expect.arrayContaining([{ ingredientId: SUGAR, quantity: 1 }]),
+      },
+      after: {
+        yieldQuantity: 30,
+        lines: [
+          { ingredientId: FLOUR, quantity: 12 },
+          { ingredientId: YEAST, quantity: 3 },
+        ],
+      },
+    });
+
+    // The plan confirmed before the edit keeps what it was planned with.
+    expect((await api.production.plans.get(early.id)).lines[0]).toMatchObject({
+      runs: 2,
+      expectedQuantity: 40,
+    });
+    const old = await api.production.batches.get(early.lines[0]!.batchId!);
+    expect(old).toMatchObject({ runs: 2, expectedQuantity: 40 });
+    expect(old.consumption.map((c) => [c.ingredientId, c.plannedQuantity])).toEqual(
+      expect.arrayContaining([
+        [FLOUR, 20],
+        [SUGAR, 2],
+        [YEAST, 8],
+      ]),
+    );
+
+    // A draft confirmed now is worked out with the new formula: 30 loaves = 1 run of 30.
+    const now = await api.production.plans.confirm(draft.id);
+    expect(now.lines[0]).toMatchObject({ runs: 1, expectedQuantity: 30 });
+    const fresh = await api.production.batches.get(now.lines[0]!.batchId!);
+    expect(fresh).toMatchObject({ runs: 1, expectedQuantity: 30 });
+    expect(fresh.consumption.map((c) => [c.ingredientId, c.plannedQuantity])).toEqual([
+      [FLOUR, 12],
+      [YEAST, 3],
+    ]);
+  });
+
+  it('needs the BAKERY_PRODUCTION feature and production.manage', async () => {
+    const body = { yieldQuantity: 20, lines: [{ ingredientId: FLOUR, quantity: 10 }] };
+    await signInAs('owner@grocery.demo', 'loc_02TOWN', 'dev_06');
+    expect(await fail(api.production.saveFormula(BREAD, body))).toMatchObject({
+      code: 'FEATURE_NOT_ENABLED',
+    });
+    await signInAs('cashier@pilot.demo', 'loc_01MAIN', 'dev_01');
+    expect(await fail(api.production.saveFormula(BREAD, body))).toMatchObject({
+      code: 'FORBIDDEN',
+    });
+    expect(await fail(api.production.materials())).toMatchObject({ code: 'FORBIDDEN' });
   });
 });

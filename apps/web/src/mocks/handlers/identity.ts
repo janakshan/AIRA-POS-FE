@@ -39,6 +39,7 @@ export const identityHandlers = [
           .devices.filter(
             (d) =>
               d.tenantId === ctx.me.tenant.id &&
+              d.isActive &&
               allowed.has(d.locationId) &&
               (!locationId || d.locationId === locationId),
           ),

@@ -23,5 +23,23 @@
   "noSales": "No sales yet today",
   "lowStockAlert_one": "{{count}} item is low or out of stock at {{location}}",
   "lowStockAlert_other": "{{count}} items are low or out of stock at {{location}}",
-  "viewLowStock": "View low stock"
+  "viewLowStock": "View low stock",
+  "allLocations": "All locations",
+  "locationDashboard": {
+    "title": "All locations",
+    "subtitle_one": "{{count}} location · today",
+    "subtitle_other": "{{count}} locations · today",
+    "back": "This location",
+    "open": "Open dashboard",
+    "current": "Current",
+    "empty": "No locations to show",
+    "types": {
+      "RESTAURANT": "Restaurant",
+      "RETAIL": "Retail",
+      "BAKERY": "Bakery",
+      "WAREHOUSE": "Store",
+      "MIXED": "Mixed",
+      "VAN": "Van"
+    }
+  }
 }

@@ -10,6 +10,7 @@ import type {
   RosterAssignRequest,
   StaffMealListParams,
   StaffMealRequest,
+  StaffMealVoidRequest,
 } from '@rbp/types';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { useQueryScope } from '@/features/auth/hooks/use-query-scope';
@@ -136,3 +137,9 @@ export const useCloseCashShift = () =>
 
 export const useCreateStaffMeal = () =>
   useStaffMutation((body: StaffMealRequest) => api.staff.meals.create(body));
+
+/** A-312: stock comes back and the allowance drops, so refresh both. */
+export const useVoidStaffMeal = () =>
+  useStaffMutation(({ id, body }: { id: string; body: StaffMealVoidRequest }) =>
+    api.staff.meals.void(id, body),
+  );

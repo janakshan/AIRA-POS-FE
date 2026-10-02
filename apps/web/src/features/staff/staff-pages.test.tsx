@@ -59,6 +59,50 @@ describe('HR-005 staff meal (§22)', () => {
   }, 30_000);
 });
 
+describe('A-312 void a staff meal', () => {
+  it('voids today’s meal with a manager PIN: stock comes back and the row is badged', async () => {
+    const { accessToken } = await api.auth.login({
+      email: 'manager@pilot.demo',
+      password: 'demo1234',
+    });
+    useSessionStore.getState().signIn(accessToken);
+    useSessionStore.getState().setLocation('loc_01MAIN');
+    const tea = await teaAtMain();
+    const { verificationId } = await api.identity.verifyEmployee({
+      pin: '2222',
+      action: 'staff.meal',
+    });
+    const meal = await api.staff.meals.create({
+      employeeId: 'emp_04',
+      lines: [{ productId: 'prd_01D02', quantity: 1 }],
+      verification: { verificationId, reasonCode: 'MEAL_BREAK' },
+    });
+    expect(await teaAtMain()).toBe(tea - 1);
+
+    const { user } = await openAs('manager@pilot.demo', '/staff/meals');
+    await user.click(
+      await screen.findByRole('button', { name: `Void ${meal.number}` }, { timeout: 5000 }),
+    );
+    await approveWithPin(
+      user,
+      '2222',
+      new RegExp(`Void staff meal ${meal.number}`),
+      'Recorded for the wrong employee',
+    );
+    await waitFor(async () =>
+      expect((await api.staff.meals.list({ employeeId: 'emp_04' }))[0]).toMatchObject({
+        id: meal.id,
+        status: 'VOIDED',
+      }),
+    );
+    expect(await teaAtMain()).toBe(tea);
+    expect((await screen.findAllByText('Voided')).length).toBeGreaterThan(0);
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: `Void ${meal.number}` })).not.toBeInTheDocument(),
+    );
+  }, 30_000);
+});
+
 describe('HR-006 food allowance (§23)', () => {
   it('shows who is over and by how much', async () => {
     await openAs('manager@pilot.demo', '/staff/allowance');

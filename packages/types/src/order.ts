@@ -138,10 +138,13 @@ export interface OrderListParams {
   search?: string;
   /** ISO; e.g. start of today. */
   from?: string;
+  /** ISO, inclusive (SAL-001). */
+  to?: string;
   page?: number;
   pageSize?: number;
-  /** DEL-001 delivery orders only. */
   type?: OrderType;
+  /** Orders with a sale payment by this method (SAL-001). */
+  paymentMethod?: PaymentMethod;
   deliveryStatus?: DeliveryStatus;
 }
 
@@ -218,7 +221,7 @@ export interface Receipt {
   orderType: OrderType;
   table: string | null;
   kind: 'SALE' | 'RETURN';
-  business: { name: string; logoText: string };
+  business: { name: string; logoText: string; phone?: string; taxRegNo?: string };
   location: { name: string; address: string };
   number: string;
   /** For a return receipt: the sale it refers to. */

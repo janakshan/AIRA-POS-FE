@@ -55,7 +55,9 @@
     "attendance": "Attendance",
     "meals": "Staff meals this month",
     "noAttendance": "No clock-ins yet",
-    "noMeals": "No staff meals this month"
+    "noMeals": "No staff meals this month",
+    "createLogin": "Create sign-in",
+    "manageLogin": "Manage sign-in"
   },
   "allowanceCard": {
     "title": "Food allowance this month",
@@ -174,6 +176,16 @@
     "reasonTitle": "Staff meal for {{name}}",
     "reasonDescription": "Kept with the meal and the audit log.",
     "done": "{{number}} · {{name}} · {{value}}"
+  },
+  "voidMeal": {
+    "action": "Void",
+    "actionFor": "Void {{number}}",
+    "onlyToday": "Only today's meals can be voided",
+    "badge": "Voided",
+    "voidedBy": "Voided · PIN: {{name}} · {{reason}}",
+    "reasonTitle": "Void staff meal {{number}}",
+    "reasonDescription": "The food goes back into stock and stops counting against the allowance. The meal stays listed as Voided.",
+    "done": "{{number}} voided · {{value}} back"
   },
   "allowance": {
     "title": "Food allowance",

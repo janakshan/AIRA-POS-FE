@@ -16,7 +16,7 @@ export interface ProductionFormulaLine {
   quantity: number;
 }
 
-/** What one batch run of a bakery product uses and yields (seeded; editing comes later). */
+/** What one batch run of a bakery product uses and yields (seeded; editable, A-309). */
 export interface ProductionFormula {
   productId: string;
   productCode: string;
@@ -31,6 +31,32 @@ export interface ProductionFormula {
     /** At the requested location. */
     onHand: number;
   })[];
+  /** Last edit (absent while the seeded formula is unchanged). */
+  updatedAt?: IsoDateTime;
+  updatedBy?: string;
+}
+
+/**
+ * A-309 edit a formula: applies to batches created afterwards; confirmed plans and their
+ * batches keep the quantities they were planned with.
+ */
+export interface ProductionFormulaRequest {
+  /** Finished units one run makes (whole, ≥ 1). */
+  yieldQuantity: number;
+  /** At least one; each raw material once; whole units ≥ 1. */
+  lines: ProductionFormulaLine[];
+}
+
+/** A raw material a formula can use: a stock-only ingredient (A-262). */
+export interface ProductionMaterial {
+  id: string;
+  code: string;
+  name: string;
+  unit: StockUnit;
+  /** e.g. "1 kg pack". */
+  portionDescription?: string;
+  /** At the requested location. */
+  onHand: number;
 }
 
 export type ProductionPlanStatus =

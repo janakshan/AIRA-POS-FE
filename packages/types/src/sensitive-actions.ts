@@ -116,11 +116,25 @@ export const SENSITIVE_ACTIONS = {
     label: 'Accept shop return',
     stage: 'always',
   },
+  'wholesale.void': {
+    permission: 'wholesale.void',
+    pin: true,
+    reason: true,
+    label: 'Void wholesale invoice',
+    stage: 'always',
+  },
   'staff.meal': {
     permission: 'staff.manage',
     pin: true,
     reason: true,
     label: 'Approve staff meal',
+    stage: 'always',
+  },
+  'staff.meal.void': {
+    permission: 'staff.manage',
+    pin: true,
+    reason: true,
+    label: 'Void staff meal',
     stage: 'always',
   },
 } as const satisfies Record<string, SensitiveActionPolicy>;

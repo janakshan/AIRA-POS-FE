@@ -22,6 +22,17 @@ export function usePosSettings() {
 }
 
 /** POS-005 charge types configured for the current location. */
+/** SET-006: payment methods the business accepts (cash is always on). */
+export function usePaymentMethods() {
+  const { ready, ...scope } = useQueryScope();
+  return useQuery({
+    queryKey: queryKeys.pos.paymentMethods(scope),
+    queryFn: ({ signal }) => api.pos.paymentMethods(signal),
+    enabled: ready,
+    staleTime: CONFIG_STALE_MS,
+  });
+}
+
 export function useChargeTypes() {
   const { ready, ...scope } = useQueryScope();
   return useQuery({

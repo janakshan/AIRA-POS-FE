@@ -31,6 +31,11 @@ export interface Tenant {
   defaultLanguage: LanguageCode;
   timezone: string;
   branding: TenantBranding;
+  /** Printed under the business name on receipts (SET-001). */
+  phone?: string;
+  taxRegNo?: string;
+  /** Languages staff may pick (SET-009); English is always included. */
+  languages: LanguageCode[];
 }
 
 /** VAN = a field-sales vehicle holding stock (WHO-*). */
@@ -59,7 +64,11 @@ export interface Role {
   code: string;
   name: string;
   permissions: Permission[];
+  /** Owner/Admin: can't be edited or deleted, so the business can't lock itself out (SET-004). */
+  locked?: boolean;
 }
+
+export type UserStatus = 'ACTIVE' | 'INACTIVE';
 
 /** A user's membership/access inside a tenant. */
 export interface TenantUser {
@@ -70,6 +79,8 @@ export interface TenantUser {
   /** Locations the member may operate in. Empty = all tenant locations. */
   locationIds: LocationId[];
   employeeId?: EmployeeId;
+  /** INACTIVE logins can't sign in; their sessions end on the next request (SET-003). */
+  status: UserStatus;
 }
 
 /** Tenant staff record — verified by PIN at the POS for sensitive actions. */
@@ -97,6 +108,8 @@ export interface Device {
   locationId: LocationId;
   name: string;
   type: DeviceType;
+  /** Inactive devices are never resolved as the request's device (SET-005). */
+  isActive: boolean;
 }
 
 export interface FeatureEntitlement {

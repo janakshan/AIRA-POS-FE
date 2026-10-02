@@ -35,6 +35,7 @@ import { useErrorMessage } from '@/components/use-error-message';
 import { LocationSelect } from '@/features/inventory/components/location-select';
 import { downloadCsv, toCsv } from '@/features/reports/lib/csv';
 import { api } from '@/lib/api';
+import { DATE_RANGES, rangeBounds } from '@/lib/date-range';
 import { useListParams } from '@/lib/use-list-params';
 import { PageBreadcrumbs } from '@/navigation/page-breadcrumbs';
 import { useAuditEvents, useEmployees } from '../api/queries';
@@ -43,41 +44,11 @@ import { AUDIT_GROUPS, auditActionLabel } from '../lib/action-labels';
 
 const PAGE_SIZE = 25;
 
-const RANGES = ['all', 'today', 'week', 'month', 'custom'] as const;
-
 const localDayStamp = () => {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
-
-/** ISO bounds for a preset, or a custom local from–to (inclusive). */
-function rangeBounds(range: string | undefined, from?: string, to?: string) {
-  const startOf = (d: Date) => {
-    d.setHours(0, 0, 0, 0);
-    return d;
-  };
-  if (range === 'today') return { from: startOf(new Date()).toISOString() };
-  if (range === 'week') return { from: new Date(Date.now() - 7 * 24 * 60 * 60_000).toISOString() };
-  if (range === 'month')
-    return { from: new Date(Date.now() - 30 * 24 * 60 * 60_000).toISOString() };
-  if (range === 'custom') {
-    const at = (v: string, end: boolean) => {
-      const [y, m, d] = v.split('-').map(Number);
-      return new Date(
-        y ?? 1970,
-        (m ?? 1) - 1,
-        d ?? 1,
-        end ? 23 : 0,
-        end ? 59 : 0,
-        end ? 59 : 0,
-        end ? 999 : 0,
-      ).toISOString();
-    };
-    return { ...(from ? { from: at(from, false) } : {}), ...(to ? { to: at(to, true) } : {}) };
-  }
-  return {};
-}
 
 /** REP-006 Audit log (INS-212…229): read-only history of important changes. */
 export function AuditLogPage() {
@@ -90,7 +61,7 @@ export function AuditLogPage() {
   const employees = useEmployees();
   const [open, setOpen] = useState<AuditEvent | null>(null);
   const group = AUDIT_GROUPS.find((g) => g.key === list.filters.group) ?? AUDIT_GROUPS[0];
-  const range = RANGES.find((r) => r === list.filters.range) ?? 'all';
+  const range = DATE_RANGES.find((r) => r === list.filters.range) ?? 'all';
   const bounds = useMemo(
     () => rangeBounds(range, list.filters.from, list.filters.to),
     [range, list.filters.from, list.filters.to],
@@ -322,7 +293,7 @@ export function AuditLogPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {RANGES.map((r) => (
+                      {DATE_RANGES.map((r) => (
                         <SelectItem key={r} value={r}>
                           {t(`range.${r}`)}
                         </SelectItem>

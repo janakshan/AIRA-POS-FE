@@ -26,6 +26,7 @@ import { useListParams } from '@/lib/use-list-params';
 import { PageBreadcrumbs } from '@/navigation/page-breadcrumbs';
 import { useStaffMeals } from '../api/queries';
 import { StaffMealDialog } from '../components/staff-meal-dialog';
+import { VoidedMealBadge, VoidMealButton } from '../components/void-meal-button';
 import { MonthPicker } from '../components/month-picker';
 import { monthLabel, thisMonth } from '../lib/dates';
 
@@ -44,9 +45,11 @@ export function StaffMealsPage() {
   const meals = useStaffMeals({ month, ...(locationId ? { locationId } : {}) });
   const [recording, setRecording] = useState(false);
   const rows = meals.data;
-  const total = rows?.length
+  // A-312: voided meals stay listed but don't count.
+  const counted = rows?.filter((m) => m.status !== 'VOIDED');
+  const total = counted?.length
     ? sumMoney(
-        rows.map((m) => m.value),
+        counted.map((m) => m.value),
         'LKR',
       )
     : null;
@@ -59,7 +62,10 @@ export function StaffMealsPage() {
       width: 'w-36',
       cell: (m) => (
         <span>
-          <span className="font-semibold">{m.number}</span>
+          <span className="flex flex-wrap items-center gap-2">
+            <span className="font-semibold">{m.number}</span>
+            <VoidedMealBadge meal={m} />
+          </span>
           <span className="block text-xs text-muted-foreground">
             {formatDateTime(m.at, { locale })}
           </span>
@@ -107,7 +113,20 @@ export function StaffMealsPage() {
       header: t('fields.value'),
       align: 'right',
       width: 'w-32',
-      cell: (m) => <MoneyText value={m.value} locale={locale} className="font-semibold" />,
+      cell: (m) => (
+        <MoneyText
+          value={m.value}
+          locale={locale}
+          className={m.status === 'VOIDED' ? 'text-muted-foreground line-through' : 'font-semibold'}
+        />
+      ),
+    },
+    {
+      id: 'actions',
+      header: <span className="sr-only">{t('voidMeal.action')}</span>,
+      align: 'right',
+      width: 'w-28',
+      cell: (m) => <VoidMealButton meal={m} />,
     },
   ];
 
@@ -128,7 +147,7 @@ export function StaffMealsPage() {
           label={t('meals.valueMonth', { month: monthLabel(month, locale) })}
           icon={WalletIcon}
           value={total ? <MoneyText value={total} locale={locale} /> : '—'}
-          hint={t('meals.count', { count: rows?.length ?? 0 })}
+          hint={t('meals.count', { count: counted?.length ?? 0 })}
         />
         {can('staff.manage') && (
           <StatCard

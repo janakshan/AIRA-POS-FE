@@ -14,6 +14,7 @@ import { type ReactNode, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor } from '@/app/i18n';
 import { useErrorMessage } from '@/components/use-error-message';
+import { usePaymentMethods } from '@/features/pos/api/queries';
 import { useReceiveCustomerPayment } from '../api/queries';
 
 const METHODS: { method: CustomerPaymentMethod; icon: ReactNode }[] = [
@@ -39,6 +40,11 @@ export function ReceivePaymentDialog({
   const referenceId = useId();
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState<CustomerPaymentMethod>('CASH');
+  // SET-006: only what the business accepts.
+  const accepted = usePaymentMethods().data;
+  const methods = METHODS.filter(
+    ({ method: m }) => !accepted || accepted.some((a) => a.method === m && a.enabled),
+  );
   const [reference, setReference] = useState('');
   const [wasOpen, setWasOpen] = useState(open);
   if (open !== wasOpen) {
@@ -113,7 +119,7 @@ export function ReceivePaymentDialog({
           <fieldset>
             <legend className="mb-2 text-sm font-medium">{t('balance.method')}</legend>
             <div className="grid grid-cols-3 gap-2">
-              {METHODS.map(({ method: m, icon }) => (
+              {methods.map(({ method: m, icon }) => (
                 <PaymentMethodButton
                   key={m}
                   icon={icon}

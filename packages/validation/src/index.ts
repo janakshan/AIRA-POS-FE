@@ -10,3 +10,4 @@ export * from './recipes';
 export * from './production';
 export * from './wholesale';
 export * from './staff';
+export * from './settings';

@@ -106,6 +106,106 @@ describe('mock staff: HR-005/006 staff meals and the food allowance (§22, §23)
       ),
     ).toMatchObject({ code: 'VALIDATION_FAILED' }); // Priya works at the Bakery.
   });
+
+  it('voids a meal the same day: stock comes back like a POS void and it stops counting (A-312)', async () => {
+    await signInAs('manager@pilot.demo');
+    const chickenRice = (await api.recipes.list(MAIN)).recipes.find(
+      (r) => r.productId === 'prd_01R01',
+    )!;
+    const chickenPerPlate = chickenRice.lines.find(
+      (l) => l.ingredientId === 'ing_01CHICKEN',
+    )!.quantity;
+    const chicken = await ingredient('ing_01CHICKEN');
+    const tea = await onHand('prd_01D02');
+    const before = await allowanceOf(ARUN);
+
+    // Two Chicken Rice & Curry: one prepared plate, one cooked from ingredients.
+    const meal = await api.staff.meals.create({
+      employeeId: ARUN,
+      lines: [
+        { productId: 'prd_01R01', quantity: 2 },
+        { productId: 'prd_01D02', quantity: 2 },
+      ],
+      verification: await mealPin(),
+    });
+    expect(meal.status).toBe('RECORDED');
+    expect(await ingredient('ing_01CHICKEN')).toBe(chicken - chickenPerPlate);
+    expect(await onHand('prd_01D02')).toBe(tea - 2);
+
+    // A cashier's PIN can't approve it; a manager's can.
+    expect(
+      await fail(api.identity.verifyEmployee({ pin: '3333', action: 'staff.meal.void' })),
+    ).toMatchObject({ code: 'EMPLOYEE_NOT_AUTHORIZED' });
+    const { verificationId } = await api.identity.verifyEmployee({
+      pin: '2222',
+      action: 'staff.meal.void',
+    });
+    const voided = await api.staff.meals.void(meal.id, {
+      verification: { verificationId, reasonCode: 'WRONG_EMPLOYEE' },
+    });
+    expect(voided).toMatchObject({
+      status: 'VOIDED',
+      voided: { approvedBy: 'Suresh Kumar', reason: { code: 'WRONG_EMPLOYEE' } },
+    });
+
+    // Every movement comes back as RETURN against the void; the prepared plate isn't re-queued.
+    expect(await ingredient('ing_01CHICKEN')).toBe(chicken);
+    expect(await onHand('prd_01D02')).toBe(tea);
+    const [movement] = (await api.stockMovements.list({ productId: 'prd_01D02', locationId: MAIN }))
+      .items;
+    expect(movement).toMatchObject({
+      type: 'RETURN',
+      quantity: 2,
+      reference: { kind: 'VOID', number: meal.number },
+      approvedBy: 'Suresh Kumar',
+    });
+    expect(
+      (await api.recipes.list(MAIN)).recipes.find((r) => r.productId === 'prd_01R01')!.availability
+        .prepared,
+    ).toBe(0);
+
+    // Kept and listed, but no longer eaten (HR-006) or counted on the staff report (REP-007).
+    const listed = await api.staff.meals.list({ employeeId: ARUN });
+    expect(listed.find((m) => m.id === meal.id)?.status).toBe('VOIDED');
+    const after = await allowanceOf(ARUN);
+    expect(after.consumed.amount).toBe(before.consumed.amount);
+    expect(after.meals).toBe(before.meals);
+    expect((await api.staff.employees.get(ARUN)).mealsThisMonth.amount).toBe(
+      before.consumed.amount,
+    );
+    const [event] = (await api.audit.list({ action: 'staff.meal.void' })).items;
+    expect(event).toMatchObject({ entityId: ARUN, employee: { fullName: 'Suresh Kumar' } });
+
+    // Once only.
+    const again = await api.identity.verifyEmployee({ pin: '2222', action: 'staff.meal.void' });
+    expect(
+      await fail(
+        api.staff.meals.void(meal.id, {
+          verification: { verificationId: again.verificationId, reasonCode: 'DUPLICATE' },
+        }),
+      ),
+    ).toMatchObject({ status: 409, details: { reason: 'ALREADY_VOIDED' } });
+  });
+
+  it("won't void an earlier day's meal (same day as a POS void)", async () => {
+    await signInAs('manager@pilot.demo');
+    const d = new Date();
+    d.setDate(0); // last day of the previous month
+    const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const [old] = await api.staff.meals.list({ month });
+    expect(old).toBeDefined();
+    const { verificationId } = await api.identity.verifyEmployee({
+      pin: '2222',
+      action: 'staff.meal.void',
+    });
+    expect(
+      await fail(
+        api.staff.meals.void(old!.id, {
+          verification: { verificationId, reasonCode: 'DUPLICATE' },
+        }),
+      ),
+    ).toMatchObject({ status: 409, details: { reason: 'NOT_TODAY' } });
+  });
 });
 
 describe('mock staff: HR-003 attendance with a PIN', () => {
@@ -177,7 +277,8 @@ describe('mock staff: HR-004 cash drawer shift (SCN-005 handover)', () => {
   it('works out expected cash, closes with a variance, and hands over', async () => {
     await signInAs('cashier@pilot.demo');
     const history = await api.staff.cashShifts.list(MAIN);
-    expect(history.find((s) => s.number === 'SFT-000002')?.variance?.amount).toBe(-20_000);
+    // Newest first: today's open shift, then yesterday's (Rs 200 short).
+    expect(history[1]?.variance?.amount).toBe(-20_000);
 
     const current = (await api.staff.cashShifts.current())!;
     expect(current).toMatchObject({ status: 'OPEN', openingFloat: { amount: 330_000 } });

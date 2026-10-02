@@ -23,6 +23,14 @@ export function InvoiceView({
       aria-label={invoice.number}
       className="relative mx-auto w-full max-w-[22rem] overflow-hidden rounded-md border bg-white px-5 py-6 font-mono text-[13px] leading-snug text-neutral-900 shadow-sm"
     >
+      {invoice.voided && (
+        <p
+          role="status"
+          className="absolute top-16 right-3 rotate-12 rounded border-2 border-red-700 px-2 py-0.5 text-lg font-bold tracking-widest text-red-700 uppercase"
+        >
+          {t('void.stamp')}
+        </p>
+      )}
       <header className="text-center">
         <p className="text-base font-bold">{business}</p>
         <p>{t('invoice.paperTitle')}</p>

@@ -1,4 +1,5 @@
 import type {
+  SettingsUserListParams,
   ReportParams,
   AttendanceParams,
   EmployeeListParams,
@@ -6,6 +7,7 @@ import type {
   DeliveryListParams,
   WholesaleCollectionListParams,
   WholesaleInvoiceListParams,
+  WholesalePriceListParams,
   WholesaleReturnListParams,
   WholesaleShopListParams,
   ProductionBatchListParams,
@@ -53,6 +55,9 @@ export const queryKeys = {
     [...scoped({ tenantId: scope.tenantId }), 'devices', locationId ?? '-'] as const,
   dashboard: {
     summary: (scope: QueryScope) => [...scoped(scope), 'dashboard', 'summary'] as const,
+    /** Spans locations, so keyed by tenant only. */
+    locations: (scope: QueryScope) =>
+      [...scoped({ tenantId: scope.tenantId }), 'dashboard', 'locations'] as const,
   },
   catalog: {
     /** Prefix for invalidating every catalog query of a tenant (all locations). */
@@ -164,6 +169,8 @@ export const queryKeys = {
       [...queryKeys.production.all(scope), 'summary', locationId] as const,
     formulas: (scope: QueryScope, locationId: string) =>
       [...queryKeys.production.all(scope), 'formulas', locationId] as const,
+    materials: (scope: QueryScope, locationId: string) =>
+      [...queryKeys.production.all(scope), 'materials', locationId] as const,
     plans: (scope: QueryScope, params: ProductionPlanListParams) =>
       [...queryKeys.production.all(scope), 'plans', params] as const,
     plan: (scope: QueryScope, id: string) =>
@@ -182,6 +189,23 @@ export const queryKeys = {
     all: (scope: QueryScope) => [...scoped({ tenantId: scope.tenantId }), 'reports'] as const,
     of: (scope: QueryScope, report: string, params: ReportParams) =>
       [...queryKeys.reports.all(scope), report, params] as const,
+  },
+  /** SET-*: tenant-wide admin data. */
+  settings: {
+    all: (scope: QueryScope) => [...scoped({ tenantId: scope.tenantId }), 'settings'] as const,
+    charges: (scope: QueryScope, locationId: string) =>
+      [...queryKeys.settings.all(scope), 'charges', locationId] as const,
+    locations: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'locations'] as const,
+    users: (scope: QueryScope, params: SettingsUserListParams = {}) =>
+      [...queryKeys.settings.all(scope), 'users', params] as const,
+    roles: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'roles'] as const,
+    business: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'business'] as const,
+    devices: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'devices'] as const,
+    payments: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'payments'] as const,
+    printers: (scope: QueryScope, locationId: string) =>
+      [...queryKeys.settings.all(scope), 'printers', locationId] as const,
+    languages: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'languages'] as const,
+    features: (scope: QueryScope) => [...queryKeys.settings.all(scope), 'features'] as const,
   },
   /** HR-*: tenant-wide (staff work across locations). */
   staff: {
@@ -228,6 +252,8 @@ export const queryKeys = {
       [...queryKeys.wholesale.all(scope), 'ledger', id] as const,
     products: (scope: QueryScope, locationId: string) =>
       [...queryKeys.wholesale.all(scope), 'products', locationId] as const,
+    prices: (scope: QueryScope, params: WholesalePriceListParams) =>
+      [...queryKeys.wholesale.all(scope), 'prices', params] as const,
     invoices: (scope: QueryScope, params: WholesaleInvoiceListParams) =>
       [...queryKeys.wholesale.all(scope), 'invoices', params] as const,
     invoice: (scope: QueryScope, id: string) =>
@@ -249,6 +275,8 @@ export const queryKeys = {
     chargeTypes: (scope: QueryScope) => [...scoped(scope), 'pos', 'charge-types'] as const,
     promotions: (scope: QueryScope) =>
       [...scoped({ tenantId: scope.tenantId }), 'pos', 'promotions'] as const,
+    paymentMethods: (scope: QueryScope) =>
+      [...scoped({ tenantId: scope.tenantId }), 'pos', 'payment-methods'] as const,
   },
   reasons: (scope: QueryScope, action?: string) =>
     [...scoped({ tenantId: scope.tenantId }), 'reasons', action ?? '*'] as const,

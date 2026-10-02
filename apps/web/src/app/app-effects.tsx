@@ -29,7 +29,9 @@ export function AppEffects() {
   }, [primary]);
 
   // Language: user choice → tenant default → English. (Location/device overrides come later.)
-  const effectiveLanguage = language ?? me?.tenant.defaultLanguage ?? 'en';
+  // A personal choice the business has since turned off falls back to its default (SET-009).
+  const allowed = !language || !me || me.tenant.languages.includes(language);
+  const effectiveLanguage = (allowed ? language : null) ?? me?.tenant.defaultLanguage ?? 'en';
   useEffect(() => {
     if (i18n.language !== effectiveLanguage) void i18n.changeLanguage(effectiveLanguage);
     document.documentElement.lang = effectiveLanguage;

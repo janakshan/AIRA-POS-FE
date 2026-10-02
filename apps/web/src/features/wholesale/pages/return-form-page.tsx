@@ -74,9 +74,9 @@ export function ReturnFormPage() {
   const [condition, setCondition] = useState<Record<string, ReturnCondition>>({});
   useBreadcrumbTitle(t('returnForm.title'));
 
-  const invoice = invoices.data?.find((i) => i.id === invoiceId);
-  const returnable = invoices.data?.filter((i) =>
-    i.lines.some((l) => l.quantity > l.returnedQuantity),
+  const invoice = invoices.data?.find((i) => i.id === invoiceId && i.status !== 'VOIDED');
+  const returnable = invoices.data?.filter(
+    (i) => i.status !== 'VOIDED' && i.lines.some((l) => l.quantity > l.returnedQuantity),
   );
   const rows: Row[] = useMemo(
     () =>

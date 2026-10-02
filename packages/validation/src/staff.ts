@@ -65,6 +65,9 @@ export const closeCashShiftSchema = z.object({
   note: z.string().trim().max(200).optional(),
 });
 
+/** A-312: void a staff meal (same day) with a manager PIN and reason. */
+export const staffMealVoidSchema = z.object({ verification: sensitiveActionSchema });
+
 /** HR-005 / POS: each item once. */
 export const staffMealSchema = z
   .object({

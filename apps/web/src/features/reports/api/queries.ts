@@ -5,7 +5,7 @@ import { useQueryScope } from '@/features/auth/hooks/use-query-scope';
 import { api } from '@/lib/api';
 import { periodError } from '../lib/period';
 
-/** REP-001…005. Read-only; stock and sale writes invalidate `reports.all`. */
+/** REP-001…005, REP-007. Read-only; stock and sale writes invalidate `reports.all`. */
 
 function useReport<P extends ReportParams, R>(
   name: string,
@@ -29,3 +29,4 @@ export const useLocationReport = (p: ReportParams) =>
   useReport('locations', p, api.reports.locations);
 export const useStockReport = (p: StockReportParams) => useReport('stock', p, api.reports.stock);
 export const useVoidsReport = (p: ReportParams) => useReport('voids', p, api.reports.voids);
+export const useStaffReport = (p: ReportParams) => useReport('staff', p, api.reports.staff);

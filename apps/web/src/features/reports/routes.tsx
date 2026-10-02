@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router';
 
-/** REP-001…005 (lazy), keyed by nav item (REP-006 lives in features/audit). */
+/** REP-001…005 and REP-007 (lazy), keyed by nav item (REP-006 lives in features/audit). */
 export const reportRoutes: Record<string, RouteObject[]> = {
   salesReport: [
     {
@@ -39,6 +39,14 @@ export const reportRoutes: Record<string, RouteObject[]> = {
       index: true,
       lazy: async () => ({
         Component: (await import('./pages/voids-report-page')).VoidsReportPage,
+      }),
+    },
+  ],
+  staffReport: [
+    {
+      index: true,
+      lazy: async () => ({
+        Component: (await import('./pages/staff-report-page')).StaffReportPage,
       }),
     },
   ],

@@ -17,6 +17,7 @@ import { formatDateTime } from '@rbp/utils';
 import {
   ArmchairIcon,
   ChefHatIcon,
+  MapPinnedIcon,
   PackageXIcon,
   ReceiptIcon,
   ShieldCheckIcon,
@@ -33,7 +34,9 @@ import { useMe } from '@/features/auth/api/queries';
 import { useAccess } from '@/features/auth/hooks/use-access';
 import { useEmployeeVerification } from '@/features/auth/hooks/use-employee-verification';
 import { isRestaurantPos } from '@/features/pos/lib/pos-mode';
+import { LOCATION_DASHBOARD_ITEM } from '@/navigation/nav-config';
 import { useDashboardSummary } from '../api/queries';
+import { useShowLocationDashboard } from '../hooks/use-show-location-dashboard';
 import { HourlySalesChart } from '../components/hourly-sales-chart';
 
 /** DASH-001 Main Dashboard */
@@ -52,6 +55,7 @@ export function DashboardPage() {
   const restaurant = type === 'RESTAURANT' || type === 'MIXED';
   const canPos = counter && check({ feature: 'POS_RETAIL', permission: 'pos.sale.create' }).allowed;
   const canKitchen = restaurant && check({ feature: 'KOT', permission: 'kot.view' }).allowed;
+  const showLocations = useShowLocationDashboard();
 
   return (
     <Screen id="DASH-001" title={t('title')} className="space-y-section">
@@ -60,6 +64,13 @@ export function DashboardPage() {
         description={t('subtitle', { location: me?.currentLocation?.name })}
         actions={
           <>
+            {showLocations && (
+              <Button variant="outline" asChild>
+                <Link to={LOCATION_DASHBOARD_ITEM.path}>
+                  <MapPinnedIcon /> {t('allLocations')}
+                </Link>
+              </Button>
+            )}
             {canKitchen && (
               <Button variant="outline" asChild>
                 <Link to="/kitchen">

@@ -158,6 +158,8 @@
     "productionCancelReasonRequired": "Say why it's being cancelled",
     "outputRequired": "Enter what came out of the oven",
     "productionLocation": "Production runs at bakery locations only",
+    "formulaEmpty": "Add at least one raw material",
+    "materialTwice": "This raw material is already on the formula",
     "shopRequired": "Choose a shop",
     "invoiceEmpty": "Add at least one item",
     "returnEmpty": "Add at least one item being returned",
@@ -172,7 +174,21 @@
     "noteRequired": "Say what it's for",
     "employeeRequired": "Choose the employee",
     "mealEmpty": "Add what they ate",
-    "pinTaken": "Another employee already uses this PIN"
+    "pinTaken": "Another employee already uses this PIN",
+    "servicePercent": "The service charge is a percentage",
+    "onlyServiceAutomatic": "Only the service charge can be added automatically",
+    "otherNoDefault": "“Other” has no default; staff enter the amount",
+    "chargeDefaultRequired": "Enter a default amount",
+    "daysMax": "No more than 365 days",
+    "passwordMin8": "Password must be at least 8 characters",
+    "rolesRequired": "Choose at least one role",
+    "permissionsRequired": "Choose at least one permission",
+    "emailTaken": "Another sign-in already uses this email",
+    "employeeHasLogin": "This employee already has a sign-in",
+    "nameTaken": "That name is already used",
+    "logoTextMax": "Up to 3 letters",
+    "methodOff": "This payment method is turned off",
+    "defaultLanguageOff": "The default language must be one of the available ones"
   },
   "errors": {
     "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
@@ -212,5 +228,19 @@
   "reason": {
     "comment": "Comment",
     "approvedBy": "Approved by {{name}}"
+  },
+  "errorReasons": {
+    "ACCOUNT_DISABLED": "This sign-in has been turned off. Ask your manager.",
+    "LAST_ADMIN": "At least one active sign-in must keep access to Settings.",
+    "LIMIT_REACHED": "Your plan allows {{max}} {{limit}}. Turn one off or upgrade.",
+    "ROLE_LOCKED": "This role can't be changed.",
+    "ROLE_IN_USE_one": "{{count}} sign-in still has this role. Move it to another role first.",
+    "ROLE_IN_USE_other": "{{count}} sign-ins still have this role. Move them to another role first.",
+    "CURRENT_LOCATION": "You can't turn off the location you're working in. Switch location first.",
+    "LAST_LOCATION": "At least one location must stay active.",
+    "SELF_DEACTIVATE": "You can't turn off your own sign-in.",
+    "DEVICE_SHIFT_OPEN": "This device has an open cash drawer shift. Close the shift first.",
+    "STATION_IN_USE_one": "{{count}} product still prints here. Move it to another station on Location products first.",
+    "STATION_IN_USE_other": "{{count}} products still print here. Move them to another station on Location products first."
   }
 }

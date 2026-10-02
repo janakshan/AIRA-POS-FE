@@ -4,6 +4,7 @@ import type {
   CompleteBatchRequest,
   CreateWastageRequest,
   ProductionBatchListParams,
+  ProductionFormulaRequest,
   ProductionPlanListParams,
   ProductionPlanRequest,
   StartBatchRequest,
@@ -33,6 +34,16 @@ export function useProductionFormulas(locationId: string) {
     queryFn: ({ signal }) => api.production.formulas(locationId, signal),
     enabled: ready && !!locationId,
     staleTime: 5 * 60_000,
+  });
+}
+
+/** A-309: stock-only raw materials a formula can use. */
+export function useProductionMaterials(locationId: string) {
+  const { ready, ...scope } = useQueryScope();
+  return useQuery({
+    queryKey: queryKeys.production.materials(scope, locationId),
+    queryFn: ({ signal }) => api.production.materials(locationId, signal),
+    enabled: ready && !!locationId,
   });
 }
 
@@ -102,6 +113,19 @@ function useProductionMutation<V, R>(fn: (vars: V) => Promise<R>) {
 export const useSaveProductionPlan = () =>
   useProductionMutation(({ id, body }: { id?: string; body: ProductionPlanRequest }) =>
     id ? api.production.plans.update(id, body) : api.production.plans.create(body),
+  );
+
+export const useSaveProductionFormula = () =>
+  useProductionMutation(
+    ({
+      productId,
+      body,
+      locationId,
+    }: {
+      productId: string;
+      body: ProductionFormulaRequest;
+      locationId?: string;
+    }) => api.production.saveFormula(productId, body, locationId),
   );
 
 export const useConfirmProductionPlan = () =>

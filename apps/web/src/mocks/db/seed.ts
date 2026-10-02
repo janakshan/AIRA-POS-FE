@@ -31,6 +31,7 @@ import type {
   LimitCode,
   Location,
   Permission,
+  PaymentMethodSetting,
   PosSettings,
   Promotion,
   Reason,
@@ -95,6 +96,10 @@ export interface MockDb extends CatalogSeed {
   customers: Customer[];
   /** POS-005 charge types per location. */
   chargeTypes: Record<string, ChargeType[]>;
+  /** SET-006 payment methods per tenant (business-wide). */
+  paymentMethods: Record<string, PaymentMethodSetting[]>;
+  /** SET-005 simulated pairing: activation code per device, and whether it has been used. */
+  deviceActivation: Record<string, { code: string; paired: boolean }>;
   /** POS-004 promotions per tenant. */
   promotions: Record<string, Promotion[]>;
   /** Approved discounts/charges (never deleted; voided instead). */
@@ -207,6 +212,9 @@ export interface ProductionFormulaRecord {
   productId: string;
   yieldQuantity: number;
   lines: ProductionFormulaLine[];
+  /** A-309: last edit. */
+  updatedAt?: string;
+  updatedBy?: string;
 }
 
 export type ProductionPlanRecord = Omit<ProductionPlan, 'progress'> & { tenantId: string };
@@ -233,11 +241,14 @@ export interface MockVerificationRecord {
 /** Reason groups by sensitive action (REQ-268…287). Empty = offered for every action. */
 const ITEM = ['pos.item.quantity.decrease', 'pos.item.remove', 'pos.order.cancel'];
 const RETURN = ['pos.return', 'pos.refund'];
-const VOID = ['pos.invoice.void'];
+/** POS-012 and A-311 (wholesale invoice void). */
+const VOID = ['pos.invoice.void', 'wholesale.void'];
 /** BAK: batch rejects and finished goods written off. */
 const BAKE = ['production.wastage'];
 /** WHO: goods a shop gives back. */
 const WHO = ['wholesale.return'];
+/** HR: a staff meal voided the same day (A-312). */
+const MEAL_VOID = ['staff.meal.void'];
 
 /** Default reasons from REQ-275…285 (+ drawer and discount reasons); tenants can configure their own. */
 const DEFAULT_REASONS: Reason[] = (
@@ -249,7 +260,7 @@ const DEFAULT_REASONS: Reason[] = (
     ['DUPLICATE_SALE', 'Duplicate sale', [...VOID, 'pos.order.cancel']],
     ['CUSTOMER_REQUEST', 'Customer request', ['restaurant.table.transfer']],
     ['CUSTOMER_CANCELLED', 'Customer cancelled item', ITEM],
-    ['WRONG_ITEM', 'Wrong item entered', [...ITEM, ...RETURN]],
+    ['WRONG_ITEM', 'Wrong item entered', [...ITEM, ...RETURN, ...MEAL_VOID]],
     ['WRONG_QTY', 'Wrong quantity entered', ITEM],
     ['KITCHEN_MISTAKE', 'Kitchen mistake', [...ITEM, 'pos.discount.apply']],
     ['UNAVAILABLE', 'Product unavailable', ITEM],
@@ -275,7 +286,8 @@ const DEFAULT_REASONS: Reason[] = (
       'Price correction',
       ['pos.price.override', 'pos.charge.manage', 'pos.discount.apply'],
     ],
-    ['DUPLICATE', 'Duplicate entry', [...ITEM, 'pos.charge.manage']],
+    ['DUPLICATE', 'Duplicate entry', [...ITEM, 'pos.charge.manage', ...MEAL_VOID]],
+    ['WRONG_EMPLOYEE', 'Recorded for the wrong employee', MEAL_VOID],
     ['CHANGE_FOR_CUSTOMER', 'Change for customer', ['pos.drawer.open']],
     ['CASH_PICKUP', 'Cash pickup', ['pos.drawer.open']],
     ['SHIFT_COUNT', 'Shift count', ['pos.drawer.open']],
@@ -290,7 +302,7 @@ const DEFAULT_REASONS: Reason[] = (
 }));
 
 /** Bump whenever the seed shape changes so persisted demo databases reseed. */
-export const DB_VERSION = 22;
+export const DB_VERSION = 27;
 export const DEMO_PASSWORD = 'demo1234';
 
 const id = <T extends string>(value: string) => value as T;
@@ -355,6 +367,7 @@ function roles(
     code,
     name,
     permissions,
+    ...(code === 'OWNER' ? { locked: true } : {}),
   }));
 }
 
@@ -369,6 +382,8 @@ export function createSeed(): MockDb {
       defaultLanguage: 'en',
       timezone: 'Asia/Colombo',
       branding: { logoText: 'PF' },
+      phone: '+94 11 234 5678',
+      languages: ['en', 'ta', 'si'],
     },
     {
       id: T2,
@@ -379,6 +394,7 @@ export function createSeed(): MockDb {
       defaultLanguage: 'en',
       timezone: 'Asia/Colombo',
       branding: { logoText: 'DG', primaryColor: 'oklch(0.56 0.15 155)' },
+      languages: ['en', 'si'],
     },
   ];
 
@@ -509,6 +525,7 @@ export function createSeed(): MockDb {
     roleIds: [id<Role['id']>(roleId)],
     locationIds,
     employeeId: id<Employee['id']>(employeeId),
+    status: 'ACTIVE',
   });
 
   const tenantUsers: TenantUser[] = [
@@ -535,6 +552,7 @@ export function createSeed(): MockDb {
     locationId,
     name,
     type,
+    isActive: true,
   });
 
   const devices: Device[] = [
@@ -592,6 +610,7 @@ export function createSeed(): MockDb {
         maxDiscountBps: 5000,
         returnWindowDays: 30,
         receiptFooter: 'Thank you! Come again.',
+        receiptPrinter: 'Receipt Printer',
       },
       {
         locationId: L.bakery,
@@ -601,6 +620,7 @@ export function createSeed(): MockDb {
         maxDiscountBps: 5000,
         returnWindowDays: 30,
         receiptFooter: 'Thank you! Come again.',
+        receiptPrinter: 'Counter Receipt',
       },
       {
         locationId: L.store,
@@ -610,6 +630,7 @@ export function createSeed(): MockDb {
         maxDiscountBps: 5000,
         returnWindowDays: 30,
         receiptFooter: 'Thank you! Come again.',
+        receiptPrinter: 'Receipt Printer',
       },
       {
         locationId: L.van,
@@ -619,6 +640,7 @@ export function createSeed(): MockDb {
         maxDiscountBps: 0,
         returnWindowDays: 30,
         receiptFooter: 'Thank you for your business.',
+        receiptPrinter: 'Receipt Printer',
       },
       {
         locationId: L.grocery,
@@ -628,9 +650,23 @@ export function createSeed(): MockDb {
         maxDiscountBps: 5000,
         returnWindowDays: 30,
         receiptFooter: 'Thank you! Come again.',
+        receiptPrinter: 'Receipt Printer',
       },
     ],
     customers: createCustomerSeed(),
+    paymentMethods: Object.fromEntries(
+      [T1, T2].map((t) => [
+        t,
+        (['CASH', 'CARD', 'BANK_TRANSFER', 'CREDIT'] as const).map((method) => ({
+          method,
+          enabled: true,
+        })),
+      ]),
+    ),
+    // Seeded devices are already paired; their codes only matter if re-issued.
+    deviceActivation: Object.fromEntries(
+      devices.map((d, i) => [d.id, { code: String(482913 + i * 7919).slice(-6), paired: true }]),
+    ),
     chargeTypes: {
       [L.main]: [
         {

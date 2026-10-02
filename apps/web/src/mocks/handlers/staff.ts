@@ -20,15 +20,21 @@ import {
   openCashShiftSchema,
   rosterAssignSchema,
   staffMealSchema,
+  staffMealVoidSchema,
 } from '@rbp/validation';
 import { newId, nowIso } from '@rbp/utils';
 import { http, HttpResponse } from 'msw';
-import { employeePermissions, recordAudit, requireVerifiedAction } from '../audit';
+import {
+  employeePermissions,
+  recordAudit,
+  requireVerifiedAction,
+  type VerifiedAction,
+} from '../audit';
 import { type MockContext, requireFeature, requirePermission, resolveContext } from '../context';
 import { db } from '../db';
 import type { CashShiftRecord, MockDb, MockEmployeeRecord } from '../db/seed';
 import { API, handle, MockHttpError, parseBody } from '../http';
-import { nextInventoryNumber } from '../inventory';
+import { nextInventoryNumber, postMovement, settingKey } from '../inventory';
 import { locationName, myLocationIds, requireLocationAccess } from '../location';
 import { assertCanSell, postSaleStock } from '../recipes';
 
@@ -38,7 +44,7 @@ import { assertCanSell, postSaleStock } from '../recipes';
  */
 
 export const DEFAULT_ALLOWANCE = 500_000;
-const GRACE_MINUTES = 10;
+export const GRACE_MINUTES = 10;
 
 function staffContext(request: Request, feature: FeatureCode, permission?: Permission) {
   const ctx = resolveContext(request);
@@ -92,12 +98,54 @@ function employeeByPin(ctx: MockContext, pin: string, locationId: string) {
 
 const monthOf = (iso: string) => localDate(iso).slice(0, 7);
 
+/** A voided meal no longer counts as eaten (HR-006) or in reports (A-312). */
+export const mealCounts = (m: Pick<StaffMeal, 'status'>) => m.status !== 'VOIDED';
+
+const mealsOfMonth = (state: MockDb, tenantId: string, employeeId: string, month: string) =>
+  state.staffMeals.filter(
+    (m) =>
+      m.tenantId === tenantId &&
+      m.employeeId === employeeId &&
+      monthOf(m.at) === month &&
+      mealCounts(m),
+  );
+
 function mealsValue(state: MockDb, tenantId: string, employeeId: string, month: string) {
-  return state.staffMeals
-    .filter(
-      (m) => m.tenantId === tenantId && m.employeeId === employeeId && monthOf(m.at) === month,
-    )
-    .reduce((s, m) => s + m.value.amount, 0);
+  return mealsOfMonth(state, tenantId, employeeId, month).reduce((s, m) => s + m.value.amount, 0);
+}
+
+/**
+ * A-312 void, mirroring POS-012: every STAFF_MEAL movement the meal made (other items and recipe
+ * ingredients alike) comes back as RETURN against a VOID reference. Prepared plates it used
+ * aren't re-queued, as for a voided sale.
+ */
+function reverseMealStock(ctx: MockContext, meal: StaffMeal, verified: VerifiedAction) {
+  const taken = new Map<string, number>();
+  for (const m of db.get().stockMovements) {
+    if (
+      m.tenantId === ctx.me.tenant.id &&
+      m.type === 'STAFF_MEAL' &&
+      m.reference.kind === 'STAFF_MEAL' &&
+      m.reference.id === meal.id
+    ) {
+      const key = settingKey(m.productId, m.locationId);
+      taken.set(key, (taken.get(key) ?? 0) - m.quantity);
+    }
+  }
+  for (const [key, quantity] of taken) {
+    const [productId = '', locationId = ''] = key.split(':');
+    if (quantity <= 0) continue;
+    postMovement(ctx, {
+      productId,
+      locationId,
+      type: 'RETURN',
+      quantity,
+      reference: { kind: 'VOID', id: meal.id, number: meal.number },
+      reason: verified.reason,
+      approvedBy: verified.employee.fullName,
+      note: 'Staff meal voided',
+    });
+  }
 }
 
 function employeeView(ctx: MockContext, e: MockEmployeeRecord): EmployeeView {
@@ -160,8 +208,8 @@ function shiftFor(
   return a ? (templatesOf(state, tenantId).find((t) => t.id === a.templateId) ?? null) : null;
 }
 
-/** HR-003 status of one employee on one day at one location. */
-function attendanceRow(
+/** HR-003 status of one employee on one day at one location (also REP-007). */
+export function attendanceRow(
   state: MockDb,
   e: MockEmployeeRecord,
   locationId: string,
@@ -869,6 +917,7 @@ export const staffHandlers = [
         reason: verified.reason,
         recordedBy: ctx.me.user.displayName,
         at: nowIso(),
+        status: 'RECORDED',
       };
       postSaleStock(
         ctx,
@@ -894,6 +943,61 @@ export const staffHandlers = [
     }),
   ),
 
+  /**
+   * A-312 void a staff meal: same day only (as POS-012), manager PIN + reason. Stock comes back;
+   * the meal stays listed as VOIDED and stops counting against the allowance.
+   */
+  http.post(
+    `${API}/staff/meals/:id/void`,
+    handle(async ({ request, params }) => {
+      const ctx = staffContext(request, 'HR', 'staff.view');
+      const meal = db
+        .get()
+        .staffMeals.find((m) => m.id === String(params.id) && m.tenantId === ctx.me.tenant.id);
+      if (!meal) throw new MockHttpError('NOT_FOUND', 404, 'Staff meal not found');
+      requireLocationAccess(ctx, meal.locationId);
+      if (meal.status === 'VOIDED') {
+        throw new MockHttpError('CONFLICT', 409, 'This meal is already voided', {
+          reason: 'ALREADY_VOIDED',
+        });
+      }
+      if (localDate(meal.at) !== localDate()) {
+        throw new MockHttpError('CONFLICT', 409, 'Only today’s staff meals can be voided', {
+          reason: 'NOT_TODAY',
+        });
+      }
+      const input = await parseBody(request, staffMealVoidSchema);
+      const verified = requireVerifiedAction(ctx, input.verification, 'staff.meal.void');
+      const { tenantId: _t, ...before } = meal;
+      reverseMealStock(ctx, before, verified);
+      const voided: StaffMeal = {
+        ...before,
+        status: 'VOIDED',
+        voided: {
+          at: nowIso(),
+          by: ctx.me.user.displayName,
+          approvedBy: verified.employee.fullName,
+          reason: verified.reason,
+        },
+      };
+      db.update((d) => {
+        const rec = d.staffMeals.find((m) => m.id === meal.id);
+        if (rec) Object.assign(rec, { status: voided.status, voided: voided.voided });
+      });
+      const used = mealsValue(db.get(), ctx.me.tenant.id, meal.employeeId, monthOf(meal.at));
+      recordAudit(ctx, {
+        action: 'staff.meal.void',
+        entity: 'employee',
+        entityId: meal.employeeId,
+        entityLabel: `${meal.number} voided · ${meal.employeeName} · ${meal.value.amount / 100} back (${used / 100} this month)`,
+        before: { status: 'RECORDED', value: meal.value },
+        after: { status: 'VOIDED' },
+        verified,
+      });
+      return HttpResponse.json(voided);
+    }),
+  ),
+
   /** HR-006 §23: allowance, eaten, remaining, excess for salary deduction. */
   http.get(
     `${API}/staff/allowance`,
@@ -916,9 +1020,7 @@ export const staffHandlers = [
             consumed: money(ctx, consumed),
             remaining: money(ctx, Math.max(0, allowance - consumed)),
             excess: money(ctx, Math.max(0, consumed - allowance)),
-            meals: state.staffMeals.filter(
-              (m) => m.tenantId === e.tenantId && m.employeeId === e.id && monthOf(m.at) === month,
-            ).length,
+            meals: mealsOfMonth(state, e.tenantId, e.id, month).length,
           };
         })
         .sort((a, b) => b.excess.amount - a.excess.amount || b.consumed.amount - a.consumed.amount);

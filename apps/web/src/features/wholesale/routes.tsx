@@ -52,4 +52,11 @@ export const wholesaleRoutes: Record<string, RouteObject[]> = {
       }),
     },
   ],
+  /** A-310 (wholesale.prices). */
+  wholesalePrices: [
+    {
+      index: true,
+      lazy: async () => ({ Component: (await import('./pages/prices-page')).PricesPage }),
+    },
+  ],
 };

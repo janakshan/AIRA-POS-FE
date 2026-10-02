@@ -6,6 +6,6 @@
   "assets": {
     "directory": "./apps/web/dist",
     // createBrowserRouter: serve index.html for unknown paths so deep links work.
-    "not_found_handling": "single-page-application"
-  }
+    "not_found_handling": "single-page-application",
+  },
 }

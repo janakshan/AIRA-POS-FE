@@ -14,6 +14,8 @@ import { purchasingHandlers } from './purchasing';
 import { productionHandlers } from './production';
 import { recipeHandlers } from './recipes';
 import { reportHandlers } from './reports';
+import { settingsHandlers } from './settings';
+import { settingsSystemHandlers } from './settings-system';
 import { staffHandlers } from './staff';
 import { wholesaleHandlers } from './wholesale';
 
@@ -30,6 +32,8 @@ export const handlers = [
   ...deliveryHandlers,
   ...staffHandlers,
   ...reportHandlers,
+  ...settingsHandlers,
+  ...settingsSystemHandlers,
   ...inventoryHandlers,
   ...purchasingHandlers,
   ...recipeHandlers,

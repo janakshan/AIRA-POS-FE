@@ -103,7 +103,20 @@ export interface WholesaleInvoiceLine {
   returnedQuantity: number;
 }
 
-export type WholesaleInvoiceStatus = 'OPEN' | 'PAID';
+/** VOIDED (A-311): reversed, kept for history, left out of balances and sales. */
+export type WholesaleInvoiceStatus = 'OPEN' | 'PAID' | 'VOIDED';
+
+/** A-311: who approved a void and why; the cash paid at the shop is refunded. */
+export interface WholesaleInvoiceVoid {
+  at: IsoDateTime;
+  /** Signed-in user who voided it. */
+  voidedBy: string;
+  /** Employee whose PIN approved it (wholesale.void). */
+  approvedBy: string;
+  reason: { code: string; label: string; comment?: string };
+  /** Paid at the shop and handed back (null = nothing was paid). */
+  refunded: { method: WholesalePaymentMethod; amount: Money } | null;
+}
 
 /** WHO-003: a sale to a shop from the van. Prices include VAT. */
 export interface WholesaleInvoice {
@@ -141,6 +154,8 @@ export interface WholesaleInvoice {
   note?: string;
   createdBy: string;
   at: IsoDateTime;
+  /** Set once the invoice is voided (A-311). */
+  voided?: WholesaleInvoiceVoid;
 }
 
 export interface WholesaleInvoiceListParams {
@@ -160,6 +175,33 @@ export interface WholesaleInvoiceRequest {
   paidNow: number;
   method?: WholesalePaymentMethod;
   note?: string;
+}
+
+/** A-311: manager PIN + reason. */
+export interface VoidWholesaleInvoiceRequest {
+  verification: SensitiveActionContext;
+}
+
+/** A-310 one row of the wholesale price list (VAT inclusive). */
+export interface WholesalePriceRow {
+  productId: string;
+  code: string;
+  name: string;
+  unit: StockUnit;
+  retailPrice: Money;
+  /** null = not sold wholesale yet. */
+  price: Money | null;
+  updatedAt: IsoDateTime | null;
+  updatedBy: string | null;
+}
+
+export interface WholesalePriceListParams {
+  search?: string;
+}
+
+export interface WholesalePriceRequest {
+  /** Minor units, VAT inclusive, > 0. */
+  price: number;
 }
 
 export interface ShareInvoiceRequest {
@@ -253,7 +295,8 @@ export interface WholesaleReturnRequest {
   verification: SensitiveActionContext;
 }
 
-export type ShopLedgerKind = 'OPENING' | 'INVOICE' | 'COLLECTION' | 'RETURN';
+/** VOID reverses an invoice's credit on the day it was voided (A-311). */
+export type ShopLedgerKind = 'OPENING' | 'INVOICE' | 'COLLECTION' | 'RETURN' | 'VOID';
 
 /** WHO-002 statement row (credit part of an invoice only; cash paid at the shop nets out). */
 export interface ShopLedgerEntry {
@@ -266,6 +309,8 @@ export interface ShopLedgerEntry {
   amount: Money;
   balance: Money;
   at: IsoDateTime;
+  /** INVOICE rows: the invoice was later voided (a VOID row reverses it). */
+  voided?: boolean;
 }
 
 /** WHO-006 one route on one day. */

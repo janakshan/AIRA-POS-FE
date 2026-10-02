@@ -1,0 +1,435 @@
+{
+  "locationTypes": {
+    "RESTAURANT": "Restaurant",
+    "RETAIL": "Retail",
+    "BAKERY": "Bakery",
+    "WAREHOUSE": "Store",
+    "MIXED": "Mixed",
+    "VAN": "Van"
+  },
+  "active": "Active",
+  "inactive": "Inactive",
+  "save": "Save",
+  "cancel": "Cancel",
+  "close": "Close",
+  "allLocations": "All locations",
+  "charges": {
+    "title": "Charges",
+    "hint": "Charges staff can add at the POS, and their default amounts.",
+    "location": "Location",
+    "offered": "Offered",
+    "name": "Name",
+    "mode": "Type",
+    "modes": {
+      "PERCENT": "Percentage",
+      "FIXED": "Fixed amount"
+    },
+    "default": "Default",
+    "noDefault": "Staff enter the amount",
+    "automatic": "Add to every sale",
+    "automaticHint": "Added automatically to items marked “service charge” at this location.",
+    "codes": {
+      "SERVICE": "Service charge",
+      "DELIVERY": "Delivery",
+      "PACKAGING": "Packaging",
+      "OTHER": "Other"
+    },
+    "openSales": "Charges already on open sales keep their amount; new sales use these defaults.",
+    "saved": "Charges saved for {{location}}",
+    "unchanged": "No changes"
+  },
+  "locations": {
+    "title": "Locations",
+    "hint": "Branches, stores and vans, and their tax and receipt settings.",
+    "new": "Add location",
+    "caption": "Locations",
+    "empty": "No locations yet",
+    "code": "Code",
+    "name": "Name",
+    "type": "Type",
+    "address": "Address",
+    "tax": "Tax",
+    "users": "Sign-ins",
+    "status": "Status",
+    "editTitle": "Edit {{name}}",
+    "newTitle": "Add location",
+    "pos": "POS settings",
+    "taxLabel": "Tax name",
+    "taxRate": "Tax rate (%)",
+    "maxDiscount": "Largest discount (%)",
+    "returnWindow": "Returns accepted for (days)",
+    "receiptFooter": "Receipt footer",
+    "serviceCharge": "Service charge: {{rate}}",
+    "serviceNone": "Service charge: none",
+    "editCharges": "Change on Charges",
+    "activeHint": "Inactive locations can't be opened. Their history is kept.",
+    "newHint": "A new location starts with no products switched on and no charges. Owners can open it at once; give other sign-ins access on Users.",
+    "created": "{{name}} added",
+    "updated": "{{name}} saved",
+    "current": "You're here"
+  },
+  "users": {
+    "title": "Users",
+    "hint": "Who can sign in, what they can do and where.",
+    "new": "Add sign-in",
+    "caption": "Sign-ins",
+    "empty": "No sign-ins",
+    "noResults": "No sign-ins match",
+    "search": "Search sign-ins",
+    "searchPlaceholder": "Name or email",
+    "statusFilter": "Status",
+    "allStatuses": "All",
+    "name": "Name",
+    "email": "Email",
+    "roles": "Roles",
+    "locations": "Can open",
+    "employee": "Employee",
+    "status": "Status",
+    "you": "You",
+    "newTitle": "Add sign-in",
+    "editTitle": "Edit {{name}}",
+    "password": "Temporary password",
+    "passwordHint": "At least 8 characters. Share it with them; they sign in with it.",
+    "accessAll": "All locations, including new ones",
+    "accessChosen": "Only these locations",
+    "noEmployee": "Not linked",
+    "employeeHint": "Linking gives this employee's PIN the authority of these roles (discounts, voids…).",
+    "activeLabel": "Can sign in",
+    "activeHint": "Turning this off signs them out straight away.",
+    "resetPassword": "Reset password",
+    "resetTitle": "New password for {{name}}",
+    "newPassword": "New temporary password",
+    "passwordReset": "Password changed for {{name}}",
+    "created": "{{name}} can now sign in",
+    "updated": "{{name}} saved",
+    "createLogin": "Create sign-in",
+    "openUser": "Manage sign-in"
+  },
+  "roles": {
+    "title": "Roles & permissions",
+    "hint": "What each role can do. A sign-in can have several roles.",
+    "new": "Add role",
+    "caption": "Roles",
+    "name": "Role",
+    "users": "Sign-ins",
+    "permissions": "Permissions",
+    "permissionCount": "{{count}} of {{total}}",
+    "locked": "Locked",
+    "lockedHint": "The Owner role always has every permission so the business can't lock itself out.",
+    "edit": "Edit",
+    "copy": "Copy",
+    "delete": "Delete",
+    "copyOf": "{{name}} (copy)",
+    "newTitle": "New role",
+    "editTitle": "Edit {{name}}",
+    "viewTitle": "{{name}}",
+    "selectAll": "Select all",
+    "moduleOff": "Module off",
+    "moduleOffHint": "Your plan doesn't include this module yet; the permission does nothing until it does.",
+    "effect": "Changes apply to everyone with this role on their next action, including what their PIN can approve.",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteBody": "This can't be undone.",
+    "created": "{{name}} created",
+    "updated": "{{name}} saved",
+    "deleted": "{{name}} deleted",
+    "notFound": "Role not found",
+    "back": "Back to roles"
+  },
+  "groups": {
+    "dashboard": "Dashboard",
+    "pos": "POS",
+    "restaurant": "Restaurant & kitchen",
+    "catalog": "Catalog",
+    "customers": "Customers",
+    "inventory": "Inventory",
+    "operations": "Purchasing, production & wholesale",
+    "delivery": "Delivery",
+    "staff": "Staff",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "permissions": {
+    "dashboard.view": {
+      "label": "View dashboard",
+      "hint": "Today's sales and alerts on the home screen."
+    },
+    "pos.sale.create": {
+      "label": "Sell",
+      "hint": "Ring up, hold and take payment for sales."
+    },
+    "pos.discount.apply": {
+      "label": "Approve discounts",
+      "hint": "Give item or bill discounts and promotions."
+    },
+    "pos.charge.manage": {
+      "label": "Change charges",
+      "hint": "Custom amounts, waive the service charge, remove charges."
+    },
+    "pos.price.override": {
+      "label": "Change prices",
+      "hint": "Override an item's price on a sale."
+    },
+    "pos.item.cancel": {
+      "label": "Cancel items",
+      "hint": "Reduce or remove items on a saved sale."
+    },
+    "pos.order.void": {
+      "label": "Void / cancel sales",
+      "hint": "Void today's paid invoices, cancel unpaid orders."
+    },
+    "pos.refund": {
+      "label": "Refunds",
+      "hint": "Take returns and refund customers."
+    },
+    "pos.drawer.open": {
+      "label": "Open cash drawer",
+      "hint": "Open the drawer outside a sale."
+    },
+    "restaurant.table.manage": {
+      "label": "Tables",
+      "hint": "Open and manage table orders."
+    },
+    "restaurant.table.transfer": {
+      "label": "Move tables",
+      "hint": "Move or merge table orders."
+    },
+    "kot.view": {
+      "label": "See kitchen board",
+      "hint": "View kitchen tickets."
+    },
+    "kot.manage": {
+      "label": "Run kitchen board",
+      "hint": "Start, ready and complete kitchen tickets."
+    },
+    "catalog.view": {
+      "label": "View catalog",
+      "hint": "See products, categories and prices."
+    },
+    "catalog.manage": {
+      "label": "Manage catalog",
+      "hint": "Add and change products, categories, prices and Quick Pad."
+    },
+    "customer.view": {
+      "label": "View customers",
+      "hint": "See customers and their balances."
+    },
+    "customer.manage": {
+      "label": "Manage customers",
+      "hint": "Add and change customers, take payments."
+    },
+    "inventory.view": {
+      "label": "View stock",
+      "hint": "See stock levels and movements."
+    },
+    "inventory.adjust": {
+      "label": "Adjust stock",
+      "hint": "Count, write off and correct stock."
+    },
+    "inventory.transfer": {
+      "label": "Transfer stock",
+      "hint": "Send and receive stock between locations."
+    },
+    "purchasing.manage": {
+      "label": "Purchasing",
+      "hint": "Suppliers, purchase orders and goods received."
+    },
+    "production.manage": {
+      "label": "Production",
+      "hint": "Bakery plans and batches."
+    },
+    "wholesale.manage": {
+      "label": "Wholesale",
+      "hint": "Shops, invoices, collections and routes."
+    },
+    "wholesale.prices": {
+      "label": "Wholesale prices",
+      "hint": "Change what shops pay. Field sales reps sell at these prices."
+    },
+    "wholesale.void": {
+      "label": "Void wholesale invoices",
+      "hint": "Approve voiding today's wholesale invoices with a PIN."
+    },
+    "delivery.manage": {
+      "label": "Dispatch deliveries",
+      "hint": "Confirm, assign riders and track deliveries."
+    },
+    "delivery.deliver": {
+      "label": "Deliver",
+      "hint": "Move your own deliveries out and delivered."
+    },
+    "staff.view": {
+      "label": "View staff",
+      "hint": "See employees, attendance and shifts."
+    },
+    "staff.manage": {
+      "label": "Manage staff",
+      "hint": "Add employees, rosters, PINs and allowances."
+    },
+    "report.sales.view": {
+      "label": "Sales reports",
+      "hint": "Sales, product, location and staff reports; all-locations dashboard."
+    },
+    "report.audit.view": {
+      "label": "Audit log",
+      "hint": "See who changed what."
+    },
+    "settings.manage": {
+      "label": "Settings",
+      "hint": "Locations, charges, sign-ins and roles."
+    }
+  },
+  "business": {
+    "title": "Business",
+    "hint": "Your business name, look and the details printed on receipts.",
+    "name": "Business name",
+    "logoText": "Logo letters",
+    "logoTextHint": "Up to 3 letters for the badge in the menu.",
+    "color": "Brand colour",
+    "defaultColor": "Use the default colour",
+    "customColor": "Custom colour",
+    "phone": "Phone",
+    "taxRegNo": "Tax registration number",
+    "receiptHint": "Printed under your name on every receipt.",
+    "timezone": "Time zone",
+    "currency": "Currency",
+    "currencyHint": "Fixed for this business: changing it would re-value every price.",
+    "preview": "Preview",
+    "receiptPreview": "Receipt header",
+    "saved": "Business details saved"
+  },
+  "timezones": {
+    "Asia/Colombo": "Sri Lanka (Colombo)",
+    "Asia/Kolkata": "India (Kolkata)",
+    "Asia/Dubai": "UAE (Dubai)",
+    "UTC": "UTC"
+  },
+  "devices": {
+    "title": "Devices",
+    "hint": "Tills, tablets and kitchen screens, and where they are.",
+    "new": "Add device",
+    "caption": "Devices",
+    "empty": "No devices yet",
+    "name": "Name",
+    "type": "Type",
+    "location": "Location",
+    "status": "Status",
+    "types": {
+      "POS_TERMINAL": "POS terminal",
+      "TABLET": "Tablet",
+      "KITCHEN_DISPLAY": "Kitchen display",
+      "BACK_OFFICE": "Back office"
+    },
+    "thisBrowser": "This browser",
+    "paired": "Paired",
+    "notPaired": "Waiting to pair",
+    "newTitle": "Add device",
+    "editTitle": "Edit {{name}}",
+    "activeHint": "A device that's turned off can't be used to sell or approve anything.",
+    "codeTitle": "Pair {{name}}",
+    "codeHint": "Enter this code on the device, or scan the QR code, to link it to {{location}}.",
+    "newCode": "New code",
+    "code": "Activation code",
+    "useHere": "Use on this browser",
+    "usingHere": "This browser is now {{name}}",
+    "useHereHint": "Only devices at the location you're working in can be used here.",
+    "created": "{{name}} added",
+    "updated": "{{name}} saved",
+    "done": "Done"
+  },
+  "payments": {
+    "title": "Payment methods",
+    "hint": "How customers can pay, across the whole business.",
+    "methods": {
+      "CASH": "Cash",
+      "CARD": "Card",
+      "BANK_TRANSFER": "Bank transfer",
+      "CREDIT": "Credit sale"
+    },
+    "notes": {
+      "CASH": "Always on: every till takes cash.",
+      "CARD": "Paid on the card terminal; the approval code is printed.",
+      "BANK_TRANSFER": "Staff enter the transfer reference.",
+      "CREDIT": "Needs a customer; the amount is added to what they owe."
+    },
+    "refunds": "Refunds always go back the way the customer paid, even if that method is now off.",
+    "saved": "Payment methods saved"
+  },
+  "printers": {
+    "title": "Printers",
+    "hint": "Where receipts and kitchen tickets print at each location.",
+    "location": "Location",
+    "receipt": "Receipt printer",
+    "receiptHint": "Customer receipts and bills from this location's tills.",
+    "printerName": "Printer",
+    "testPrint": "Test print",
+    "testSent": "Test page sent to {{printer}}",
+    "stations": "Kitchen stations",
+    "stationsHint": "Each station prints its own KOTs. Choose which products go where on Location products.",
+    "newStation": "Add station",
+    "stationName": "Station",
+    "code": "Code",
+    "products": "Products",
+    "empty": "No kitchen stations at this location",
+    "newTitle": "Add station",
+    "editTitle": "Edit {{name}}",
+    "delete": "Delete",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteBody": "Its KOTs will stop printing. This can't be undone.",
+    "stationSaved": "{{name}} saved",
+    "stationCreated": "{{name}} added",
+    "stationDeleted": "{{name}} deleted",
+    "receiptSaved": "Receipt printer saved",
+    "simulated": "Printers are simulated in this prototype."
+  },
+  "languages": {
+    "title": "Languages",
+    "hint": "Which languages staff can use, and the one the app starts in.",
+    "available": "Available languages",
+    "englishAlways": "Always available",
+    "default": "Default language",
+    "defaultHint": "New devices and staff who haven't chosen start in this language.",
+    "coverage": "Your product names",
+    "coverageHint": "The app's own words are translated for you. Product and category names are yours: add them in Catalog.",
+    "products": "Products: {{done}} of {{total}}",
+    "categories": "Categories: {{done}} of {{total}}",
+    "openCatalog": "Open products",
+    "saved": "Languages saved"
+  },
+  "features": {
+    "title": "Features",
+    "hint": "What your plan includes. Contact us to change it.",
+    "plan": "Your plan",
+    "status": {
+      "ACTIVE": "Active",
+      "TRIAL": "Trial",
+      "SUSPENDED": "Suspended"
+    },
+    "on": "Included",
+    "off": "Not in your plan",
+    "usage": "Usage",
+    "limits": {
+      "locations": "Locations",
+      "devices": "Devices",
+      "users": "Sign-ins"
+    },
+    "used": "{{used}} of {{max}}",
+    "unlimited": "{{used}} · no limit",
+    "contact": "To add a module or raise a limit, contact us. Modules turn on for everyone straight away.",
+    "descriptions": {
+      "POS_RETAIL": "Counter sales with barcode and Quick Pad.",
+      "POS_RESTAURANT": "Dine-in, takeaway and table orders.",
+      "KOT": "Kitchen tickets and the kitchen board.",
+      "TABLE_MANAGEMENT": "Floor plan, open tables and moving orders.",
+      "DELIVERY": "Delivery orders, riders and dispatch.",
+      "INVENTORY": "Stock levels, counts and transfers.",
+      "PURCHASING": "Suppliers, purchase orders and goods received.",
+      "RECIPES": "Recipes and prepared items.",
+      "BAKERY_PRODUCTION": "Bakery production plans and batches.",
+      "WHOLESALE": "Wholesale shops, invoices and collections.",
+      "FIELD_SALES": "Van sales and routes.",
+      "HR": "Employees, shifts, staff meals and allowances.",
+      "ATTENDANCE": "Clock in and out with a PIN.",
+      "ADVANCED_REPORTING": "Extra reports and analysis."
+    }
+  }
+}

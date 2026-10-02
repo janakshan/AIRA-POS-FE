@@ -1,0 +1,114 @@
+{
+  "list": {
+    "title": "Orders",
+    "hint": "Every sale at {{location}} — reprint receipts, return items or void a sale.",
+    "caption": "Orders",
+    "search": "Search orders",
+    "searchPlaceholder": "Order or return number, customer or phone",
+    "anyStatus": "All",
+    "anyType": "All order types",
+    "anyPayment": "All payment methods",
+    "range": "Date range",
+    "from": "From",
+    "to": "To",
+    "empty": "No orders yet.",
+    "emptyHint": "Sales made on the POS appear here.",
+    "noResults": "No orders match these filters.",
+    "newSale": "New sale"
+  },
+  "range": {
+    "all": "All time",
+    "today": "Today",
+    "week": "Last 7 days",
+    "month": "Last 30 days",
+    "custom": "Custom dates"
+  },
+  "status": {
+    "PAID": "Paid",
+    "HELD": "Held",
+    "OPEN": "Open",
+    "CANCELLED": "Cancelled",
+    "VOIDED": "Voided"
+  },
+  "method": {
+    "CASH": "Cash",
+    "CARD": "Card",
+    "BANK_TRANSFER": "Bank transfer",
+    "CREDIT": "Credit"
+  },
+  "columns": {
+    "number": "Order",
+    "time": "Time",
+    "type": "Type",
+    "customer": "Customer",
+    "items": "Items",
+    "payment": "Payment",
+    "total": "Total",
+    "status": "Status"
+  },
+  "walkIn": "Walk-in",
+  "items_one": "{{count}} item",
+  "items_other": "{{count}} items",
+  "returnsCount_one": "{{count}} return",
+  "returnsCount_other": "{{count}} returns",
+  "detail": {
+    "subtitle": "{{type}} · {{location}}",
+    "customer": "Customer",
+    "table": "Table",
+    "delivery": "Delivery",
+    "createdBy": "Opened",
+    "paidAt": "Paid",
+    "heldAt": "Held",
+    "holdLabel": "Hold label",
+    "lines": "Items",
+    "item": "Item",
+    "qty": "Qty",
+    "unitPrice": "Price",
+    "lineTotal": "Amount",
+    "cancelledQty": "{{count}} cancelled",
+    "returnedQty": "{{count}} returned",
+    "note": "Note: {{note}}",
+    "totals": "Totals",
+    "subtotal": "Subtotal",
+    "discounts": "Discounts",
+    "serviceCharge": "Service charge",
+    "tax": "Tax",
+    "total": "Total",
+    "payments": "Payments",
+    "noPayments": "No payments yet.",
+    "refund": "Refund",
+    "tendered": "Tendered {{tendered}} · change {{change}}",
+    "returns": "Returns",
+    "returnBy": "{{amount}} refunded by {{method}} · approved by {{name}} · {{reason}}",
+    "returnReceipt": "Return receipt",
+    "cancelledTitle": "{{status}} by {{name}}",
+    "cancelledReason": "{{reason}} · {{at}}"
+  },
+  "actions": {
+    "receipt": "Receipt",
+    "return": "Return items",
+    "void": "Void sale",
+    "cancel": "Cancel order",
+    "openPos": "Open on POS",
+    "more": "More actions"
+  },
+  "blocked": {
+    "returns": "This sale has returns — return the remaining items instead of voiding.",
+    "day": "Only today's sales can be voided. Use Return for older sales.",
+    "kitchen": "Items were sent to the kitchen — cancel this order on the POS."
+  },
+  "void": {
+    "title": "Why void {{number}}?",
+    "description": "Voiding refunds the full amount and is recorded in the audit log.",
+    "done": "{{number}} voided — {{amount}} refunded"
+  },
+  "cancel": {
+    "title": "Why cancel {{number}}?",
+    "description": "The order is closed without payment and recorded in the audit log.",
+    "done": "{{number}} cancelled"
+  },
+  "summary": "{{from}}–{{to}} of {{total}}",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}}"
+}

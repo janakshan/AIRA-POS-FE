@@ -142,3 +142,80 @@ describe('WHO-006 route overview', () => {
     );
   });
 });
+
+describe('A-310 wholesale prices', () => {
+  it('lets the owner change a wholesale price', async () => {
+    const { user } = await openAs('owner@pilot.demo', '/wholesale/prices', 'loc_01MAIN');
+    await user.click(
+      await screen.findByRole(
+        'button',
+        { name: 'Edit wholesale price of Sandwich Bread (450g)' },
+        { timeout: 5000 },
+      ),
+    );
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Wholesale price · Sandwich Bread (450g)',
+    });
+    const price = within(dialog).getByRole('textbox', { name: /Wholesale price/ });
+    await user.clear(price);
+    await user.click(within(dialog).getByRole('button', { name: 'Save price' }));
+    expect(await within(dialog).findByText('Enter an amount above zero')).toBeInTheDocument();
+    await user.type(price, '190');
+    await user.click(within(dialog).getByRole('button', { name: 'Save price' }));
+    await waitFor(async () => {
+      const rows = await api.wholesale.prices.list({ search: 'Sandwich' });
+      expect(rows[0]!.price?.amount).toBe(19_000);
+    });
+  }, 20_000);
+
+  it('is closed to field sales reps', async () => {
+    await openAs('rep@pilot.demo', '/wholesale/prices');
+    expect(await screen.findByText('Access denied', {}, { timeout: 5000 })).toBeInTheDocument();
+  });
+});
+
+describe('A-311 void a wholesale invoice', () => {
+  it('voids today’s invoice with a manager PIN and reason', async () => {
+    const { accessToken } = await api.auth.login({ email: 'rep@pilot.demo', password: 'demo1234' });
+    useSessionStore.getState().signIn(accessToken);
+    useSessionStore.getState().setLocation('loc_01VAN1');
+    const invoice = await api.wholesale.invoices.create({
+      shopId: 'shp_007',
+      lines: [{ productId: 'prd_01B03', quantity: 2 }],
+      paidNow: 10_000,
+      method: 'CASH',
+    });
+    const { user } = await openAs(
+      'owner@pilot.demo',
+      `/wholesale/field-sales/${invoice.id}`,
+      'loc_01MAIN',
+    );
+    await user.click(
+      await screen.findByRole('button', { name: /Void invoice/ }, { timeout: 5000 }),
+    );
+    const pin = await screen.findByRole('dialog', { name: 'Employee verification' });
+    await keypad(user, pin, '1111');
+    const reason = await screen.findByRole('dialog', { name: `Why void ${invoice.number}?` });
+    await user.click(within(reason).getByRole('radio', { name: 'Wrong item sold' }));
+    await user.click(within(reason).getByRole('button', { name: 'Confirm' }));
+
+    expect(await screen.findByText('Voided · approved by Nirmala Rajan')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Void invoice/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Record a return/ })).not.toBeInTheDocument();
+    const voided = await api.wholesale.invoices.get(invoice.id);
+    expect(voided).toMatchObject({ status: 'VOIDED', voided: { refunded: { method: 'CASH' } } });
+  }, 30_000);
+
+  it('explains why an older invoice can’t be voided', async () => {
+    const { accessToken } = await api.auth.login({ email: 'rep@pilot.demo', password: 'demo1234' });
+    useSessionStore.getState().signIn(accessToken);
+    const old = (await api.wholesale.invoices.list({ shopId: LAKSHMI })).find((i) =>
+      i.lines.every((l) => l.returnedQuantity === 0),
+    )!;
+    await openAs('rep@pilot.demo', `/wholesale/field-sales/${old.id}`);
+    expect(
+      await screen.findByText(/Only today's invoices can be voided/, {}, { timeout: 5000 }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Void invoice/ })).toBeDisabled();
+  });
+});

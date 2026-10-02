@@ -3,6 +3,7 @@ import type {
   RouteOverview,
   StockMovement,
   WholesaleCollection,
+  WholesalePriceRow,
   WholesaleProduct,
   WholesaleReturn,
   WholesaleReturnDetail,
@@ -11,8 +12,10 @@ import type {
 } from '@rbp/types';
 import {
   shareInvoiceSchema,
+  voidWholesaleInvoiceSchema,
   wholesaleCollectionSchema,
   wholesaleInvoiceSchema,
+  wholesalePriceSchema,
   wholesaleReturnSchema,
   wholesaleShopSchema,
 } from '@rbp/validation';
@@ -36,6 +39,7 @@ import {
   allocate,
   includedTax,
   invoiceView,
+  isLive,
   ledgerOf,
   localDate,
   openItems,
@@ -139,6 +143,56 @@ function productsAt(ctx: MockContext, locationId: string): WholesaleProduct[] {
     .sort((a, b) => a.code.localeCompare(b.code));
 }
 
+/** A-310: changing the price list needs `wholesale.prices` (owner, manager), not reps. */
+function pricesContext(request: Request) {
+  const ctx = resolveContext(request);
+  requireFeature(ctx, 'WHOLESALE');
+  requirePermission(ctx, 'wholesale.prices');
+  return ctx;
+}
+
+/** A-310 every product sold on the POS, with its retail and wholesale price (VAT inclusive). */
+function priceRows(ctx: MockContext): WholesalePriceRow[] {
+  const state = db.get();
+  const tenantId = ctx.me.tenant.id;
+  const prices = state.wholesalePrices[tenantId] ?? {};
+  return state.products
+    .filter(
+      (p) =>
+        p.tenantId === tenantId &&
+        (p.kind ?? 'ITEM') === 'ITEM' &&
+        (p.isActive || prices[p.id] !== undefined),
+    )
+    .map((p) => priceRow(ctx, p.id))
+    .sort((a, b) => a.code.localeCompare(b.code));
+}
+
+function priceRow(ctx: MockContext, productId: string): WholesalePriceRow {
+  const state = db.get();
+  const p = state.products.find((x) => x.id === productId)!;
+  const price = state.wholesalePrices[ctx.me.tenant.id]?.[productId];
+  // Who changed it last comes from the audit log (newest first).
+  const last = state.auditLog.find(
+    (e) =>
+      e.tenantId === ctx.me.tenant.id &&
+      e.action === 'wholesale.price.update' &&
+      e.entityId === productId,
+  );
+  return {
+    productId,
+    code: p.code,
+    name: p.name,
+    unit: p.stockUnit ?? 'pcs',
+    retailPrice: p.basePrice,
+    price: price === undefined ? null : money(ctx, price),
+    updatedAt: last?.at ?? null,
+    updatedBy: last?.userName ?? null,
+  };
+}
+
+/** A-311: same rule as a POS void (A-225): only on the day it was made. */
+const isToday = (at: string) => localDate(at) === localDate(new Date());
+
 const sameDay = (at: string, date: string | null) => !date || localDate(at) === date;
 const within = (at: string, days: string | null) => {
   if (days === null) return true;
@@ -229,7 +283,9 @@ export const wholesaleHandlers = [
       const tenantId = ctx.me.tenant.id;
       const onDay = <T extends { shopId: string; at: string }>(docs: T[], shopId: string) =>
         docs.filter((x) => x.shopId === shopId && localDate(x.at) === date);
-      const invoices = state.wholesaleInvoices.filter((i) => i.tenantId === tenantId);
+      const all = state.wholesaleInvoices.filter((i) => i.tenantId === tenantId);
+      // A-311: a voided invoice still counts as a visit but not as a sale.
+      const invoices = all.filter(isLive);
       const collections = state.wholesaleCollections.filter((c) => c.tenantId === tenantId);
       const returns = state.wholesaleReturns.filter((r) => r.tenantId === tenantId);
       const sum = (xs: { amount: number }[]) => xs.reduce((s, x) => s + x.amount, 0);
@@ -242,7 +298,7 @@ export const wholesaleHandlers = [
           const ret = onDay(returns, s.id);
           return {
             shop: shopView(state, s),
-            visited: inv.length + col.length + ret.length > 0,
+            visited: onDay(all, s.id).length + col.length + ret.length > 0,
             sales: money(ctx, sum(inv.map((i) => i.total))),
             collected: money(ctx, sum(col.map((c) => c.amount))),
             returns: money(ctx, sum(ret.map((r) => r.credit))),
@@ -438,6 +494,55 @@ export const wholesaleHandlers = [
     }),
   ),
 
+  /** A-310 the price list: retail vs wholesale for every product. */
+  http.get(
+    `${API}/wholesale/prices`,
+    handle(({ request }) => {
+      const ctx = pricesContext(request);
+      const q = new URL(request.url).searchParams.get('search')?.trim().toLowerCase();
+      return HttpResponse.json(
+        priceRows(ctx).filter(
+          (r) => !q || r.name.toLowerCase().includes(q) || r.code.toLowerCase().includes(q),
+        ),
+      );
+    }),
+  ),
+
+  /**
+   * A-310: set a product's wholesale price (VAT inclusive). Invoices already made keep the price
+   * on their lines; the next invoice uses the new one. Audited old → new.
+   */
+  http.put(
+    `${API}/wholesale/prices/:productId`,
+    handle(async ({ request, params }) => {
+      const ctx = pricesContext(request);
+      const { price } = await parseBody(request, wholesalePriceSchema);
+      const tenantId = ctx.me.tenant.id;
+      const product = db
+        .get()
+        .products.find(
+          (p) =>
+            p.id === params.productId && p.tenantId === tenantId && (p.kind ?? 'ITEM') === 'ITEM',
+        );
+      if (!product) throw new MockHttpError('NOT_FOUND', 404, 'Product not found');
+      const before = priceOf(ctx, product.id);
+      if (before !== price) {
+        db.update((d) => {
+          d.wholesalePrices[tenantId] = { ...d.wholesalePrices[tenantId], [product.id]: price };
+        });
+        recordAudit(ctx, {
+          action: 'wholesale.price.update',
+          entity: 'product',
+          entityId: product.id,
+          entityLabel: `${product.code} ${product.name} · wholesale price`,
+          before: before === undefined ? null : money(ctx, before),
+          after: money(ctx, price),
+        });
+      }
+      return HttpResponse.json(priceRow(ctx, product.id));
+    }),
+  ),
+
   http.get(
     `${API}/wholesale/invoices`,
     handle(({ request }) => {
@@ -625,6 +730,84 @@ export const wholesaleHandlers = [
     }),
   ),
 
+  /**
+   * A-311 void (POS-012's rule, A-225): only on the day it was made and only with no returns
+   * linked; a manager PIN + reason (`wholesale.void`). Every item goes back into the van
+   * (RETURN, like a POS void), the credit part leaves the shop's balance (money already applied
+   * to it is re-applied to the shop's other items, since balances are derived), and what was
+   * paid at the shop is refunded. The invoice is kept, marked VOIDED.
+   */
+  http.post(
+    `${API}/wholesale/invoices/:id/void`,
+    handle(async ({ request, params }) => {
+      const ctx = wholesaleContext(request);
+      const invoice = findInvoice(ctx, String(params.id));
+      const conflict = (message: string, reason: string) =>
+        new MockHttpError('CONFLICT', 409, message, { reason });
+      if (invoice.voided) throw conflict('Invoice is already voided', 'ALREADY_VOIDED');
+      const state = db.get();
+      const linked = state.wholesaleReturns.some(
+        (r) => r.tenantId === ctx.me.tenant.id && r.invoiceId === invoice.id,
+      );
+      if (linked || invoice.lines.some((l) => l.returnedQuantity > 0)) {
+        throw conflict('Invoice has returns — record a return instead', 'HAS_RETURNS');
+      }
+      if (!isToday(invoice.at)) {
+        throw conflict(
+          'Only today’s invoices can be voided — record a return instead',
+          'NOT_TODAY',
+        );
+      }
+      const input = await parseBody(request, voidWholesaleInvoiceSchema);
+      const verified = requireVerifiedAction(ctx, input.verification, 'wholesale.void');
+      const shop = findShop(ctx, invoice.shopId);
+      const before = outstandingOf(state, shop);
+      const at = nowIso();
+      const record: WholesaleInvoiceRecord = {
+        ...invoice,
+        voided: {
+          at,
+          voidedBy: ctx.me.user.displayName,
+          approvedBy: verified.employee.fullName,
+          reason: verified.reason,
+          refunded: invoice.paidNow,
+        },
+      };
+      const reference = {
+        kind: 'WHOLESALE_INVOICE' as const,
+        id: invoice.id,
+        number: invoice.number,
+      };
+      for (const l of invoice.lines) {
+        postMovement(ctx, {
+          productId: l.productId,
+          locationId: invoice.locationId,
+          type: 'RETURN',
+          quantity: l.quantity,
+          reference,
+          note: `Invoice voided · ${invoice.shopName}`,
+          approvedBy: verified.employee.fullName,
+          at,
+        });
+      }
+      db.update((d) => {
+        d.wholesaleInvoices = d.wholesaleInvoices.map((i) => (i.id === invoice.id ? record : i));
+      });
+      const after = outstandingOf(db.get(), shop);
+      const refunded = invoice.paidNow?.amount.amount ?? 0;
+      recordAudit(ctx, {
+        action: 'wholesale.invoice.void',
+        entity: 'wholesale-invoice',
+        entityId: invoice.id,
+        entityLabel: `${invoice.number} voided · ${invoice.shopName} · ${invoice.total.amount / 100}${refunded ? ` (${refunded / 100} refunded)` : ''}`,
+        before: { status: 'ISSUED', outstanding: before },
+        after: { status: 'VOIDED', outstanding: after, refunded },
+        verified,
+      });
+      return HttpResponse.json(invoiceView(db.get(), record));
+    }),
+  ),
+
   /** WHO-004 */
   http.get(
     `${API}/wholesale/collections`,
@@ -750,6 +933,9 @@ export const wholesaleHandlers = [
         throw new MockHttpError('VALIDATION_FAILED', 400, 'Invoice is for another shop', {
           fieldErrors: { invoiceId: 'validation.required' },
         });
+      }
+      if (invoice?.voided) {
+        throw new MockHttpError('CONFLICT', 409, 'Invoice is voided', { reason: 'INVOICE_VOIDED' });
       }
       const van = invoice ? invoice.locationId : vanFor(ctx, shop);
       requireLocationAccess(ctx, van);

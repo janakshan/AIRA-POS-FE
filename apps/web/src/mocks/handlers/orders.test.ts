@@ -424,3 +424,41 @@ describe('mock orders: POS-012 void / cancel', () => {
     expect(await fail(api.orders.resume(held.id))).toMatchObject({ code: 'CONFLICT' });
   });
 });
+
+describe('mock orders: SAL-001 list filters', () => {
+  it('filters by order type, payment method and an inclusive date range', async () => {
+    await signInAs('manager@pilot.demo');
+    const cash = await paidSale('CASH');
+    const credit = await paidSale('CREDIT', 'cus_05');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const byMethod = await api.orders.list({ from: today.toISOString(), paymentMethod: 'CREDIT' });
+    expect(byMethod.items.map((o) => o.id)).toContain(credit.id);
+    expect(byMethod.items.map((o) => o.id)).not.toContain(cash.id);
+    expect(
+      byMethod.items.every((o) =>
+        o.payments.some((p) => p.kind === 'SALE' && p.method === 'CREDIT'),
+      ),
+    ).toBe(true);
+
+    const dineIn = await api.orders.list({ type: 'DINE_IN', pageSize: 100 });
+    expect(dineIn.total).toBeGreaterThan(0);
+    expect(dineIn.items.every((o) => o.type === 'DINE_IN')).toBe(true);
+
+    // Seeded history: yesterday only, nothing from today.
+    const yesterday = new Date(today.getTime() - 24 * 60 * 60_000);
+    const day = await api.orders.list({
+      from: yesterday.toISOString(),
+      to: new Date(today.getTime() - 1).toISOString(),
+      pageSize: 100,
+    });
+    expect(day.total).toBeGreaterThan(0);
+    expect(
+      day.items.every(
+        (o) => o.createdAt >= yesterday.toISOString() && o.createdAt < today.toISOString(),
+      ),
+    ).toBe(true);
+    expect(day.items.map((o) => o.id)).not.toContain(cash.id);
+  });
+});

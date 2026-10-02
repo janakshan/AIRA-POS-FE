@@ -1,5 +1,6 @@
 import type {
   FinishedGoodsItem,
+  ProductionMaterial,
   ProductionBatchStatus,
   ProductionPlanStatus,
   ProductionSummary,
@@ -9,6 +10,7 @@ import type {
 import {
   cancelProductionSchema,
   completeBatchSchema,
+  productionFormulaSchema,
   productionPlanSchema,
   productionWastageSchema,
   startBatchSchema,
@@ -18,7 +20,11 @@ import { http, HttpResponse } from 'msw';
 import { recordAudit, requireVerifiedAction } from '../audit';
 import { type MockContext, requireFeature, requirePermission, resolveContext } from '../context';
 import { db } from '../db';
-import type { ProductionBatchRecord, ProductionPlanRecord } from '../db/seed';
+import type {
+  ProductionBatchRecord,
+  ProductionFormulaRecord,
+  ProductionPlanRecord,
+} from '../db/seed';
 import { API, handle, MockHttpError, parseBody } from '../http';
 import {
   assertInStock,
@@ -36,6 +42,7 @@ import {
   formulaOf,
   formulasOf,
   localDate,
+  materialsOf,
   planView,
   requireFormula,
   startOfDay,
@@ -256,6 +263,85 @@ export const productionHandlers = [
     }),
   ),
 
+  /**
+   * A-309 edit a formula. Only batches created afterwards use it: confirmed plans and their
+   * batches already hold their runs and raw-material quantities.
+   */
+  http.put(
+    `${API}/production/formulas/:productId`,
+    handle(async ({ request, params }) => {
+      const ctx = productionContext(request);
+      const locationId = targetLocation(ctx, new URL(request.url));
+      const tenantId = ctx.me.tenant.id;
+      const state = db.get();
+      const before = formulasOf(state, tenantId).find((f) => f.productId === params.productId);
+      if (!before) throw new MockHttpError('NOT_FOUND', 404, 'Production formula not found');
+      const input = await parseBody(request, productionFormulaSchema);
+      const materials = new Map(materialsOf(state, tenantId).map((p) => [p.id as string, p]));
+      input.lines.forEach((l, i) => {
+        if (!materials.has(l.ingredientId)) {
+          throw new MockHttpError('VALIDATION_FAILED', 400, 'Not a raw material', {
+            fieldErrors: { [`lines.${i}.ingredientId`]: 'validation.itemRequired' },
+          });
+        }
+      });
+      const same =
+        input.yieldQuantity === before.yieldQuantity &&
+        input.lines.length === before.lines.length &&
+        input.lines.every(
+          (l, i) =>
+            l.ingredientId === before.lines[i]?.ingredientId &&
+            l.quantity === before.lines[i]?.quantity,
+        );
+      if (!same) {
+        const after: ProductionFormulaRecord = {
+          ...before,
+          yieldQuantity: input.yieldQuantity,
+          lines: input.lines.map((l) => ({ ingredientId: l.ingredientId, quantity: l.quantity })),
+          updatedAt: nowIso(),
+          updatedBy: ctx.me.user.displayName,
+        };
+        db.update((d) => {
+          d.productionFormulas = d.productionFormulas.map((f) =>
+            f.tenantId === tenantId && f.productId === after.productId ? after : f,
+          );
+        });
+        const product = state.products.find((p) => p.id === after.productId);
+        recordAudit(ctx, {
+          action: 'production.formula.update',
+          entity: 'production-formula',
+          entityId: after.productId,
+          entityLabel: `${product?.name ?? after.productId}: ${after.yieldQuantity} per run · ${after.lines.map((l) => `${materials.get(l.ingredientId)?.name} ${l.quantity}`).join(', ')}`,
+          before: { yieldQuantity: before.yieldQuantity, lines: before.lines },
+          after: { yieldQuantity: after.yieldQuantity, lines: after.lines },
+        });
+      }
+      return HttpResponse.json(formulaOf(ctx, before.productId, locationId));
+    }),
+  ),
+
+  /** Raw materials a formula can use (stock-only ingredients), with on hand at the location. */
+  http.get(
+    `${API}/production/materials`,
+    handle(({ request }) => {
+      const ctx = productionContext(request);
+      const locationId = targetLocation(ctx, new URL(request.url));
+      const state = db.get();
+      const index = onHandIndex(state, ctx.me.tenant.id);
+      const items: ProductionMaterial[] = materialsOf(state, ctx.me.tenant.id)
+        .map((p) => ({
+          id: p.id,
+          code: p.code,
+          name: p.name,
+          unit: p.stockUnit ?? 'pcs',
+          ...(p.portion?.description ? { portionDescription: p.portion.description } : {}),
+          onHand: index.qty.get(settingKey(p.id, locationId)) ?? 0,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      return HttpResponse.json(items);
+    }),
+  ),
+
   /** BAK-002 plans, newest plan date first. */
   http.get(
     `${API}/production/plans`,
@@ -351,7 +437,11 @@ export const productionHandlers = [
     }),
   ),
 
-  /** DRAFT → CONFIRMED: one PLANNED batch per line. */
+  /**
+   * DRAFT → CONFIRMED: one PLANNED batch per line. Runs and raw materials are worked out from
+   * today's formula and copied onto the plan and batches, so a later formula edit (A-309)
+   * doesn't change them.
+   */
   http.post(
     `${API}/production/plans/:id/confirm`,
     handle(({ request, params }) => {
@@ -359,7 +449,8 @@ export const productionHandlers = [
       const before = findPlan(ctx, String(params.id));
       if (before.status !== 'DRAFT') throw invalidState('Plan', before.status);
       const state = db.get();
-      const batches: ProductionBatchRecord[] = before.lines.map((l) => {
+      const lines = planLines(ctx, before.lines);
+      const batches: ProductionBatchRecord[] = lines.map((l) => {
         const f = requireFormula(ctx, l.productId);
         return {
           id: newId('bat'),
@@ -391,7 +482,7 @@ export const productionHandlers = [
         status: 'CONFIRMED',
         confirmedBy: ctx.me.user.displayName,
         confirmedAt: now,
-        lines: before.lines.map((l, i) => ({ ...l, batchId: batches[i]!.id })),
+        lines: lines.map((l, i) => ({ ...l, batchId: batches[i]!.id })),
       };
       db.update((d) => {
         d.productionBatches.push(...batches);

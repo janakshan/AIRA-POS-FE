@@ -7,7 +7,14 @@ export function useErrorMessage() {
   const { t } = useTranslation();
   return useCallback(
     (error: unknown): string => {
-      if (isApiError(error)) return t(`errors.${error.code}`, { defaultValue: error.message });
+      if (isApiError(error)) {
+        const message = t(`errors.${error.code}`, { defaultValue: error.message });
+        // A business rule's own wording (e.g. LAST_ADMIN) when there is one.
+        const reason = error.details?.reason;
+        return typeof reason === 'string'
+          ? t(`errorReasons.${reason}`, { defaultValue: message, ...error.details })
+          : message;
+      }
       return t('errors.INTERNAL_ERROR');
     },
     [t],

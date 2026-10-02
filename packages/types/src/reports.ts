@@ -201,3 +201,48 @@ export interface VoidsReport {
     removedItems: number;
   };
 }
+
+/** REP-007 one employee over the period (A-294). */
+export interface StaffReportFigures {
+  /** Rostered shifts in the period up to now. */
+  rostered: number;
+  /** Days with a clock-in (rostered or not). */
+  worked: number;
+  /** Clocked minutes (an open clock-in counts up to now). */
+  minutes: number;
+  /** Rostered shifts started more than the grace period late. */
+  late: number;
+  lateMinutes: number;
+  /** Rostered shifts with no clock-in once the grace period passed. */
+  absent: number;
+  /** Days worked without a rostered shift. */
+  unrostered: number;
+  /** Paid orders (not voided) they rang up. */
+  orders: number;
+  /** Their sales less the refunds they gave (as REP-001 "by cashier"). */
+  net: Money;
+  discounts: Money;
+  refunds: Money;
+  /** Cash shifts they closed (counted) in the period. */
+  shiftsClosed: number;
+  /** Counted − expected over those shifts; negative = short. */
+  variance: Money;
+  shortShifts: number;
+  meals: number;
+  mealValue: Money;
+}
+
+export interface StaffReportRow extends StaffReportFigures {
+  /** Null for sales by someone who isn't on the employee list (e.g. a login without one). */
+  employeeId: string | null;
+  name: string;
+  jobTitle: string;
+}
+
+export interface StaffReport {
+  from: string;
+  to: string;
+  locationIds: LocationId[];
+  rows: StaffReportRow[];
+  totals: StaffReportFigures;
+}

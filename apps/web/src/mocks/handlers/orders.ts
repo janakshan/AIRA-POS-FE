@@ -25,6 +25,7 @@ import type { z } from 'zod';
 import { recordAudit, requireVerifiedAction, type VerifiedAction } from '../audit';
 import { type MockContext, requireFeature, requirePermission, resolveContext } from '../context';
 import { db } from '../db';
+import { paymentMethodOn } from '../payments';
 import { withDeliveryStatus } from '../delivery';
 import { activeRecipe, postMovement } from '../inventory';
 import {
@@ -65,6 +66,7 @@ function settingsFor(locationId: string) {
     taxLabel: s?.taxLabel ?? 'Tax',
     returnWindowDays: s?.returnWindowDays ?? 30,
     receiptFooter: s?.receiptFooter ?? 'Thank you!',
+    receiptPrinter: s?.receiptPrinter ?? 'Receipt Printer',
   };
 }
 
@@ -314,7 +316,12 @@ function buildReceipt(ctx: MockContext, order: OrderRecord, returnId?: string): 
           : ('ORIGINAL' as const),
     orderType: order.type,
     table: order.table?.name ?? null,
-    business: { name: ctx.me.tenant.name, logoText: ctx.me.tenant.branding?.logoText ?? '' },
+    business: {
+      name: ctx.me.tenant.name,
+      logoText: ctx.me.tenant.branding?.logoText ?? '',
+      ...(ctx.me.tenant.phone ? { phone: ctx.me.tenant.phone } : {}),
+      ...(ctx.me.tenant.taxRegNo ? { taxRegNo: ctx.me.tenant.taxRegNo } : {}),
+    },
     location: { name: location.name, address: location.address },
     cashier: order.createdBy,
     device: device?.name ?? null,
@@ -584,6 +591,9 @@ export function payOrder(ctx: MockContext, order: OrderRecord, input: PayOrderIn
   // Authoritative stock check: someone else may have sold the last one since it was saved.
   assertCanSell(ctx, order.locationId, order.lines);
   const total = order.totals.total;
+  if (!paymentMethodOn(ctx.me.tenant.id, input.method)) {
+    throw fieldError('method', 'validation.methodOff', `${input.method} is turned off`);
+  }
   let extra: Partial<Payment> = {};
   if (input.method === 'CASH') {
     if (!input.tendered || input.tendered.amount < total.amount) {
@@ -664,6 +674,9 @@ export const orderHandlers = [
       const p = new URL(request.url).searchParams;
       const status = p.get('status');
       const from = p.get('from');
+      const to = p.get('to');
+      const type = p.get('type');
+      const method = p.get('paymentMethod');
       const q = p.get('search')?.trim().toLowerCase();
       const digits = q?.replace(/\D/g, '');
       const items = db
@@ -674,6 +687,9 @@ export const orderHandlers = [
             o.locationId === locationOf(ctx).id &&
             (!status || o.status === status) &&
             (!from || o.createdAt >= from) &&
+            (!to || o.createdAt <= to) &&
+            (!type || o.type === type) &&
+            (!method || o.payments.some((x) => x.kind === 'SALE' && x.method === method)) &&
             (!q ||
               o.number.toLowerCase().includes(q) ||
               o.customer?.name.toLowerCase().includes(q) ||
@@ -1226,9 +1242,11 @@ export const orderHandlers = [
       requireSeller(ctx);
       const order = findOrder(ctx, String(params.id));
       const body = (await request.json().catch(() => ({}))) as { returnId?: string };
+      // SET-008: the location's receipt printer.
+      const printer = settingsFor(order.locationId).receiptPrinter;
       // A table bill (pro-forma, audited by /bill) doesn't count as the receipt's print.
       if (order.status === 'OPEN' || order.status === 'HELD') {
-        return HttpResponse.json({ printer: 'Receipt Printer', copy: 'BILL' });
+        return HttpResponse.json({ printer, copy: 'BILL' });
       }
       const reprint = (order.receiptPrints ?? 0) > 0;
       save({ ...order, receiptPrints: (order.receiptPrints ?? 0) + 1 });
@@ -1244,7 +1262,7 @@ export const orderHandlers = [
         after: { copy: reprint ? 'REPRINT' : 'ORIGINAL' },
       });
       return HttpResponse.json({
-        printer: 'Receipt Printer',
+        printer,
         copy: reprint ? 'REPRINT' : 'ORIGINAL',
       });
     }),

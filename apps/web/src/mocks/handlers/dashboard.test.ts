@@ -51,3 +51,35 @@ describe('mock dashboard: DASH-001 summary', () => {
     expect(summary.salesToday.amount).toBe(0);
   });
 });
+
+describe('mock dashboard: DASH-002 locations', () => {
+  it('shows every location the owner can see, busiest first, with matching totals', async () => {
+    await signInAs('owner@pilot.demo');
+    const board = await api.dashboard.locations();
+    const ids = board.locations.map((r) => r.location.id);
+    expect([...ids].sort()).toEqual(['loc_01BAKERY', 'loc_01MAIN', 'loc_01STORE', 'loc_01VAN1']);
+    const sales = board.locations.map((r) => r.salesToday.amount);
+    expect(sales).toEqual([...sales].sort((a, b) => b - a));
+    expect(board.totals.salesToday.amount).toBe(sales.reduce((a, b) => a + b, 0));
+    expect(board.totals.ordersToday).toBe(
+      board.locations.reduce((acc, r) => acc + r.ordersToday, 0),
+    );
+    // Each row matches what DASH-001 shows at that location.
+    const { asOf: _, ...main } = await api.dashboard.summary();
+    expect(board.locations.find((r) => r.location.id === 'loc_01MAIN')).toMatchObject(main);
+  });
+
+  it('limits a manager to their own locations', async () => {
+    await signInAs('manager@pilot.demo');
+    const board = await api.dashboard.locations();
+    expect(board.locations.map((r) => r.location.id).sort()).toEqual([
+      'loc_01BAKERY',
+      'loc_01MAIN',
+    ]);
+  });
+
+  it('is closed to a cashier', async () => {
+    await signInAs('cashier@pilot.demo');
+    await expect(api.dashboard.locations()).rejects.toMatchObject({ status: 403 });
+  });
+});
