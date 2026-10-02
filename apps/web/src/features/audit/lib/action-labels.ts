@@ -17,4 +17,5 @@ export const AUDIT_GROUPS = [
   { key: 'wholesale', prefix: 'wholesale.' },
   { key: 'delivery', prefix: 'delivery.' },
   { key: 'staff', prefix: 'staff.' },
+  { key: 'settings', prefix: 'settings.' },
 ] as const;

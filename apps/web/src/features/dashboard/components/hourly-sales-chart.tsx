@@ -1,6 +1,6 @@
 import type { CurrencyCode, DashboardSummary } from '@rbp/types';
 import { EmptyState } from '@rbp/ui';
-import { formatMoney } from '@rbp/utils';
+import { cn, formatMoney } from '@rbp/utils';
 import { BarChart3Icon } from 'lucide-react';
 
 interface Props {
@@ -8,18 +8,26 @@ interface Props {
   currency: CurrencyCode;
   locale: string;
   emptyLabel: string;
+  /** Short version for the DASH-002 location cards. */
+  compact?: boolean;
 }
 
 const hourLabel = (h: number) => `${String(h).padStart(2, '0')}:00`;
 
 /** Single-series bar chart: one hue, thin bars anchored to baseline, hover tooltip, sr-only table. */
-export function HourlySalesChart({ data, currency, locale, emptyLabel }: Props) {
+export function HourlySalesChart({ data, currency, locale, emptyLabel, compact }: Props) {
   const max = Math.max(...data.map((d) => d.amount), 0);
-  if (max === 0) return <EmptyState icon={BarChart3Icon} title={emptyLabel} className="py-8" />;
+  if (max === 0)
+    return (
+      <EmptyState icon={BarChart3Icon} title={emptyLabel} className={compact ? 'py-4' : 'py-8'} />
+    );
 
   return (
     <figure>
-      <div className="flex h-48 items-end gap-0.5 border-b border-border" aria-hidden>
+      <div
+        className={cn('flex items-end gap-0.5 border-b border-border', compact ? 'h-20' : 'h-48')}
+        aria-hidden
+      >
         {data.map((d) => {
           const label = `${hourLabel(d.hour)} · ${formatMoney({ amount: d.amount, currency }, locale)}`;
           return (

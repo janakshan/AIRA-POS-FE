@@ -4,13 +4,15 @@ import type { CashShiftRecord, MockDb } from './seed';
 /**
  * HR-* demo data for the pilot tenant:
  * - Phones and the Rs 5,000 monthly food allowance (§23) on every employee.
- * - Morning (06:00–14:00) / Evening (14:00–22:00) shifts, rostered Mon–Sat for last week and
- *   this week; a week of clock-ins (Fathima late two days ago, Arun absent three days ago) and
- *   Kasun clocked in now.
- * - Counter POS 1 cash shifts: two closed (the second Rs 200 short) and one open, each opened
+ * - Morning (06:00–14:00) / Evening (14:00–22:00) shifts, rostered Mon–Sat from 30 days ago to
+ *   the end of this week; 30 days of clock-ins (Fathima late two days ago, Arun absent three
+ *   days ago, a few more lates/absences earlier, Suresh in on two Sundays) and Kasun in now.
+ * - Counter POS 1 cash shifts: a month of closed shifts (mostly exact, some over or short), then
+ *   the last three as before — two closed (the second Rs 200 short) and one open — each opened
  *   with the previous count (SCN-005 handover).
- * - This month's staff meals: Arun just under his allowance, Kasun Rs 1,220 over. They're on
- *   the ledger like sales (recipe dishes use ingredients); openings are topped up to match.
+ * - Staff meals: this month's (Arun just under his allowance, Kasun Rs 1,220 over) and some
+ *   from earlier in the 30 days. They're on the ledger like sales (recipe dishes use
+ *   ingredients); openings are topped up to match.
  */
 
 const T1 = 'ten_01PILOT';
@@ -38,6 +40,45 @@ const ROSTER: [string, string, 'tpl_MORNING' | 'tpl_EVENING'][] = [
   ['emp_10', MAIN, 'tpl_EVENING'],
   ['emp_06', BAKERY, 'tpl_MORNING'],
 ];
+
+/** REP-007 history (A-295): days back that are late (minutes) or absent; all ≥ 7 days ago. */
+const HISTORY_DAYS = 30;
+const EXTRA_LATE: Record<string, [number, number][]> = {
+  emp_03: [
+    [9, 18],
+    [17, 12],
+  ],
+  emp_04: [
+    [12, 35],
+    [20, 15],
+    [26, 22],
+  ],
+  emp_10: [
+    [8, 14],
+    [15, 30],
+  ],
+  emp_06: [[22, 19]],
+};
+const EXTRA_ABSENT: Record<string, number[]> = {
+  emp_05: [18],
+  emp_10: [11],
+  emp_04: [24],
+};
+/** Older staff meals: [days back, employee, [product, qty][]]. */
+const OLD_MEALS: [number, string, [string, number][]][] = [
+  [28, 'emp_05', [['prd_01R01', 1]]],
+  [25, 'emp_04', [['prd_01K01', 1]]],
+  [23, 'emp_03', [['prd_01D02', 1]]],
+  [21, 'emp_05', [['prd_01R02', 1]]],
+  [19, 'emp_10', [['prd_01R01', 1]]],
+  [16, 'emp_04', [['prd_01R01', 1]]],
+  [14, 'emp_05', [['prd_01K02', 1]]],
+  [12, 'emp_03', [['prd_01R01', 1]]],
+  [10, 'emp_04', [['prd_01K01', 1]]],
+  [8, 'emp_10', [['prd_01D02', 1]]],
+];
+/** Drawer over/short per older shift (cents), cycled; mostly exact. */
+const OLD_VARIANCE = [0, 0, -15_000, 0, 5_000, 0, 0, -10_000, 0, 20_000, 0, -50_000, 0, 0];
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const localDate = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -118,11 +159,11 @@ export function seedStaff(db: MockDb) {
   );
   const window = { tpl_MORNING: [6, 14], tpl_EVENING: [14, 22] } as const;
 
-  // Roster: Monday last week → Sunday this week, Mon–Sat.
+  // Roster: 30 days ago (or Monday last week if earlier) → Sunday this week, Mon–Sat.
   const today = new Date();
   const mondayThisWeek = (today.getDay() + 6) % 7;
   let r = 0;
-  for (let back = mondayThisWeek + 7; back >= mondayThisWeek - 6; back--) {
+  for (let back = Math.max(HISTORY_DAYS, mondayThisWeek + 7); back >= mondayThisWeek - 6; back--) {
     const day = dayAt(back, 12);
     if (day.getDay() === 0) continue;
     for (const [employeeId, locationId, templateId] of ROSTER) {
@@ -137,17 +178,19 @@ export function seedStaff(db: MockDb) {
     }
   }
 
-  // Attendance: the last six days as rostered (a late and an absence), Kasun in now.
+  // Attendance: 30 days as rostered (lates and absences), Suresh on two Sundays, Kasun in now.
   let a = 0;
-  for (let back = 6; back >= 1; back--) {
+  for (let back = HISTORY_DAYS; back >= 1; back--) {
     const date = localDate(dayAt(back, 12));
     for (const [employeeId, locationId, templateId] of ROSTER) {
       if (!db.rosterAssignments.some((x) => x.employeeId === employeeId && x.date === date)) {
         continue;
       }
       if (employeeId === 'emp_05' && back === 3) continue; // absent
+      if (EXTRA_ABSENT[employeeId]?.includes(back)) continue;
       const [start, end] = window[templateId];
-      const lateBy = employeeId === 'emp_03' && back === 2 ? 25 : -(4 + (a % 6));
+      const extraLate = EXTRA_LATE[employeeId]?.find(([d]) => d === back)?.[1];
+      const lateBy = employeeId === 'emp_03' && back === 2 ? 25 : (extraLate ?? -(4 + (a % 6)));
       const clockIn = dayAt(back, start, 0);
       clockIn.setMinutes(clockIn.getMinutes() + lateBy);
       const clockOut = dayAt(back, end, 3 + (a % 7));
@@ -162,6 +205,22 @@ export function seedStaff(db: MockDb) {
         method: 'PIN',
       });
     }
+  }
+  // Unrostered: Suresh covers a Sunday morning now and then.
+  let sundays = 0;
+  for (let back = HISTORY_DAYS; back >= 7 && sundays < 2; back--) {
+    if (dayAt(back, 12).getDay() !== 0) continue;
+    sundays += 1;
+    db.attendance.push({
+      id: `att_seed_${++a}`,
+      tenantId: T1,
+      employeeId: 'emp_02',
+      locationId: MAIN as never,
+      date: localDate(dayAt(back, 12)),
+      clockInAt: dayAt(back, 9, 55).toISOString(),
+      clockOutAt: dayAt(back, 14, 5).toISOString(),
+      method: 'PIN',
+    });
   }
   const kasunIn = new Date(Date.now() - 90 * 60_000);
   db.attendance.push({
@@ -216,24 +275,46 @@ export function seedStaff(db: MockDb) {
   });
   const fathima: [string, string] = ['emp_03', 'Fathima Rizvi'];
   const suresh: [string, string] = ['emp_02', MANAGER];
+  const kasun: [string, string] = ['emp_04', 'Kasun Perera'];
+  // Older shifts (Mon–Sat, 30 → 3 days ago), chained backwards so the last hands over 5,000.
+  // History sales have no device, so expected cash is the float and counted = float + variance.
+  const oldDays: number[] = [];
+  for (let back = HISTORY_DAYS; back >= 3; back--) {
+    if (dayAt(back, 12).getDay() !== 0) oldDays.push(back);
+  }
+  const old: { back: number; float: number; counted: number }[] = [];
+  let handover = 500_000;
+  for (let i = oldDays.length - 1; i >= 0; i--) {
+    const variance = OLD_VARIANCE[i % OLD_VARIANCE.length]!;
+    old.unshift({ back: oldDays[i]!, float: handover - variance, counted: handover });
+    handover -= variance;
+  }
+  const n0 = old.length;
   const openToday = new Date(Math.min(dayAt(0, 6).getTime(), Date.now() - 60 * 60_000));
   db.cashShifts.push(
+    ...old.map((o, i) =>
+      shift(i + 1, dayAt(o.back, 6), i % 5 === 4 ? kasun : fathima, o.float, {
+        at: dayAt(o.back, 22),
+        by: i % 4 === 3 ? kasun : suresh,
+        counted: o.counted,
+      }),
+    ),
     shift(
-      1,
+      n0 + 1,
       dayAt(2, 6),
       fathima,
       500_000,
       { at: dayAt(2, 22), by: suresh, counted: 350_000 },
       150_000,
     ),
-    shift(2, dayAt(1, 6), fathima, 350_000, {
+    shift(n0 + 2, dayAt(1, 6), fathima, 350_000, {
       at: dayAt(1, 22),
       by: suresh,
       counted: 330_000,
     }),
-    shift(3, openToday, fathima, 330_000),
+    shift(n0 + 3, openToday, fathima, 330_000),
   );
-  db.orderSequences[`SFT:${T1}`] = 3;
+  db.orderSequences[`SFT:${T1}`] = n0 + 3;
 
   // Staff meals this month, spread over the days so far.
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1, 12, 30);
@@ -241,12 +322,24 @@ export function seedStaff(db: MockDb) {
   const movements: (StockMovement & { tenantId: string })[] = [];
   const touched = new Set<string>();
   let mv = 0;
-  MEALS.forEach(([employeeId, items], i) => {
+  // Earlier meals stay before this month so the HR-005/006 allowance figures don't move.
+  const planned: { employeeId: string; items: [string, number][]; at: string }[] = [
+    ...OLD_MEALS.map(([back, employeeId, items]) => ({
+      employeeId,
+      items,
+      at: dayAt(back, 13, 15),
+    }))
+      .filter((m) => m.at < monthStart)
+      .map((m) => ({ ...m, at: m.at.toISOString() })),
+    ...MEALS.map(([employeeId, items], i) => {
+      let when = new Date(monthStart);
+      when.setDate(1 + Math.floor((i * daysSoFar) / MEALS.length));
+      if (when.getTime() > Date.now()) when = new Date(Date.now() - (MEALS.length - i) * 60_000);
+      return { employeeId, items, at: when.toISOString() };
+    }),
+  ];
+  planned.forEach(({ employeeId, items, at }, i) => {
     const employee = db.employees.find((e) => e.id === employeeId)!;
-    let when = new Date(monthStart);
-    when.setDate(1 + Math.floor((i * daysSoFar) / MEALS.length));
-    if (when.getTime() > Date.now()) when = new Date(Date.now() - (MEALS.length - i) * 60_000);
-    const at = when.toISOString();
     const number = `SML-${String(i + 1).padStart(6, '0')}`;
     const id = `sml_seed_${i + 1}`;
     const lines: StaffMealLine[] = items.map(([productId, quantity]) => {
@@ -311,7 +404,7 @@ export function seedStaff(db: MockDb) {
   });
   db.stockMovements.push(...movements);
   topUpOpenings(db, movements, MAIN, touched);
-  db.orderSequences[`SML:${T1}`] = MEALS.length;
+  db.orderSequences[`SML:${T1}`] = planned.length;
 }
 
 /** Keep INV-* balances where they were: add what these movements took to the openings. */

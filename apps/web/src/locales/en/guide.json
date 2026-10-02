@@ -51,14 +51,6 @@
     "title": "Coming soon",
     "intro": "You can already see these screens in the menu, but they aren't finished yet. For now, they show a \"coming soon\" page.",
     "items": {
-      "orders": {
-        "title": "Sales → Orders",
-        "body": "A list of all past orders, where you can search them and reprint receipts."
-      },
-      "staffReport": {
-        "title": "Reports → Staff",
-        "body": "Sales and hours for each staff member."
-      },
       "settings": {
         "title": "Settings",
         "body": "Business details, locations, users and roles, devices, payment methods, charges, printers, languages and modules."

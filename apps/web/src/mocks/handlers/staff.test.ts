@@ -177,7 +177,8 @@ describe('mock staff: HR-004 cash drawer shift (SCN-005 handover)', () => {
   it('works out expected cash, closes with a variance, and hands over', async () => {
     await signInAs('cashier@pilot.demo');
     const history = await api.staff.cashShifts.list(MAIN);
-    expect(history.find((s) => s.number === 'SFT-000002')?.variance?.amount).toBe(-20_000);
+    // Newest first: today's open shift, then yesterday's (Rs 200 short).
+    expect(history[1]?.variance?.amount).toBe(-20_000);
 
     const current = (await api.staff.cashShifts.current())!;
     expect(current).toMatchObject({ status: 'OPEN', openingFloat: { amount: 330_000 } });

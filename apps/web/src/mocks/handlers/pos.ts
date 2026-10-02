@@ -5,6 +5,7 @@ import { http, HttpResponse } from 'msw';
 import { recordAudit, requireVerifiedAction, type VerifiedAction } from '../audit';
 import { type MockContext, requirePermission, resolveContext } from '../context';
 import { db } from '../db';
+import { paymentMethodsFor } from '../payments';
 import { API, handle, MockHttpError, parseBody } from '../http';
 
 const fieldError = (field: string, key: string, message: string, details = {}) =>
@@ -59,6 +60,15 @@ export const posHandlers = [
       const ctx = resolveContext(request, { requireLocation: true });
       requireSeller(ctx);
       return HttpResponse.json(db.get().chargeTypes[ctx.me.currentLocation!.id] ?? []);
+    }),
+  ),
+
+  /** SET-006 payment methods the business accepts (POS payment, customer payments). */
+  http.get(
+    `${API}/payment-methods`,
+    handle(({ request }) => {
+      const ctx = resolveContext(request);
+      return HttpResponse.json(paymentMethodsFor(ctx.me.tenant.id));
     }),
   ),
 

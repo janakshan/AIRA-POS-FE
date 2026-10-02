@@ -18,7 +18,7 @@ import { formatDateTime, formatPhone } from '@rbp/utils';
 import { HistoryIcon, PencilIcon, PhoneIcon } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { localeFor } from '@/app/i18n';
 import { QueryError } from '@/components/query-error';
 import { Screen } from '@/components/screen';
@@ -146,6 +146,19 @@ export function EmployeeDetailPage() {
           <Fact label={t('fields.locations')}>{e.locations.map((l) => l.name).join(', ')}</Fact>
           <Fact label={t('employee.login')}>
             {e.login ? `${e.login.email} · ${e.login.roles.join(', ')}` : t('employee.noLogin')}
+            {can('settings.manage') && (
+              // SET-003 owns sign-ins; the employee record only shows the link.
+              <Link
+                to={
+                  e.login
+                    ? `/settings/users?q=${encodeURIComponent(e.login.email)}`
+                    : `/settings/users?employee=${encodeURIComponent(e.id)}`
+                }
+                className="ml-2 text-sm font-normal underline underline-offset-2"
+              >
+                {t(e.login ? 'employee.manageLogin' : 'employee.createLogin')}
+              </Link>
+            )}
           </Fact>
           <Fact label={t('employee.joined')}>
             {e.joinedAt ? formatPlainDate(e.joinedAt, locale) : '—'}

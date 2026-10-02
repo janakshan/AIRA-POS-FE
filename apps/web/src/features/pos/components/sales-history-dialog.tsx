@@ -7,7 +7,6 @@ import {
   SearchInput,
   Skeleton,
   StatusBadge,
-  type StatusTone,
   toast,
 } from '@rbp/ui';
 import { formatDateTime, formatMoney } from '@rbp/utils';
@@ -20,14 +19,7 @@ import { useMe } from '@/features/auth/api/queries';
 import { useSensitiveAction } from '@/features/auth/hooks/use-sensitive-action';
 import { useDeliveryStatus } from '@/features/restaurant/api/queries';
 import { useOrders, useVoidOrder } from '../api/orders';
-
-const TONE: Record<OrderStatus, StatusTone> = {
-  PAID: 'success',
-  HELD: 'info',
-  OPEN: 'progress',
-  CANCELLED: 'neutral',
-  VOIDED: 'danger',
-};
+import { ORDER_TONE, returnable, startOfToday, voidBlock } from '../lib/order-rules';
 
 /** Staff move a delivery on by hand; PREPARING/READY also follow the kitchen tickets. */
 const NEXT_DELIVERY: Partial<Record<DeliveryStatus, DeliveryStatus>> = {
@@ -36,21 +28,6 @@ const NEXT_DELIVERY: Partial<Record<DeliveryStatus, DeliveryStatus>> = {
   PREPARING: 'READY',
   // Assigning a rider and handing over happen on DEL-001 Deliveries.
 };
-
-const startOfToday = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-};
-
-const returnable = (o: Order) =>
-  o.status === 'PAID' && o.lines.some((l) => l.quantity - l.returnedQuantity > 0);
-const voidBlock = (o: Order): 'returns' | 'day' | null =>
-  o.returns.length
-    ? 'returns'
-    : o.paidAt && new Date(o.paidAt).toDateString() !== new Date().toDateString()
-      ? 'day'
-      : null;
 
 /**
  * Today's sales at this location: receipt (reprint), return (POS-011) and void (POS-012).
@@ -142,7 +119,7 @@ export function SalesHistoryDialog({
                 <li key={o.id} className="space-y-2 px-3 py-2.5">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="font-semibold">{o.number}</span>
-                    <StatusBadge tone={TONE[o.status]} size="sm">
+                    <StatusBadge tone={ORDER_TONE[o.status]} size="sm">
                       {t(`history.${o.status}`)}
                     </StatusBadge>
                     {o.type !== 'RETAIL' && (

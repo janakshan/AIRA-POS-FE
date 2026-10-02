@@ -1,5 +1,6 @@
 {
   "dashboard": "முகப்புப் பலகை",
+  "locationDashboard": "அனைத்து இடங்களும்",
   "groups": {
     "sales": "விற்பனை",
     "catalog": "பொருட்பட்டியல்",
@@ -30,6 +31,13 @@
     "attendance": "வருகை",
     "locations": "இடங்கள்",
     "users": "பயனர்கள்",
-    "languages": "மொழிகள்"
+    "languages": "மொழிகள்",
+    "business": "வணிகம்",
+    "roles": "பங்குகள் & அனுமதிகள்",
+    "devices": "சாதனங்கள்",
+    "payments": "கட்டண முறைகள்",
+    "charges": "கட்டணங்கள்",
+    "printers": "அச்சுப்பொறிகள்",
+    "features": "அம்சங்கள்"
   }
 }

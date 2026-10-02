@@ -132,3 +132,28 @@ describe('REP-006 audit report', () => {
     expect(text).not.toContain('Main Restaurant');
   }, 20_000);
 });
+
+describe('REP-007 Staff report', () => {
+  it('shows each employee over the last 30 days, exports a CSV and opens an employee', async () => {
+    const files = captureDownloads();
+    const { user, router } = await openAs('manager@pilot.demo', '/reports/staff');
+    await user.click(
+      await screen.findByRole('button', { name: 'Last 30 days' }, { timeout: 5000 }),
+    );
+    expect(
+      await screen.findByRole('button', { name: 'Fathima Rizvi' }, { timeout: 5000 }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Hours worked')).toBeInTheDocument();
+    expect(screen.getByText('Drawer over / short')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Download CSV/ }));
+    await waitFor(() => expect(files).toHaveLength(1));
+    expect(files[0]!.name).toMatch(/^staff-\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.csv$/);
+    const text = await files[0]!.blob.text();
+    expect(text).toContain('Employee,Job title,Rostered shifts,Days worked');
+    expect(text).toMatch(/Fathima Rizvi,Cashier,\d+,\d+/);
+
+    await user.click(screen.getByRole('button', { name: 'Fathima Rizvi' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/staff/employees/emp_03'));
+  });
+});

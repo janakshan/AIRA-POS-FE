@@ -17,3 +17,4 @@ export * from './saas';
 export * from './wholesale';
 export * from './sensitive-actions';
 export * from './staff';
+export * from './settings';

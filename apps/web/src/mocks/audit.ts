@@ -23,7 +23,7 @@ export function employeePermissions(tenantId: string, employeeId: string): Set<P
   const tenantUser = state.tenantUsers.find(
     (t) => t.tenantId === tenantId && t.employeeId === employeeId,
   );
-  if (!tenantUser) return new Set();
+  if (!tenantUser || tenantUser.status === 'INACTIVE') return new Set();
   return new Set(
     state.roles.filter((r) => tenantUser.roleIds.includes(r.id)).flatMap((r) => r.permissions),
   );

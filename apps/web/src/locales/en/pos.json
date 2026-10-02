@@ -213,7 +213,9 @@
     "paid": "Paid",
     "void": "VOIDED",
     "cancelled": "CANCELLED",
-    "bill": "BILL — NOT PAID"
+    "bill": "BILL — NOT PAID",
+    "phone": "Tel: {{phone}}",
+    "taxRegNo": "Tax reg. no: {{number}}"
   },
   "hold": {
     "action": "Hold",

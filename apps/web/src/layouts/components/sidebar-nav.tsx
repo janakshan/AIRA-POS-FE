@@ -14,7 +14,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, NavLink, useLocation } from 'react-router';
 import { useAccess } from '@/features/auth/hooks/use-access';
-import { DASHBOARD_ITEM, type NavGroup } from '@/navigation/nav-config';
+import { useShowLocationDashboard } from '@/features/dashboard/hooks/use-show-location-dashboard';
+import { DASHBOARD_ITEM, LOCATION_DASHBOARD_ITEM, type NavGroup } from '@/navigation/nav-config';
 import { useVisibleNav } from './use-visible-nav';
 
 const linkBase =
@@ -37,6 +38,7 @@ export function SidebarNav({
   const groups = useVisibleNav();
   const { check } = useAccess();
   const showDashboard = check(DASHBOARD_ITEM).allowed;
+  const showLocations = useShowLocationDashboard();
   const [open, setOpen] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(groups.map((g) => [g.key, isInGroup(g, pathname)])),
   );
@@ -63,6 +65,24 @@ export function SidebarNav({
               </NavLink>
             </TooltipTrigger>
             <TooltipContent side="right">{t('dashboard')}</TooltipContent>
+          </Tooltip>
+        )}
+        {showLocations && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink
+                to={LOCATION_DASHBOARD_ITEM.path}
+                aria-label={t('locationDashboard')}
+                className={cn(
+                  linkBase,
+                  'size-11 justify-center px-0',
+                  pathname === LOCATION_DASHBOARD_ITEM.path && linkActive,
+                )}
+              >
+                <LOCATION_DASHBOARD_ITEM.icon className="size-5" />
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="right">{t('locationDashboard')}</TooltipContent>
           </Tooltip>
         )}
         {groups.map((g) => (
@@ -105,6 +125,16 @@ export function SidebarNav({
         >
           <DASHBOARD_ITEM.icon className="size-5 shrink-0" />
           {t('dashboard')}
+        </NavLink>
+      )}
+      {showLocations && (
+        <NavLink
+          to={LOCATION_DASHBOARD_ITEM.path}
+          onClick={onNavigate}
+          className={({ isActive }) => cn(linkBase, isActive && linkActive)}
+        >
+          <LOCATION_DASHBOARD_ITEM.icon className="size-5 shrink-0" />
+          {t('locationDashboard')}
         </NavLink>
       )}
       {groups.map((g) => {

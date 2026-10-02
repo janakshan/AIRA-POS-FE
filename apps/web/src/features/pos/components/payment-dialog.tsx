@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { localeFor } from '@/app/i18n';
 import { useErrorMessage } from '@/components/use-error-message';
 import { usePayOrder } from '../api/orders';
+import { usePaymentMethods } from '../api/queries';
 import type { CartView } from '../hooks/use-cart';
 import type { useSaleActions } from '../hooks/use-sale-actions';
 
@@ -52,6 +53,11 @@ export function PaymentDialog({ open, onOpenChange, cart, sale, onPaid }: Paymen
   const pay = usePayOrder();
   const referenceId = useId();
   const [method, setMethod] = useState<PaymentMethod>('CASH');
+  // SET-006: only what the business accepts (cash is always on, so it stays the default).
+  const accepted = usePaymentMethods().data;
+  const methods = METHODS.filter(
+    ({ method: m }) => !accepted || accepted.some((a) => a.method === m && a.enabled),
+  );
   const [tendered, setTendered] = useState('');
   const [reference, setReference] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -141,7 +147,7 @@ export function PaymentDialog({ open, onOpenChange, cart, sale, onPaid }: Paymen
           <fieldset>
             <legend className="mb-2 text-sm font-medium">{t('payment.method')}</legend>
             <div className="grid grid-cols-2 gap-2">
-              {METHODS.map(({ method: m, icon }) => (
+              {methods.map(({ method: m, icon }) => (
                 <PaymentMethodButton
                   key={m}
                   icon={icon}

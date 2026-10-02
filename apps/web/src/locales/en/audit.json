@@ -14,7 +14,8 @@
     "production": "Bakery",
     "wholesale": "Wholesale",
     "delivery": "Delivery",
-    "staff": "Staff"
+    "staff": "Staff",
+    "settings": "Settings"
   },
   "sensitiveOnly": "PIN-approved only",
   "anyEmployee": "Any approver",
@@ -132,6 +133,25 @@
     "staff_shift_open": "Cash shift opened",
     "staff_shift_cash": "Cash in / out",
     "staff_shift_close": "Cash shift closed",
-    "staff_meal_create": "Staff meal"
+    "staff_meal_create": "Staff meal",
+    "settings_charges_update": "Charges changed",
+    "settings_location_create": "Location added",
+    "settings_location_update": "Location changed",
+    "settings_user_create": "Sign-in added",
+    "settings_user_update": "Sign-in changed",
+    "settings_user_password": "Password reset",
+    "settings_role_create": "Role created",
+    "settings_role_update": "Role changed",
+    "settings_role_delete": "Role deleted",
+    "settings_business_update": "Business details changed",
+    "settings_device_create": "Device added",
+    "settings_device_update": "Device changed",
+    "settings_device_code": "Pairing code issued",
+    "settings_payments_update": "Payment methods changed",
+    "settings_printer_update": "Receipt printer changed",
+    "settings_station_create": "Kitchen station added",
+    "settings_station_update": "Kitchen station changed",
+    "settings_station_delete": "Kitchen station deleted",
+    "settings_languages_update": "Languages changed"
   }
 }

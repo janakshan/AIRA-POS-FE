@@ -38,7 +38,7 @@ import { assertCanSell, postSaleStock } from '../recipes';
  */
 
 export const DEFAULT_ALLOWANCE = 500_000;
-const GRACE_MINUTES = 10;
+export const GRACE_MINUTES = 10;
 
 function staffContext(request: Request, feature: FeatureCode, permission?: Permission) {
   const ctx = resolveContext(request);
@@ -160,8 +160,8 @@ function shiftFor(
   return a ? (templatesOf(state, tenantId).find((t) => t.id === a.templateId) ?? null) : null;
 }
 
-/** HR-003 status of one employee on one day at one location. */
-function attendanceRow(
+/** HR-003 status of one employee on one day at one location (also REP-007). */
+export function attendanceRow(
   state: MockDb,
   e: MockEmployeeRecord,
   locationId: string,

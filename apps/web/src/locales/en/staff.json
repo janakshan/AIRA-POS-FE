@@ -55,7 +55,9 @@
     "attendance": "Attendance",
     "meals": "Staff meals this month",
     "noAttendance": "No clock-ins yet",
-    "noMeals": "No staff meals this month"
+    "noMeals": "No staff meals this month",
+    "createLogin": "Create sign-in",
+    "manageLogin": "Manage sign-in"
   },
   "allowanceCard": {
     "title": "Food allowance this month",

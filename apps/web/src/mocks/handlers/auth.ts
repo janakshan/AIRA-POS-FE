@@ -17,6 +17,11 @@ export const authHandlers = [
       // Prototype: a user belongs to one tenant. Multi-tenant membership would add a tenant picker here.
       const membership = state.tenantUsers.find((t) => t.userId === user.id);
       if (!membership) throw new MockHttpError('FORBIDDEN', 403, 'User has no tenant membership');
+      if (membership.status === 'INACTIVE') {
+        throw new MockHttpError('FORBIDDEN', 403, 'This sign-in has been deactivated', {
+          reason: 'ACCOUNT_DISABLED',
+        });
+      }
       const { password: _password, ...publicUser } = user;
       return HttpResponse.json<LoginResponse>({
         accessToken: issueToken(membership.id),

@@ -200,3 +200,58 @@ describe('mock reports: access', () => {
     expect(all.rows.map((x) => x.name).sort()).toEqual(['Bakery Outlet', 'Main Restaurant']);
   });
 });
+
+describe('mock reports: REP-007 staff', () => {
+  const MONTH = { from: day(29), to: day(), locationId: 'loc_01MAIN' };
+  const row = <R extends { name: string }>(r: { rows: R[] }, name: string) =>
+    r.rows.find((x) => x.name === name)!;
+
+  it('shows hours, lates, absences, drawer over/short and meals per employee', async () => {
+    await signInAs('manager@pilot.demo');
+    const r = await api.reports.staff(MONTH);
+    const fathima = row(r, 'Fathima Rizvi');
+    expect(fathima.worked).toBeGreaterThan(15);
+    expect(fathima.minutes).toBeGreaterThan(fathima.worked * 7 * 60);
+    expect(fathima.late).toBeGreaterThanOrEqual(3);
+    expect(row(r, 'Arun Selvam').absent).toBeGreaterThanOrEqual(2);
+    expect(row(r, 'Suresh Kumar')).toMatchObject({ unrostered: 2 });
+    expect(row(r, 'Suresh Kumar').shiftsClosed).toBeGreaterThan(10);
+    expect(row(r, 'Suresh Kumar').shortShifts).toBeGreaterThan(0);
+    expect(r.totals.meals).toBeGreaterThan(0);
+    // Bakery staff aren't at Main.
+    expect(r.rows.some((x) => x.name === 'Priya Nathan')).toBe(false);
+
+    // Totals are the sum of the rows.
+    const sum = (f: (x: (typeof r.rows)[number]) => number) => r.rows.reduce((s, x) => s + f(x), 0);
+    expect(r.totals.minutes).toBe(sum((x) => x.minutes));
+    expect(r.totals.net.amount).toBe(sum((x) => x.net.amount));
+    expect(r.totals.variance.amount).toBe(sum((x) => x.variance.amount));
+    expect(r.totals.mealValue.amount).toBe(sum((x) => x.mealValue.amount));
+  });
+
+  it("matches REP-001's sales by cashier and picks up today's activity", async () => {
+    await signInAs('manager@pilot.demo');
+    const before = row(await api.reports.staff(TODAY), 'Fathima Rizvi')?.orders ?? 0;
+    await signInAs('cashier@pilot.demo');
+    await paidSale();
+    await signInAs('manager@pilot.demo');
+    const [staff, sales] = await Promise.all([api.reports.staff(MONTH), api.reports.sales(MONTH)]);
+    expect(staff.totals.net).toEqual(
+      lkr(sales.byCashier.reduce((s, c) => s + c.net.amount, 0) / 100),
+    );
+    for (const c of sales.byCashier) {
+      expect(row(staff, c.name)).toMatchObject({ net: c.net, orders: c.orders });
+    }
+    const today = await api.reports.staff(TODAY);
+    expect(row(today, 'Fathima Rizvi').orders).toBe(before + 1);
+    // Kasun is clocked in now: his open shift counts up to now.
+    expect(row(today, 'Kasun Perera').minutes).toBeGreaterThanOrEqual(89);
+  });
+
+  it('needs HR and staff.view', async () => {
+    await signInAs('cashier@pilot.demo');
+    expect(await fail(api.reports.staff())).toMatchObject({ code: 'FORBIDDEN' });
+    await signInAs('owner@grocery.demo', 'loc_02TOWN', null);
+    expect(await fail(api.reports.staff())).toMatchObject({ code: 'FEATURE_NOT_ENABLED' });
+  });
+});

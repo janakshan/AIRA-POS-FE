@@ -70,7 +70,8 @@ export function periodOf(url: URL): Period {
   return { from, to, days, start: at(from, false).toISOString(), end: at(to, true).toISOString() };
 }
 
-const inPeriod = (iso: string | undefined, p: Period) => !!iso && iso >= p.start && iso <= p.end;
+export const inPeriod = (iso: string | undefined, p: Period) =>
+  !!iso && iso >= p.start && iso <= p.end;
 
 export const money = (ctx: MockContext, amount: number): Money => ({
   amount,
@@ -206,9 +207,12 @@ export function byType(orders: OrderRecord[], p: Period) {
 
 /** Sales by the order's cashier; refunds by whoever gave the money back, when they did. */
 export function byCashier(orders: OrderRecord[], p: Period) {
-  const rows = new Map<string, { net: number; orders: number; discounts: number }>();
+  const rows = new Map<
+    string,
+    { net: number; orders: number; discounts: number; refunds: number }
+  >();
   const row = (name: string) => {
-    const r = rows.get(name) ?? { net: 0, orders: 0, discounts: 0 };
+    const r = rows.get(name) ?? { net: 0, orders: 0, discounts: 0, refunds: 0 };
     rows.set(name, r);
     return r;
   };
@@ -220,8 +224,11 @@ export function byCashier(orders: OrderRecord[], p: Period) {
       r.discounts += o.totals.discountTotal.amount;
     }
   }
-  for (const { payment } of refundsIn(orders, p))
-    row(payment.createdBy).net -= payment.amount.amount;
+  for (const { payment } of refundsIn(orders, p)) {
+    const r = row(payment.createdBy);
+    r.net -= payment.amount.amount;
+    r.refunds += payment.amount.amount;
+  }
   return rows;
 }
 

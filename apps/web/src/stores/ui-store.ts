@@ -23,7 +23,7 @@ export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
       sidebarCollapsed: false,
-      theme: 'system',
+      theme: 'light',
       language: null,
       showScreenIds: false,
       showQueryDevtools: false,
@@ -33,6 +33,16 @@ export const useUiStore = create<UiState>()(
       setShowScreenIds: (showScreenIds) => set({ showScreenIds }),
       setShowQueryDevtools: (showQueryDevtools) => set({ showQueryDevtools }),
     }),
-    { name: 'rbp.ui', storage: safeJsonStorage },
+    {
+      name: 'rbp.ui',
+      storage: safeJsonStorage,
+      version: 1,
+      // v0 defaulted to 'system'; move those users onto the new light default once.
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<UiState>;
+        if (version < 1 && state.theme === 'system') state.theme = 'light';
+        return state as UiState;
+      },
+    },
   ),
 );

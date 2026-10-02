@@ -1,5 +1,6 @@
 {
   "dashboard": "උපකරණ පුවරුව",
+  "locationDashboard": "සියලු ස්ථාන",
   "groups": {
     "sales": "විකුණුම්",
     "catalog": "නිෂ්පාදන නාමාවලිය",
@@ -29,6 +30,13 @@
     "attendance": "පැමිණීම",
     "locations": "ස්ථාන",
     "users": "පරිශීලකයින්",
-    "languages": "භාෂා"
+    "languages": "භාෂා",
+    "business": "ව්‍යාපාරය",
+    "roles": "භූමිකා සහ අවසර",
+    "devices": "උපාංග",
+    "payments": "ගෙවීම් ක්‍රම",
+    "charges": "අමතර ගාස්තු",
+    "printers": "මුද්‍රණ යන්ත්‍ර",
+    "features": "විශේෂාංග"
   }
 }

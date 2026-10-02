@@ -57,6 +57,12 @@ export function ReceiptView({ receipt }: { receipt: Receipt }) {
         <p className="text-base font-bold">{receipt.business.name}</p>
         <p>{receipt.location.name}</p>
         <p className="text-xs">{receipt.location.address}</p>
+        {receipt.business.phone && (
+          <p className="text-xs">{t('receipt.phone', { phone: receipt.business.phone })}</p>
+        )}
+        {receipt.business.taxRegNo && (
+          <p className="text-xs">{t('receipt.taxRegNo', { number: receipt.business.taxRegNo })}</p>
+        )}
         {receipt.copy === 'BILL' && (
           <p className="mt-2 border-y border-dashed border-neutral-400 py-1 font-bold tracking-wide">
             {t('receipt.bill')}

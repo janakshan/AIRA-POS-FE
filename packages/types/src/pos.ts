@@ -15,6 +15,8 @@ export interface PosSettings {
   /** Days after sale that returns are accepted. */
   returnWindowDays: number;
   receiptFooter: string;
+  /** Simulated receipt printer receipts go to (SET-008). */
+  receiptPrinter: string;
 }
 
 export type AdjustmentMode = 'PERCENT' | 'FIXED';

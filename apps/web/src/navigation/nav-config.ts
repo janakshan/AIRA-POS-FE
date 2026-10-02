@@ -4,6 +4,7 @@ import {
   BoxesIcon,
   CakeSliceIcon,
   LayoutDashboardIcon,
+  MapPinnedIcon,
   type LucideIcon,
   SettingsIcon,
   ShoppingBagIcon,
@@ -50,6 +51,16 @@ export const DASHBOARD_ITEM: NavItem & { icon: LucideIcon } = {
   icon: LayoutDashboardIcon,
 };
 
+/** DASH-002: today across locations. Only offered to users with more than one location. */
+export const LOCATION_DASHBOARD_ITEM: NavItem & { icon: LucideIcon } = {
+  key: 'locationDashboard',
+  path: '/dashboard/locations',
+  screenId: 'DASH-002',
+  phase: 'P5',
+  permission: 'report.sales.view',
+  icon: MapPinnedIcon,
+};
+
 /** Information architecture (02_Prototype/02_INFORMATION_ARCHITECTURE.md). */
 export const NAV_GROUPS: NavGroup[] = [
   {
@@ -73,7 +84,13 @@ export const NAV_GROUPS: NavGroup[] = [
         feature: 'POS_RESTAURANT',
         permission: 'pos.sale.create',
       },
-      { key: 'orders', path: '/sales/orders', phase: 'P2', permission: 'pos.sale.create' },
+      {
+        key: 'orders',
+        path: '/sales/orders',
+        screenId: 'SAL-001',
+        phase: 'P2',
+        permission: 'pos.sale.create',
+      },
       {
         key: 'tables',
         path: '/sales/tables',
@@ -446,6 +463,7 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         key: 'staffReport',
         path: '/reports/staff',
+        screenId: 'REP-007',
         phase: 'P5',
         feature: 'HR',
         permission: 'staff.view',
@@ -467,70 +485,70 @@ export const NAV_GROUPS: NavGroup[] = [
         key: 'business',
         path: '/settings/business',
         screenId: 'SET-001',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'locations',
         path: '/settings/locations',
         screenId: 'SET-002',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'users',
         path: '/settings/users',
         screenId: 'SET-003',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'roles',
         path: '/settings/roles',
         screenId: 'SET-004',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'devices',
         path: '/settings/devices',
         screenId: 'SET-005',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'payments',
         path: '/settings/payments',
         screenId: 'SET-006',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'charges',
         path: '/settings/charges',
         screenId: 'SET-007',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'printers',
         path: '/settings/printers',
         screenId: 'SET-008',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'languages',
         path: '/settings/languages',
         screenId: 'SET-009',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
       {
         key: 'features',
         path: '/settings/features',
         screenId: 'SET-010',
-        phase: 'Later',
+        phase: 'P5',
         permission: 'settings.manage',
       },
     ],

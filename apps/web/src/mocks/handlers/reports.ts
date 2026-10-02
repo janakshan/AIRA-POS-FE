@@ -2,7 +2,11 @@ import type {
   LocationSalesReport,
   Money,
   ProductSalesReport,
+  Permission,
   SalesSummaryReport,
+  StaffReport,
+  StaffReportFigures,
+  StaffReportRow,
   StockReport,
   VoidsReport,
 } from '@rbp/types';
@@ -18,6 +22,7 @@ import {
   byType,
   channels,
   figures,
+  inPeriod,
   locationRow,
   money,
   netByDay,
@@ -29,15 +34,16 @@ import {
   voidRows,
   wholesaleRow,
 } from '../reports';
+import { attendanceRow, cashShiftView } from './staff';
 
 /**
- * REP-001…005 (A-287…): read-only reports over orders, the stock ledger, wholesale and staff
+ * REP-001…005, REP-007 (A-287…): read-only reports over orders, the stock ledger, wholesale and staff
  * meals, for the locations the user can see (or one of them). REP-006 is `/audit-events`.
  */
 
-function reportContext(request: Request) {
+function reportContext(request: Request, permission: Permission = 'report.sales.view') {
   const ctx = resolveContext(request);
-  requirePermission(ctx, 'report.sales.view');
+  requirePermission(ctx, permission);
   const url = new URL(request.url);
   const param = url.searchParams.get('locationId');
   const locationIds = !param || param === 'all' ? myLocationIds(ctx) : [param];
@@ -62,6 +68,148 @@ const categoriesOf = (ctx: MockContext, ids: Set<string>) =>
     .sort((a, b) => a.name.localeCompare(b.name));
 
 const summaryOf = (p: Period) => ({ from: p.from, to: p.to });
+
+type StaffTally = Omit<
+  StaffReportFigures,
+  'net' | 'discounts' | 'refunds' | 'variance' | 'mealValue'
+> & {
+  net: number;
+  discounts: number;
+  refunds: number;
+  variance: number;
+  mealValue: number;
+};
+
+const emptyTally = (): StaffTally => ({
+  rostered: 0,
+  worked: 0,
+  minutes: 0,
+  late: 0,
+  lateMinutes: 0,
+  absent: 0,
+  unrostered: 0,
+  orders: 0,
+  net: 0,
+  discounts: 0,
+  refunds: 0,
+  shiftsClosed: 0,
+  variance: 0,
+  shortShifts: 0,
+  meals: 0,
+  mealValue: 0,
+});
+
+const hasActivity = (t: StaffTally) =>
+  t.rostered + t.worked + t.orders + t.shiftsClosed + t.meals > 0 || t.net !== 0 || t.refunds !== 0;
+
+const staffFigures = (ctx: MockContext, t: StaffTally): StaffReportFigures => ({
+  ...t,
+  net: money(ctx, t.net),
+  discounts: money(ctx, t.discounts),
+  refunds: money(ctx, t.refunds),
+  variance: money(ctx, t.variance),
+  mealValue: money(ctx, t.mealValue),
+});
+
+/**
+ * REP-007 (A-294) per employee: attendance against the roster (A-282), sales as REP-001
+ * "by cashier" (joined by name), drawer over/short on shifts they closed, and staff meals.
+ */
+const staffReport = http.get(
+  `${API}/reports/staff`,
+  handle(({ request }) => {
+    const { ctx, locationIds, period } = reportContext(request, 'staff.view');
+    requireFeature(ctx, 'HR');
+    const state = db.get();
+    const tenantId = ctx.me.tenant.id;
+    const employees = state.employees.filter(
+      (e) =>
+        e.tenantId === tenantId && e.isActive && e.locationIds.some((l) => locationIds.includes(l)),
+    );
+    const tallies = new Map<string, StaffTally>(employees.map((e) => [e.id, emptyTally()]));
+    const byName = new Map(employees.map((e) => [e.fullName, e.id]));
+
+    for (const e of employees) {
+      const t = tallies.get(e.id)!;
+      for (const locationId of e.locationIds.filter((l) => locationIds.includes(l))) {
+        for (const date of period.days) {
+          const row = attendanceRow(state, e, locationId, date);
+          if (row.shift && row.status !== 'UPCOMING') t.rostered += 1;
+          if (row.records.length) {
+            t.worked += 1;
+            t.minutes += row.minutes;
+          }
+          if (row.status === 'LATE') {
+            t.late += 1;
+            t.lateMinutes += row.lateBy;
+          }
+          if (row.status === 'ABSENT') t.absent += 1;
+          if (row.status === 'UNROSTERED') t.unrostered += 1;
+        }
+      }
+    }
+
+    // Sales by name; anyone not on the employee list keeps their own row so totals match REP-001.
+    const others = new Map<string, StaffTally>();
+    for (const [name, r] of byCashier(ordersAt(ctx, locationIds), period)) {
+      const id = byName.get(name);
+      const t = id ? tallies.get(id)! : (others.get(name) ?? emptyTally());
+      if (!id) others.set(name, t);
+      t.orders += r.orders;
+      t.net += r.net;
+      t.discounts += r.discounts;
+      t.refunds += r.refunds;
+    }
+
+    for (const s of state.cashShifts) {
+      if (s.tenantId !== tenantId || !locationIds.includes(s.locationId) || !s.closedBy) continue;
+      if (!inPeriod(s.closedAt, period)) continue;
+      const t = tallies.get(s.closedBy.employeeId);
+      if (!t) continue;
+      const variance = cashShiftView(state, s).variance?.amount ?? 0;
+      t.shiftsClosed += 1;
+      t.variance += variance;
+      if (variance < 0) t.shortShifts += 1;
+    }
+
+    for (const m of state.staffMeals) {
+      if (m.tenantId !== tenantId || !locationIds.includes(m.locationId)) continue;
+      if (!inPeriod(m.at, period)) continue;
+      const t = tallies.get(m.employeeId);
+      if (!t) continue;
+      t.meals += 1;
+      t.mealValue += m.value.amount;
+    }
+
+    const rows: StaffReportRow[] = [
+      ...employees.map((e) => ({
+        employeeId: e.id as string | null,
+        name: e.fullName,
+        jobTitle: e.jobTitle,
+        t: tallies.get(e.id)!,
+      })),
+      ...[...others].map(([name, t]) => ({ employeeId: null, name, jobTitle: '', t })),
+    ]
+      .filter((r) => hasActivity(r.t))
+      .map(({ t, ...r }) => ({ ...r, ...staffFigures(ctx, t) }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const total = emptyTally();
+    for (const r of rows) {
+      for (const k of Object.keys(total) as (keyof StaffTally)[]) {
+        const v = r[k];
+        total[k] += typeof v === 'number' ? v : v.amount;
+      }
+    }
+    const body: StaffReport = {
+      ...summaryOf(period),
+      locationIds: locationIds as StaffReport['locationIds'],
+      rows,
+      totals: staffFigures(ctx, total),
+    };
+    return HttpResponse.json(body);
+  }),
+);
 
 export const reportHandlers = [
   /** REP-001 */
@@ -266,4 +414,7 @@ export const reportHandlers = [
       return HttpResponse.json(body);
     }),
   ),
+
+  /** REP-007 */
+  staffReport,
 ];

@@ -1,5 +1,6 @@
 {
   "dashboard": "Dashboard",
+  "locationDashboard": "All locations",
   "groups": {
     "sales": "Sales",
     "catalog": "Catalog",

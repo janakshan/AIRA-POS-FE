@@ -1,4 +1,27 @@
 import type {
+  BusinessRequest,
+  BusinessSettings,
+  DeviceRequest,
+  FeatureSettings,
+  LanguageRequest,
+  LanguageSettings,
+  PaymentMethodSetting,
+  PaymentSettingsRequest,
+  PrinterSettings,
+  SettingsDevice,
+  SettingsStation,
+  StationRequest,
+  ChargeSettings,
+  ChargeSettingsRequest,
+  LocationRequest,
+  PasswordResetRequest,
+  RoleRequest,
+  SettingsLocation,
+  SettingsRole,
+  SettingsUser,
+  SettingsUserListParams,
+  UserCreateRequest,
+  UserRequest,
   LocationSalesReport,
   ProductSalesParams,
   ProductSalesReport,
@@ -7,6 +30,7 @@ import type {
   StockReport,
   StockReportParams,
   VoidsReport,
+  StaffReport,
   AttendanceParams,
   AttendanceRecord,
   AttendanceRow,
@@ -121,6 +145,7 @@ import type {
   ReceiveCustomerPaymentRequest,
   ReceiveCustomerPaymentResponse,
   DashboardSummary,
+  LocationDashboard,
   DeliveryStatusRequest,
   DrawerEventRequest,
   Device,
@@ -570,6 +595,120 @@ export function createRbpApi(client: ApiClient) {
         client.get<StockReport>(`${API_PREFIX}/reports/stock`, { query: { ...params }, signal }),
       voids: (params: ReportParams = {}, signal?: AbortSignal) =>
         client.get<VoidsReport>(`${API_PREFIX}/reports/voids`, { query: { ...params }, signal }),
+      staff: (params: ReportParams = {}, signal?: AbortSignal) =>
+        client.get<StaffReport>(`${API_PREFIX}/reports/staff`, { query: { ...params }, signal }),
+    },
+    /** SET-001…010 (settings.manage). */
+    settings: {
+      business: {
+        get: (signal?: AbortSignal) =>
+          client.get<BusinessSettings>(`${API_PREFIX}/settings/business`, { signal }),
+        save: (body: BusinessRequest) =>
+          client.put<BusinessSettings>(`${API_PREFIX}/settings/business`, body),
+      },
+      devices: {
+        list: (signal?: AbortSignal) =>
+          client.get<SettingsDevice[]>(`${API_PREFIX}/settings/devices`, { signal }),
+        create: (body: DeviceRequest) =>
+          client.post<SettingsDevice>(`${API_PREFIX}/settings/devices`, body),
+        update: (id: string, body: DeviceRequest) =>
+          client.put<SettingsDevice>(
+            `${API_PREFIX}/settings/devices/${encodeURIComponent(id)}`,
+            body,
+          ),
+        newCode: (id: string) =>
+          client.post<SettingsDevice>(
+            `${API_PREFIX}/settings/devices/${encodeURIComponent(id)}/code`,
+          ),
+      },
+      payments: {
+        get: (signal?: AbortSignal) =>
+          client.get<PaymentMethodSetting[]>(`${API_PREFIX}/settings/payments`, { signal }),
+        save: (body: PaymentSettingsRequest) =>
+          client.put<PaymentMethodSetting[]>(`${API_PREFIX}/settings/payments`, body),
+      },
+      printers: {
+        get: (locationId: string, signal?: AbortSignal) =>
+          client.get<PrinterSettings>(`${API_PREFIX}/settings/printers`, {
+            query: { locationId },
+            signal,
+          }),
+        save: (locationId: string, body: { receiptPrinter: string }) =>
+          client.put<PrinterSettings>(
+            `${API_PREFIX}/settings/printers/${encodeURIComponent(locationId)}`,
+            body,
+          ),
+      },
+      stations: {
+        create: (body: StationRequest) =>
+          client.post<SettingsStation>(`${API_PREFIX}/settings/stations`, body),
+        update: (id: string, body: StationRequest) =>
+          client.put<SettingsStation>(
+            `${API_PREFIX}/settings/stations/${encodeURIComponent(id)}`,
+            body,
+          ),
+        remove: (id: string) =>
+          client.delete<undefined>(`${API_PREFIX}/settings/stations/${encodeURIComponent(id)}`),
+      },
+      languages: {
+        get: (signal?: AbortSignal) =>
+          client.get<LanguageSettings>(`${API_PREFIX}/settings/languages`, { signal }),
+        save: (body: LanguageRequest) =>
+          client.put<LanguageSettings>(`${API_PREFIX}/settings/languages`, body),
+      },
+      features: {
+        get: (signal?: AbortSignal) =>
+          client.get<FeatureSettings>(`${API_PREFIX}/settings/features`, { signal }),
+      },
+      charges: {
+        get: (locationId: string, signal?: AbortSignal) =>
+          client.get<ChargeSettings>(`${API_PREFIX}/settings/charges`, {
+            query: { locationId },
+            signal,
+          }),
+        save: (locationId: string, body: ChargeSettingsRequest) =>
+          client.put<ChargeSettings>(
+            `${API_PREFIX}/settings/charges/${encodeURIComponent(locationId)}`,
+            body,
+          ),
+      },
+      locations: {
+        list: (signal?: AbortSignal) =>
+          client.get<SettingsLocation[]>(`${API_PREFIX}/settings/locations`, { signal }),
+        create: (body: LocationRequest) =>
+          client.post<SettingsLocation>(`${API_PREFIX}/settings/locations`, body),
+        update: (id: string, body: LocationRequest) =>
+          client.put<SettingsLocation>(
+            `${API_PREFIX}/settings/locations/${encodeURIComponent(id)}`,
+            body,
+          ),
+      },
+      users: {
+        list: (params: SettingsUserListParams = {}, signal?: AbortSignal) =>
+          client.get<SettingsUser[]>(`${API_PREFIX}/settings/users`, {
+            query: { ...params },
+            signal,
+          }),
+        create: (body: UserCreateRequest) =>
+          client.post<SettingsUser>(`${API_PREFIX}/settings/users`, body),
+        update: (id: string, body: UserRequest) =>
+          client.put<SettingsUser>(`${API_PREFIX}/settings/users/${encodeURIComponent(id)}`, body),
+        resetPassword: (id: string, body: PasswordResetRequest) =>
+          client.post<undefined>(
+            `${API_PREFIX}/settings/users/${encodeURIComponent(id)}/password`,
+            body,
+          ),
+      },
+      roles: {
+        list: (signal?: AbortSignal) =>
+          client.get<SettingsRole[]>(`${API_PREFIX}/settings/roles`, { signal }),
+        create: (body: RoleRequest) =>
+          client.post<SettingsRole>(`${API_PREFIX}/settings/roles`, body),
+        update: (id: string, body: RoleRequest) =>
+          client.put<SettingsRole>(`${API_PREFIX}/settings/roles/${encodeURIComponent(id)}`, body),
+        remove: (id: string) =>
+          client.delete<undefined>(`${API_PREFIX}/settings/roles/${encodeURIComponent(id)}`),
+      },
     },
     /** HR-001…006 staff. */
     staff: {
@@ -767,6 +906,9 @@ export function createRbpApi(client: ApiClient) {
         client.get<PosSettings>(`${API_PREFIX}/pos-settings`, { signal }),
       chargeTypes: (signal?: AbortSignal) =>
         client.get<ChargeType[]>(`${API_PREFIX}/charge-types`, { signal }),
+      /** SET-006: what the business accepts. */
+      paymentMethods: (signal?: AbortSignal) =>
+        client.get<PaymentMethodSetting[]>(`${API_PREFIX}/payment-methods`, { signal }),
       promotions: (signal?: AbortSignal) =>
         client.get<Promotion[]>(`${API_PREFIX}/promotions`, { signal }),
       /** Open the cash drawer outside a sale (PIN + reason, audited). */
@@ -787,6 +929,8 @@ export function createRbpApi(client: ApiClient) {
     dashboard: {
       summary: (signal?: AbortSignal) =>
         client.get<DashboardSummary>(`${API_PREFIX}/dashboard/summary`, { signal }),
+      locations: (signal?: AbortSignal) =>
+        client.get<LocationDashboard>(`${API_PREFIX}/dashboard/locations`, { signal }),
     },
     catalog: {
       categories: {
