@@ -1,0 +1,1165 @@
+{
+  "page": {
+    "title": "User guide",
+    "subtitle": "Everything RBP Platform can do today, step by step, with screenshots from the live app.",
+    "howTo": "Pick a chapter from the contents. Each one explains what the screen is for, who can use it and how to do the common tasks. Select any screenshot to see it full size.",
+    "contents": "Contents",
+    "jumpTo": "Jump to chapter",
+    "signIn": "Sign in",
+    "openApp": "Open the app",
+    "usedBy": "Used by:",
+    "zoom": "View screenshot full size",
+    "zoomHint": "Full-size screenshot of this step."
+  },
+  "roles": {
+    "title": "Who can do what",
+    "intro": "What each role can open. An owner can change which role a person has. Full means the person can view and make changes. Limited means they can view only, or use part of the area.",
+    "area": "Area",
+    "names": {
+      "owner": "Owner",
+      "manager": "Manager",
+      "cashier": "Cashier",
+      "waiter": "Waiter",
+      "kitchen": "Kitchen",
+      "rider": "Delivery rider",
+      "rep": "Field sales rep"
+    },
+    "levels": {
+      "full": "Full access",
+      "limited": "Limited or view only",
+      "none": "No access"
+    },
+    "areas": {
+      "dashboard": "Dashboard",
+      "retailPos": "Retail POS",
+      "restaurant": "Tables & Restaurant POS",
+      "kitchen": "Kitchen board (KOT)",
+      "deliveries": "Deliveries",
+      "catalog": "Catalog",
+      "customers": "Customers",
+      "inventory": "Inventory",
+      "purchasing": "Purchasing",
+      "production": "Recipes & production",
+      "wholesale": "Wholesale & field sales",
+      "staff": "Staff",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "pinNote": "Some actions, such as discounts, removing items, voids, refunds and stock adjustments, also ask for an employee PIN. If the person's role isn't allowed to do the action, a manager enters their PIN to approve it."
+  },
+  "comingSoon": {
+    "title": "Coming soon",
+    "intro": "You can already see these screens in the menu, but they aren't finished yet. For now, they show a \"coming soon\" page.",
+    "items": {
+      "orders": {
+        "title": "Sales → Orders",
+        "body": "A list of all past orders, where you can search them and reprint receipts."
+      },
+      "staffReport": {
+        "title": "Reports → Staff",
+        "body": "Sales and hours for each staff member."
+      },
+      "settings": {
+        "title": "Settings",
+        "body": "Business details, locations, users and roles, devices, payment methods, charges, printers, languages and modules."
+      }
+    }
+  },
+  "sections": {
+    "start": {
+      "title": "Getting started",
+      "intro": "How to sign in, pick the location you're working at, find your way around, and confirm sensitive actions with your employee PIN.",
+      "tasks": {
+        "signIn": {
+          "title": "Sign in",
+          "steps": {
+            "open": "Open the app. Enter your <b>Email</b> and <b>Password</b>, then select <b>Sign in</b>.",
+            "location": "If you work at more than one location, choose the one you're at today, for example <b>Main Restaurant</b>, and select <b>Continue</b>.",
+            "home": "The <b>Dashboard</b> opens. Kitchen staff go straight to the kitchen board instead."
+          }
+        },
+        "navigate": {
+          "title": "Find your way around",
+          "steps": {
+            "sidebar": "Use the menu on the left. Select a group, for example <b>Sales</b>, to see its screens. You only see the screens your role can use.",
+            "switchLocation": "To change location, select the location name in the top bar and pick another one. Every screen then shows that location's data.",
+            "phone": "On a phone or small tablet, select the <b>menu</b> button at the top left to open the same menu."
+          }
+        },
+        "pin": {
+          "title": "Confirm an action with your PIN",
+          "intro": "Each employee has their own 4-digit PIN, so the system records who did what.",
+          "steps": {
+            "when": "Sensitive actions, such as giving a discount, removing an item, a refund or a stock adjustment, open the <b>Employee verification</b> window.",
+            "enter": "Type your 4-digit PIN on the keypad or keyboard. The window shows which action you are approving.",
+            "result": "If your role is allowed to do it, the action goes ahead and is recorded under your name. If not, the message asks a manager to enter their PIN instead."
+          },
+          "note": "Never share your PIN. Everything done with it is recorded in the audit log under your name."
+        },
+        "preferences": {
+          "title": "Language, theme and signing out",
+          "steps": {
+            "menu": "Select your initials at the top right to open your account menu.",
+            "language": "Under <b>Language</b>, choose English, தமிழ் (Tamil) or සිංහල (Sinhala).",
+            "theme": "Under <b>Theme</b>, choose <b>Light</b>, <b>Dark</b> or <b>System</b> (matches your device).",
+            "signOut": "Select <b>Sign out</b> when you finish, especially on a shared device."
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "intro": "The home screen: a summary of today at the location you're signed in to.",
+      "tasks": {
+        "overview": {
+          "title": "Read today's summary",
+          "steps": {
+            "open": "Select <b>Dashboard</b> at the top of the menu.",
+            "cards": "The cards show <b>Sales today</b>, <b>Orders today</b>, <b>Average order</b> and, at restaurants, <b>Open tables</b> and pending kitchen tickets.",
+            "alerts": "A yellow banner warns you when items are low or out of stock. Select <b>View low stock</b> to see which ones.",
+            "shortcuts": "Use the buttons at the top right, such as <b>Open Restaurant POS</b> or <b>Open kitchen board</b>, to jump straight to the screen you use most."
+          }
+        }
+      }
+    },
+    "retailPos": {
+      "title": "Retail POS: make a sale",
+      "intro": "The Retail POS is the full-screen till for shop counters such as the Bakery Outlet. Cashiers, managers and owners use it to ring up items, add a customer, apply approved discounts and take payment. Open it from <b>Sales → Retail POS</b> while you are signed in to a shop location.",
+      "tasks": {
+        "findProducts": {
+          "title": "Open the POS and find products",
+          "intro": "There are four ways to add an item: tap a tile, type in the search bar, open the full search, or scan a barcode.",
+          "steps": {
+            "open": "Open <b>Sales → Retail POS</b>. Product tiles are on the left and the <b>Current sale</b> is on the right. The location name at the top shows which shop you are selling for.",
+            "tiles": "Tap a category on the left, such as <b>Bakery</b> or <b>Drinks</b>, then tap a product tile to add one to the sale. Tap it again to add another. The tile shows how many are already in the sale, and a badge like <b>24 left</b> warns when stock is low.",
+            "search": "To find an item by name or code, type in <b>Search products or scan a barcode</b>. Matching products appear as tiles. Press Enter to add the only match. Type a quantity first to add several at once, for example <b>3*B01</b> adds three of product B01.",
+            "fullSearch": "For a longer list, tap <b>Search</b> (or press F2). Filter by category, use the arrow keys to choose a product and press Enter to add it. Tap <b>Done</b> when you have finished.",
+            "scan": "To use a barcode scanner, scan the item while no box is being typed in. It goes straight into the sale. If the code is not sold at this shop, the POS tells you and nothing is added."
+          },
+          "note": "You can't sell more than is in stock. If you try, the POS adds only what is left and tells you how many there are. Items marked unavailable can't be added."
+        },
+        "buildCart": {
+          "title": "Change quantities and remove items",
+          "steps": {
+            "select": "Tap an item in the <b>Current sale</b> to open its controls.",
+            "stepper": "Tap <b>+</b> or <b>−</b> to change the quantity by one. On a keyboard, the + and − keys do the same for the selected item, and the arrow keys move between items.",
+            "qty": "To type a larger quantity, tap <b>Qty</b>, enter the number on the keypad and tap <b>Set quantity</b>.",
+            "remove": "To take an item off the sale, tap the red bin icon next to it, or press Delete on a keyboard.",
+            "clear": "To start again, tap <b>Clear</b> at the top of the sale and confirm. All items are removed."
+          },
+          "note": "Items you have just added can be changed freely. Once a sale has been held, lowering or removing its saved items needs a manager's PIN and a reason (see Hold and resume a sale)."
+        },
+        "addCustomer": {
+          "title": "Add a customer to the sale",
+          "intro": "A sale is for a <b>Walk-in customer</b> unless you add one. Adding a customer puts the sale on their history and lets you sell on credit.",
+          "steps": {
+            "open": "Tap <b>Add customer</b> at the top of the sale.",
+            "phone": "Type the customer's phone number in any format, such as 077…, 77… or +94…. When the customer is found, check the name and any amount they owe, then tap <b>Select</b>.",
+            "name": "If you don't have the number, type part of the name under <b>Or search by name</b> and select the right person.",
+            "create": "If no one has that number, fill in <b>Customer name</b>, and an address and <b>Type</b> if you want, then tap <b>Create & select</b>.",
+            "remove": "The customer's name now shows on the sale, with <b>Owes</b> if they have an unpaid balance. Tap the <b>×</b> next to the name to go back to a walk-in sale."
+          },
+          "note": "Only staff who are allowed to manage customers can create new ones. Others can still find existing customers or continue as walk-in."
+        },
+        "discount": {
+          "title": "Give a discount or change a price",
+          "intro": "Discounts and price changes always need a manager's PIN and a reason. They are recorded in the audit log.",
+          "steps": {
+            "open": "Tap <b>Discount</b> under the total. Under <b>Apply to</b>, choose <b>Whole bill</b> or one item.",
+            "value": "Choose <b>Percentage</b> or <b>Amount</b> and enter the value on the keypad (or tap a quick choice such as <b>10%</b>), or pick a ready-made offer under <b>Promotion</b>. Check the preview, for example <b>Discount −LKR 117.00 · New total LKR 1,053.00</b>, then tap <b>Apply discount</b>.",
+            "pin": "The <b>Employee verification</b> box opens. A manager enters their 4-digit PIN.",
+            "reason": "Choose the reason, such as <b>Loyal customer</b>, and tap <b>Confirm</b>. If you choose <b>Other</b>, type a comment. The discount appears in the sale totals.",
+            "price": "To change an item's price instead, tap the item, then <b>Price</b>. Enter the <b>New unit price</b> and tap <b>Change price</b>. A manager approves it with their PIN and a reason in the same way."
+          },
+          "note": "Each shop has a highest discount a manager can approve here (50% by default). An amount discount can't be more than the bill or the item total. To take a bill discount off again, tap the <b>×</b> next to it in the totals."
+        },
+        "charges": {
+          "title": "Add a charge",
+          "steps": {
+            "open": "Tap <b>Charges</b> under the total.",
+            "default": "Tap a standard charge, for example <b>Add LKR 30.00</b> for <b>Packaging</b>. Standard charges are added straight away and appear under <b>On this sale</b>.",
+            "custom": "For a different amount, tap <b>Custom amount</b>. For <b>Other charge</b>, also fill in <b>What is it for?</b>. Enter the amount and tap <b>Add charge</b>. A manager approves it with their PIN and a reason.",
+            "remove": "To remove a charge, tap the <b>×</b> next to it under <b>On this sale</b> or in the sale totals. Removing a charge also needs a manager's PIN and a reason."
+          }
+        },
+        "takePayment": {
+          "title": "Take payment and give a receipt",
+          "intro": "Each sale is paid with one method. Split payments are not available.",
+          "steps": {
+            "pay": "Check the total and tap <b>Pay</b>. The <b>Payment</b> box shows the <b>Amount due</b>.",
+            "cash": "For cash, keep <b>Cash</b> selected. Tap <b>Exact</b> or a note amount, or type what the customer handed you. The POS shows the <b>Change due</b>, or <b>Short by</b> if it isn't enough.",
+            "other": "For <b>Card</b>, the customer taps, inserts or swipes the card on the terminal. For <b>Bank transfer</b>, type the <b>Transfer reference</b> from the slip. <b>Credit sale</b> adds the total to the customer's balance and only works when a customer is on the sale.",
+            "take": "Tap <b>Take</b> with the amount to finish the sale.",
+            "receipt": "The receipt opens. For cash, the <b>Change due</b> is shown at the top. Tap <b>Print</b> to send the receipt to the printer, then <b>New sale</b> to serve the next customer."
+          },
+          "note": "If a payment doesn't go through, the sale is kept under its order number, so you can simply try again."
+        }
+      }
+    },
+    "retailPosManage": {
+      "title": "Retail POS: held sales, returns and the drawer",
+      "intro": "Besides selling, the Retail POS lets you park a sale for later, look back at today's sales, reprint receipts, refund returned items and open the cash drawer. The <b>Held</b> and <b>History</b> buttons are next to the search bar in <b>Sales → Retail POS</b>.",
+      "tasks": {
+        "holdSale": {
+          "title": "Hold and resume a sale",
+          "intro": "Hold a sale when a customer steps away, so you can serve the next person.",
+          "steps": {
+            "hold": "With items in the sale, tap <b>Hold</b>. Type a <b>Label</b>, such as the customer's name, and tap <b>Hold sale</b>. The sale is saved with an order number and the till is cleared.",
+            "list": "Tap <b>Held</b> to see the held sales at this shop. The number on the button shows how many are waiting.",
+            "resume": "Tap <b>Resume</b> next to the sale. The current sale must be empty first, so finish, hold or clear it.",
+            "saved": "The items on a resumed sale are marked <b>Saved</b>. You can add more freely, but lowering or removing a saved item needs a manager's PIN and a reason.",
+            "cancel": "To drop a held sale completely, resume it and tap <b>Cancel sale</b>. A manager enters their PIN and a reason. The sale is kept as cancelled, not deleted."
+          }
+        },
+        "salesHistory": {
+          "title": "Find a sale, reprint a receipt or void a sale",
+          "steps": {
+            "open": "Tap <b>History</b>. It lists today's sales at this shop with their status and total.",
+            "find": "Search by <b>Receipt number, customer or phone</b>, or tap <b>Paid</b>, <b>Held</b>, <b>Cancelled</b> or <b>Voided</b> to filter.",
+            "receipt": "Tap <b>Receipt</b> to see the receipt again, then <b>Print</b> for a copy. Copies are marked <b>REPRINT</b>.",
+            "void": "To cancel a paid sale in full, tap <b>Void</b>. A manager enters their PIN and a reason. The full amount is refunded and the sale shows as <b>Voided</b>."
+          },
+          "note": "Only today's sales can be voided, and not once items have been returned. For those, use <b>Return</b>."
+        },
+        "returnSale": {
+          "title": "Refund returned items",
+          "steps": {
+            "open": "Tap <b>History</b>, find the sale and tap <b>Return</b>.",
+            "pick": "Use <b>+</b> and <b>−</b> to choose how many of each item are coming back. You can't return more than was sold. The refund amount updates as you go.",
+            "method": "Under <b>Refund to</b>, choose <b>Original payment</b> or <b>Cash</b>. Keep <b>Put returned items back in stock</b> ticked if they can be sold again. Untick it to record them as wastage.",
+            "approve": "Tap <b>Refund</b>. A manager enters their PIN and chooses a reason, such as <b>Customer returned item</b>, then taps <b>Confirm</b>.",
+            "receipt": "A return receipt opens with its own number and the original sale number. Print it for the customer."
+          },
+          "note": "The refund takes off each item's share of any discount on the original sale. You can return part of a sale now and the rest later, as long as it is still listed in <b>History</b>."
+        },
+        "openDrawer": {
+          "title": "Open the cash drawer without a sale",
+          "steps": {
+            "button": "Tap <b>Open drawer</b> under the total.",
+            "pin": "Enter your PIN. Anyone allowed to open the drawer, including cashiers, can use their own PIN.",
+            "reason": "Choose why, such as <b>Change for customer</b> or <b>Cash pickup</b>, and tap <b>Confirm</b>. The drawer opens and the event is recorded in the audit log."
+          },
+          "note": "Cash put into or taken out of the drawer, and the count at the end of a shift, are recorded on the <b>Cash drawer</b> tab in <b>Staff → Shifts</b>."
+        }
+      }
+    },
+    "restaurantTables": {
+      "title": "Tables and dine-in orders",
+      "intro": "The Tables screen is the restaurant floor plan. Waiters, managers and owners use it to see which tables are free, start a dine-in order, move a party to another table and print the bill. Open it from <b>Sales → Tables</b> while you are signed in to a restaurant location.",
+      "tasks": {
+        "floorPlan": {
+          "title": "Read the floor plan",
+          "steps": {
+            "open": "Open <b>Sales → Tables</b>. Tables are grouped by area, such as <b>Indoor</b>, <b>Outdoor</b> and <b>Bar</b>, and each area heading shows how many of its tables are free.",
+            "counts": "The three boxes at the top count the tables that are <b>Free</b>, <b>Occupied</b> and <b>Bill printed</b> right now.",
+            "tiles": "Each table shows its name, number of seats and a status badge: green <b>Free</b>, purple <b>Occupied</b> or amber <b>Bill printed</b>. A busy table also shows its running total, how long ago the order was opened and who opened it.",
+            "unsent": "If a table shows a line like <b>2 not sent</b>, it has items on the order that the kitchen hasn't received yet. Open the table and send them."
+          },
+          "note": "The <b>Open POS</b> button at the top right takes you straight to the sale screen without choosing a table."
+        },
+        "openTable": {
+          "title": "Seat a table and send the order to the kitchen",
+          "steps": {
+            "tap": "On <b>Sales → Tables</b>, tap a <b>Free</b> table. The sale screen opens as a <b>Dine-in</b> order for that table, and the table name appears at the top of the sale.",
+            "add": "Tap a category, then tap products to add them. Each new item is marked <b>Not sent</b> until the kitchen has it.",
+            "note": "To add cooking instructions, tap the item in the sale, then tap <b>Note</b>. Tap a quick choice such as <b>Less spicy</b> or <b>No onion</b>, or type your own (up to 120 characters), then tap <b>Save note</b>. The note is printed on the kitchen ticket.",
+            "send": "Tap <b>Send 5 to kitchen</b> (the number is how many items are new). The order is saved and a kitchen ticket goes to each station that makes the food, such as the <b>Main Kitchen</b> and the <b>Beverage Bar</b>. Sent items change to <b>Sent</b> and the button reads <b>All sent</b>.",
+            "leave": "Tap <b>Leave table</b> when you are done. The order stays open on the table and the screen is free for the next table.",
+            "more": "When the table orders more, tap the table again, add the new items and tap <b>Send to kitchen</b> again. Only the new items go to the kitchen."
+          },
+          "note": "Items that don't need cooking, like short eats from the display, are saved on the order but don't create a kitchen ticket. Once an item has been sent, reducing or removing it needs a manager's PIN and a reason, and you choose what happens to the food. The kitchen then gets a cancel ticket."
+        },
+        "transferTable": {
+          "title": "Move a party to another table",
+          "intro": "Use this when guests change tables after ordering. The whole order moves, together with its kitchen tickets.",
+          "steps": {
+            "open": "Tap the occupied table on <b>Sales → Tables</b> to open its order.",
+            "transfer": "Next to the table name, tap <b>Transfer</b>. Pick a <b>Free</b> table. Tables that are occupied can't be chosen.",
+            "pin": "A manager enters their PIN on the <b>Employee verification</b> keypad to approve the move.",
+            "reason": "Choose a reason, such as <b>Customer request</b> or <b>Manager instruction</b>, add a comment if you like, then tap <b>Confirm</b>.",
+            "done": "A message confirms the move, for example <b>Moved T3 → T5</b>. The kitchen tickets now show the new table, and the move is recorded in the audit log."
+          },
+          "note": "Only a whole order can be moved, and only to a free table. Tables can't be merged, and a bill can't be split between tables."
+        },
+        "printBill": {
+          "title": "Print the bill",
+          "steps": {
+            "open": "Tap the table on <b>Sales → Tables</b> to open its order.",
+            "print": "Tap <b>Print bill</b>. A bill marked <b>BILL — NOT PAID</b> opens, with the items, the service charge, tax and the total. Tap <b>Print</b> to print it, or <b>Close</b>.",
+            "status": "The table now shows <b>Bill printed</b> on the floor plan, so everyone can see it is waiting to pay.",
+            "pay": "When the guests pay, open the table and tap <b>Pay</b>. Payment works the same way as on the Retail POS, and the table becomes <b>Free</b> again."
+          },
+          "note": "If you add items after printing the bill, the table goes back to <b>Occupied</b> with the new total. Print a fresh bill before taking payment."
+        }
+      }
+    },
+    "restaurantPos": {
+      "title": "Restaurant POS: takeaway and delivery",
+      "intro": "At a restaurant location the sale screen has order types for dine-in, takeaway and delivery, and it can send items to the kitchen. Cashiers, waiters, managers and owners use it. Open it from <b>Sales → Restaurant POS</b>.",
+      "tasks": {
+        "orderTypes": {
+          "title": "Choose the order type",
+          "steps": {
+            "open": "Open <b>Sales → Restaurant POS</b>. The order type buttons are at the top of the <b>Current sale</b>.",
+            "pick": "Tap <b>Dine-in</b>, <b>Takeaway</b> or <b>Delivery</b>.",
+            "dineIn": "For <b>Dine-in</b>, tap <b>Choose table</b> and pick a free table. Until a table is chosen, the sale shows <b>Choose a table for this dine-in order.</b> and you can't send or pay.",
+            "locked": "Once an order has been saved (for example after sending it to the kitchen), its type can't be changed. A dine-in order can only change table with <b>Transfer</b>."
+          }
+        },
+        "takeaway": {
+          "title": "Take a takeaway order",
+          "steps": {
+            "select": "Tap <b>Takeaway</b>.",
+            "add": "Add the items. Add a note to an item if the customer asks, for example <b>Parcel</b>.",
+            "send": "Tap <b>Send to kitchen</b>. A message shows the kitchen ticket number and station, and the button changes to <b>All sent</b>.",
+            "pay": "Tap <b>Pay</b> and take the payment in the usual way. The customer's order is on the kitchen board as <b>TAKEAWAY</b>."
+          }
+        },
+        "delivery": {
+          "title": "Take a phone order for delivery",
+          "steps": {
+            "select": "Add the items, then tap <b>Delivery</b>. The <b>Delivery details</b> window opens.",
+            "phone": "Type the customer's <b>Phone</b> first. If they are a saved customer, their name appears and the address fills in. For a new number, type the <b>Address</b>. Add <b>Instructions (optional)</b> such as a floor number or gate code.",
+            "save": "Tap <b>Save</b>. The address shows at the top of the sale, a saved customer is added to the sale, and the location's delivery charge is added to the total.",
+            "send": "Tap <b>Send to kitchen</b>. The order appears on <b>Sales → Deliveries</b> in <b>Preparing</b>.",
+            "finish": "If the customer pays now, tap <b>Pay</b>. If they will pay the rider, tap <b>Hold</b> and then <b>Hold sale</b> to clear the screen. The order stays on the Deliveries board marked <b>Collect on delivery</b>."
+          },
+          "note": "The address must be long enough to find the door. A short address shows a message asking for more detail. To change the details later, tap the address at the top of the sale."
+        },
+        "serviceCharge": {
+          "title": "Service charge and other charges",
+          "steps": {
+            "automatic": "The location's service charge (10% at the Main Restaurant) is added automatically. It is worked out on the items after discounts and shows as <b>Service charge (10%)</b> in the totals.",
+            "open": "To see or change charges, tap <b>Charges</b> under the sale. The service charge shows <b>10% · automatic</b>.",
+            "change": "To remove the service charge tap <b>Waive</b>, or tap <b>Change rate</b> and enter a new percentage. Both need a manager's PIN and a reason, and are recorded in the audit log.",
+            "extra": "To add a standard charge such as <b>Packaging</b>, tap its <b>Add</b> button. It is added at once, with no PIN. A <b>Custom amount</b> or removing a charge needs a manager's PIN."
+          }
+        }
+      }
+    },
+    "kitchenBoard": {
+      "title": "Kitchen board (KOT)",
+      "intro": "The kitchen board shows every kitchen order ticket (KOT) for your location on a full screen, so the chefs know what to cook next. Kitchen staff, managers and owners can move tickets along. Waiters can open it too, but only to look. Open it from <b>Sales → KOT / Kitchen</b>.",
+      "tasks": {
+        "readBoard": {
+          "title": "Read the board",
+          "steps": {
+            "open": "Open <b>Sales → KOT / Kitchen</b>. Tickets sit in three columns: <b>New</b>, <b>Preparing</b> and <b>Ready</b>, with a count at the top of each. The board updates by itself every few seconds.",
+            "ticket": "Each ticket shows the order type and table in large letters (for example <b>DINE-IN · T1</b>, <b>TAKEAWAY</b> or <b>DELIVERY</b>), the ticket and order numbers, the items with any notes highlighted, the station and who sent it.",
+            "timer": "The clock on each ticket shows how long ago it arrived. A ticket still waiting after 15 minutes gets an amber border so it stands out.",
+            "station": "If you have more than one station, tap a station at the top, such as <b>Main Kitchen</b> or <b>Beverage Bar</b>, to see only its tickets. Tap <b>All stations</b> to see everything."
+          },
+          "note": "When a new ticket arrives while the board is open, a short message such as <b>1 new ticket</b> appears."
+        },
+        "cookTicket": {
+          "title": "Cook and complete a ticket",
+          "steps": {
+            "start": "When you start cooking, tap <b>Start</b> on the ticket. It moves to <b>Preparing</b>.",
+            "ready": "When the food is ready, tap <b>Ready</b>. It moves to <b>Ready</b> so the waiter or cashier can collect it.",
+            "complete": "When the food has left the kitchen, tap <b>Served</b> for a dine-in ticket or <b>Picked up</b> for takeaway and delivery. The ticket leaves the board.",
+            "cancel": "A red ticket marked <b>Cancel</b> means items were removed from an order after they were sent. It shows what should happen to the food. Read it, then tap <b>Got it</b>. Cancel tickets always appear at the top of their column."
+          }
+        },
+        "printTicket": {
+          "title": "Reprint a kitchen ticket",
+          "steps": {
+            "tap": "Tap the printer button on the ticket.",
+            "preview": "The <b>Kitchen ticket</b> preview shows exactly what prints, and the name of the station's printer.",
+            "again": "Tap <b>Print again</b> to send it to that printer."
+          }
+        }
+      }
+    },
+    "deliveries": {
+      "title": "Deliveries",
+      "intro": "The Deliveries board tracks every delivery order from the call to the door. Cashiers, managers and owners use it to confirm orders, send them to the kitchen and assign riders. Riders use it on their phones to see their own deliveries and collect payment. Open it from <b>Sales → Deliveries</b>.",
+      "tasks": {
+        "dispatchBoard": {
+          "title": "Read the delivery board",
+          "steps": {
+            "open": "Open <b>Sales → Deliveries</b>. Today's delivery orders are grouped by stage: <b>New</b>, <b>Confirmed</b>, <b>Preparing</b>, <b>Ready</b>, <b>Out for delivery</b> and <b>Delivered</b>.",
+            "card": "Each card shows the order number, customer, total and whether it is <b>Paid</b> or <b>Collect on delivery</b>. It also shows the address, any instructions, the delivery charge, the rider (or <b>No rider yet</b>) and how long ago the order came in.",
+            "filter": "Use <b>Date</b> to look at another day, <b>Rider</b> to see one rider's orders, and the stage buttons to show just one stage."
+          }
+        },
+        "moveOrder": {
+          "title": "Move an order through the stages",
+          "intro": "The blue button on each card is always the next step.",
+          "steps": {
+            "confirm": "For a new phone order, tap <b>Confirm</b> once you have checked the details with the customer.",
+            "kitchen": "Tap <b>Send to kitchen</b>. The order moves to <b>Preparing</b> and a ticket appears on the kitchen board.",
+            "ready": "When the food is packed, tap <b>Mark ready</b>. Its kitchen ticket moves to <b>Ready</b> as well, so the kitchen doesn't cook it twice."
+          }
+        },
+        "assignRider": {
+          "title": "Assign a rider",
+          "steps": {
+            "tap": "On the card, tap <b>Assign rider</b>.",
+            "choose": "Pick a rider. Under each name you can see how many deliveries they have in hand and how many they are out on now, such as <b>2 active · 1 out now</b>.",
+            "assign": "Tap <b>Assign</b>. The rider's name appears on the card, and the order shows on the rider's phone.",
+            "change": "To give the order to someone else before it leaves, tap <b>Change rider</b>."
+          },
+          "note": "An order can't go <b>Out for delivery</b> until a rider is assigned."
+        },
+        "riderRun": {
+          "title": "Deliver an order (rider, on a phone)",
+          "steps": {
+            "open": "Sign in on your phone, tap the menu button at the top left and open <b>Sales → Deliveries</b>. <b>My deliveries</b> lists only the orders assigned to you.",
+            "out": "When you leave with the food, tap <b>Out for delivery</b> on the order.",
+            "delivered": "At the door, tap <b>Delivered</b>. If the order is already <b>Paid</b>, it is marked delivered straight away.",
+            "collect": "If the card says <b>Collect on delivery</b>, the <b>Collect payment</b> window opens with the amount to collect. Choose <b>Cash</b> or <b>Card</b>. For cash, enter the <b>Cash received</b>, and the change to give back is shown.",
+            "confirm": "Tap <b>Paid · delivered</b>. The payment is recorded and the order moves to <b>Delivered</b>."
+          },
+          "note": "Riders can only mark their own orders out for delivery and delivered. If the cash received is less than the total, the window shows <b>Not enough cash</b> and won't let you finish."
+        },
+        "deliveryDetail": {
+          "title": "See a delivery's details and print a dispatch slip",
+          "steps": {
+            "open": "Tap an order number on the board. The page shows the phone, rider, address and instructions, the items with the delivery charge and total, and how much is to be collected.",
+            "progress": "The <b>Progress</b> list on the right shows each stage with the time and the person who moved it.",
+            "slip": "Tap <b>Dispatch slip</b> to print a slip for the rider with the address and <b>PAID</b> or the amount to collect."
+          },
+          "note": "The next step buttons, such as <b>Out for delivery</b>, are also on this page. A rider can only open the deliveries assigned to them."
+        }
+      }
+    },
+    "catalog": {
+      "title": "Catalog",
+      "intro": "The catalog holds everything you sell: products, the categories they sit in, where each one is sold, its price at each location and how the buttons are laid out on the POS Quick Pad. Find it under <b>Catalog</b> in the sidebar. Everyone at the till can look up products; owners and managers make the changes.",
+      "tasks": {
+        "findProduct": {
+          "title": "Find and edit a product",
+          "intro": "The product list covers your whole business. Prices and availability for each location are set separately.",
+          "steps": {
+            "open": "Open <b>Catalog → Products</b>. Each row shows the code, name, category, <b>Base price</b>, <b>Tax</b> mode and whether the product is on the <b>Quick Pad</b>.",
+            "search": "Type in <b>Search name, code or barcode</b> to find a product quickly. You can also scan a barcode into this box.",
+            "filter": "Pick a category in <b>All categories</b> to see only that category and its subcategories. Use <b>Active</b> or <b>Inactive</b> to narrow the list further.",
+            "openProduct": "Click a product to open it. The <b>Where it's sold</b> card on the right shows each location that sells it and the price there, with <b>Manage locations</b> and <b>Edit prices</b> shortcuts.",
+            "save": "Change what you need and click <b>Save</b>. To stop selling a product everywhere, turn off <b>Active</b>. It disappears from the POS and pickers, but its sales history is kept."
+          },
+          "note": "Cashiers and waiters can browse the list but can't open or change products. Only owners and managers can edit the catalog."
+        },
+        "addProduct": {
+          "title": "Add a new product",
+          "steps": {
+            "open": "Open <b>Catalog → Products</b> and click <b>New product</b>.",
+            "details": "Fill in <b>Name</b>, <b>Code</b> (your SKU or PLU) and <b>Category</b>. A <b>Description</b> is optional.",
+            "translations": "Under <b>Names in other languages</b>, add the Tamil and Sinhala names if you want them shown on the POS and receipts. If you leave them blank, the English name is shown.",
+            "price": "Enter the <b>Base price</b>, then choose the <b>Tax</b> mode: <b>Inclusive</b> means the price already includes tax, and <b>Exclusive</b> means tax is added at checkout.",
+            "barcodes": "To add a barcode, scan it into the <b>Barcodes</b> box or type it and press Enter (or click <b>Add barcode</b>). You can add more than one barcode. Click the <b>×</b> on a barcode to remove it.",
+            "options": "Optionally, use <b>Upload image</b> to add a picture for the POS button. Leave <b>Show on Quick Pad</b> on if the product should have its own button. With it off, staff can still sell the product by searching or scanning.",
+            "save": "Click <b>Save</b>. The product is created for the whole business. Next, choose which locations sell it in <b>Location Products</b>."
+          },
+          "note": "The code must be unique in your business, and the base price must be more than zero. A barcode can belong to only one product, so if another product already uses it, the app tells you and won't save."
+        },
+        "categories": {
+          "title": "Organise categories",
+          "intro": "Categories group your products on the POS, on receipts and in reports. A category can have subcategories, for example Drinks → Hot Drinks.",
+          "steps": {
+            "open": "Open <b>Catalog → Categories</b>. Subcategories are shown indented under their parent category.",
+            "new": "Click <b>New category</b>, then enter a <b>Name</b> and <b>Code</b>.",
+            "parent": "To make it a subcategory, choose a <b>Parent category</b>. Leave it empty for a top-level category. <b>Sort order</b> is optional. Lower numbers come first.",
+            "colour": "Under <b>Appearance</b>, pick the button <b>Colour</b> for the Quick Pad. You can also add Tamil and Sinhala names and a <b>Button image</b>.",
+            "save": "Click <b>Save</b>.",
+            "manage": "To change an existing category, click the <b>⋮</b> menu on its row, then choose <b>Edit</b>, <b>Add subcategory</b> or <b>Deactivate</b>."
+          },
+          "note": "A deactivated category is hidden from the POS and pickers, but its products and history are kept. You can't deactivate a category that still has active subcategories or products. Move or deactivate them first."
+        },
+        "locationProducts": {
+          "title": "Choose what each location sells",
+          "intro": "Each location sells its own selection of products. Only owners and managers can open this screen.",
+          "steps": {
+            "open": "Open <b>Catalog → Location Products</b>. Products are grouped by category.",
+            "location": "Choose the location in the drop-down at the top right. The summary line shows how many products are sold there.",
+            "soldHere": "Turn <b>Sold here</b> on or off for each product. Products that aren't sold here are greyed out. Use the <b>Sold here</b> and <b>Not sold</b> filters to check your list.",
+            "available": "If an item runs out for the day, turn <b>Available</b> off. Its button stays on the POS, but it is greyed out.",
+            "stockNote": "Type a short <b>Stock note</b> such as \"4 left\" and press Enter. The note shows on the product's POS button at this location.",
+            "settings": "Click the settings button at the end of a row to choose the <b>Kitchen station</b> where its KOT prints and to set whether <b>Service charge applies</b> when it is sold here."
+          },
+          "note": "The price column shows the price at this location. A <b>Location price</b> tag means it differs from the base price. Change it in <b>Pricing</b>."
+        },
+        "pricing": {
+          "title": "Set prices for each location",
+          "intro": "One grid shows the base price for every product plus a column for each location. Only owners and managers can open it.",
+          "steps": {
+            "open": "Open <b>Catalog → Pricing</b>. Use the search box or <b>All categories</b> to find the products you want.",
+            "edit": "Type a new price in the <b>Base price</b> column or in a location column. Changed cells are highlighted, and the bar at the bottom counts the unsaved changes. If a change makes a price lower, the bar shows <b>Lower than before</b>.",
+            "useBase": "An empty location cell uses the base price, shown in grey. To remove a location price, clear its cell. A cell marked <b>Not sold here</b> is for a product that location doesn't sell.",
+            "save": "Click <b>Save changes</b> to save them all at once, or <b>Discard</b> to undo them.",
+            "approve": "If any price goes down, a manager enters their PIN. Then choose a reason, such as <b>Price correction</b>, and click <b>Confirm</b>."
+          },
+          "note": "Price cuts always need a manager's PIN and a reason, and they are recorded in the audit log. Staff who can see the audit report also get a <b>Recent price changes</b> panel showing each change as old → new."
+        },
+        "quickPad": {
+          "title": "Arrange the Quick Pad",
+          "intro": "The Quick Pad is the grid of category and product buttons on the POS. Each location can have its own order and colours.",
+          "steps": {
+            "open": "Open <b>Catalog → Quick Pad Setup</b>.",
+            "choose": "Pick the location at the top. Leave <b>All devices at this location</b> selected, or pick a single POS terminal or tablet to give it a layout of its own.",
+            "reorder": "Drag the category buttons into the order you want, or use the up and down arrows. Click a category to see its <b>Buttons in</b> list, then reorder the products in the same way.",
+            "drill": "Click the <b>›</b> arrow on a category to open its subcategories. Click <b>Top level</b> to go back up.",
+            "colour": "Click the coloured dot next to a category to choose its button colour at this location. Click <b>Use category colour</b> to go back to the colour set for the category.",
+            "save": "Check the <b>Live preview</b> below, then click <b>Save</b>. Click <b>Discard</b> to undo."
+          },
+          "note": "A device with its own layout shows a notice with a <b>Use location layout</b> button that switches it back. Products with <b>Show on Quick Pad</b> turned off, and products not sold at the location, don't appear here."
+        }
+      }
+    },
+    "customers": {
+      "title": "Customers",
+      "intro": "Keep one customer list for the whole business, with phone numbers, addresses, order history and money owed on credit. Open <b>Customers → Customers</b>. Cashiers, owners and managers can add and edit customers. Waiters can view them.",
+      "tasks": {
+        "findCustomer": {
+          "title": "Find a customer",
+          "steps": {
+            "open": "Open <b>Customers → Customers</b>. The cards at the top show <b>Total outstanding</b> (how much customers owe across all locations) and the number of customers.",
+            "search": "Type a name or phone number in the search box. Phone numbers match however they are typed, with or without spaces.",
+            "filter": "Filter by type (<b>Walk-in / retail</b>, <b>Regular</b>, <b>Corporate</b>) or tap <b>Owes money</b>. Use the sort menu to show <b>Recent orders first</b> or <b>Highest balance first</b>.",
+            "openCustomer": "Click a customer to open their page."
+          },
+          "note": "If you search for a phone number that no customer has, the app offers <b>Create customer with this number</b>, with the number already filled in."
+        },
+        "addCustomer": {
+          "title": "Add a customer",
+          "steps": {
+            "open": "Open <b>Customers → Customers</b> and click <b>New customer</b>.",
+            "details": "Enter the <b>Name</b> and choose the <b>Type</b>.",
+            "phones": "Enter a phone number. Click <b>Add another number</b> for each extra number they call from, and give each a <b>Label</b> such as Mobile or Home.",
+            "primary": "Select <b>Primary</b> next to the main number. The primary number is printed on receipts and deliveries.",
+            "address": "Optionally add an <b>Address</b> and <b>Notes</b>. Untick <b>Deliver to the same address</b> if deliveries go somewhere else, then fill in the <b>Delivery address</b>.",
+            "save": "Click <b>Save customer</b>."
+          },
+          "note": "A phone number can belong to only one customer. If it's already taken, a warning shows who has it, with a link to open that customer."
+        },
+        "viewCustomer": {
+          "title": "View a customer's history",
+          "steps": {
+            "overview": "On the customer's page, the <b>Overview</b> tab shows the number of orders, <b>Total spent</b>, the <b>Last order</b> date, the <b>Outstanding</b> balance and their <b>Recent orders</b>.",
+            "orders": "Open the <b>Order history</b> tab to see every order from every location. Use the status chips, such as <b>Paid</b> or <b>Voided</b>, to filter the list.",
+            "orderDetail": "Click an order to see its items, charges, total, how it was paid and who served it.",
+            "edit": "To update phone numbers, addresses or notes, click <b>Edit</b> at the top right."
+          }
+        },
+        "receivePayment": {
+          "title": "Take a payment on a customer's account",
+          "intro": "When a customer buys on credit, the amount is added to their balance. Record it here when they pay it back.",
+          "steps": {
+            "open": "Open the customer, go to the <b>Balance</b> tab and click <b>Receive payment</b>. The tab lists every credit sale, return and payment as an <b>Account statement</b>.",
+            "method": "Under <b>Paid by</b>, choose <b>Cash</b>, <b>Card</b> or <b>Bank transfer</b>. For a bank transfer, enter the <b>Transfer reference</b>.",
+            "amount": "Enter the amount on the keypad, or tap <b>Full balance</b>. <b>Balance after payment</b> shows what they will still owe.",
+            "confirm": "Click <b>Receive</b>. The payment gets a number, appears in the statement and reduces the <b>Current balance</b>."
+          },
+          "note": "You can't take more than the customer owes. Payments can be taken by staff who handle the cash drawer or manage customers."
+        }
+      }
+    },
+    "inventory": {
+      "title": "Inventory",
+      "intro": "Inventory shows how much of each item you have at every location, and records every change to it: sales, transfers, deliveries, wastage and adjustments. Find it in the <b>Inventory</b> menu. Anyone with inventory access can look up stock. Owners and managers can adjust stock, and owners, managers and field sales reps can transfer it.",
+      "tasks": {
+        "checkStock": {
+          "title": "Check stock on hand",
+          "intro": "See how much you have of each item at a location, and which items are running low.",
+          "steps": {
+            "open": "Open <b>Inventory → Stock</b>. The cards at the top show how many items are tracked, and how many are <b>Low stock</b> or <b>Out of stock</b> at your location.",
+            "filter": "Type in <b>Item name or code</b> to find an item. Use the location list to look at another location, or choose <b>All locations</b> to see every location at once. You can also narrow the list by category.",
+            "status": "Tap <b>Low stock</b> or <b>Out of stock</b> to see only those items. Tap <b>All</b> to see everything again.",
+            "openItem": "Tap an item to open its stock page. It has a card for each location with the amount <b>On hand</b>, its minimum and its status.",
+            "recent": "Scroll down to <b>Recent movements</b> to see the latest sales, transfers and adjustments for the item. Tap <b>All movements</b> to see its full history."
+          },
+          "note": "An item shows as <b>Low stock</b> when it is at or below its minimum, and <b>Out of stock</b> when none is left. Out of stock items can't be sold."
+        },
+        "adjustStock": {
+          "title": "Adjust stock",
+          "intro": "Correct the stock after a count, or record items that were found, damaged, spoiled or eaten by staff.",
+          "steps": {
+            "open": "Open <b>Inventory → Stock</b> (or <b>Inventory → Adjustments</b>) and tap <b>Adjust stock</b>. From an item's stock page you can also tap <b>Adjust</b> on a location card.",
+            "pickItem": "Check the location, then search for the item and tap it.",
+            "kind": "Choose the type of adjustment: <b>Stock count</b>, <b>Add stock</b>, <b>Remove stock</b>, <b>Wastage</b> or <b>Staff meal</b>. Then tap <b>Next</b>.",
+            "quantity": "Enter the quantity on the keypad. For a <b>Stock count</b>, enter what you counted and the app works out the difference. Check <b>Stock after</b>, then tap <b>Continue to approval</b>.",
+            "pin": "A manager enters their 4-digit PIN to approve the change.",
+            "reason": "Choose why the stock is changing, for example <b>Stock count difference</b> or <b>Expired</b>, and tap <b>Confirm</b>. If you choose <b>Other</b>, add a comment.",
+            "history": "Open <b>Inventory → Adjustments</b> to see every adjustment, with the change, the reason and who approved it."
+          },
+          "note": "Every adjustment needs a manager's PIN and a reason, and is kept in the audit log. You can't take stock below zero, and a count that matches the stock on hand has nothing to adjust."
+        },
+        "transferStock": {
+          "title": "Send stock to another location",
+          "intro": "Move stock between your locations, for example from the Central Store to the Bakery Outlet.",
+          "steps": {
+            "open": "Open <b>Inventory → Transfers</b> and tap <b>New transfer</b>.",
+            "locations": "Check <b>From</b> (where the stock leaves) and choose <b>To</b> (where it goes).",
+            "items": "Search for an item and tap it, then set how many to send. Tap <b>Add item</b> to add more items. You can only send what is available at the sending location.",
+            "note": "Add a <b>Note (optional)</b> for the person receiving it, such as the delivery run.",
+            "dispatch": "Tap <b>Dispatch</b>. The transfer appears in the list as <b>In transit</b>, and the stock leaves the sending location straight away.",
+            "cancel": "Made a mistake? At the sending location, open the transfer while it is still <b>In transit</b> and tap <b>Cancel transfer</b>. The items go back into stock at the sender."
+          }
+        },
+        "receiveTransfer": {
+          "title": "Receive a transfer",
+          "intro": "When the stock arrives, the receiving location counts it in so it is added to their stock.",
+          "steps": {
+            "switch": "Make sure you are working at the receiving location. If not, tap the location name at the top of the screen and choose it.",
+            "incoming": "Open <b>Inventory → Transfers</b>, tap <b>Incoming</b>, and tap the transfer that is <b>In transit</b>.",
+            "check": "Check each item against what arrived. If something is missing, change the quantity to what you actually received. The app shows how many are short.",
+            "receive": "Tap <b>Receive all</b>, or <b>Receive (… short)</b> if something was missing. The transfer changes to <b>Received</b> and the stock is added at your location."
+          },
+          "note": "Only the receiving location can receive a transfer, and only the sending location can cancel it. Any shortage is recorded on the transfer."
+        },
+        "movements": {
+          "title": "Look up stock movements",
+          "intro": "The stock movements list is the history of every change to stock: sales, returns, transfers, deliveries, production, wastage, staff meals and adjustments.",
+          "steps": {
+            "open": "Open <b>Inventory → Stock Movement</b>. The newest movements are at the top.",
+            "filter": "Narrow the list by location and by type (for example <b>Transfer in</b> or <b>Adjustment</b>), and pick a time range: <b>Today</b>, <b>Last 7 days</b> or <b>Last 30 days</b>.",
+            "read": "Each row shows the item, the location, the type and the quantity (minus when stock goes out). <b>Reference</b> shows the sale, transfer, delivery or adjustment number, and <b>By</b> shows who did it.",
+            "fromItem": "To see one item's history only, open the item from <b>Inventory → Stock</b> and tap <b>All movements</b>."
+          }
+        },
+        "lowStock": {
+          "title": "Deal with low stock",
+          "intro": "The Low Stock page lists every item that is at or below its minimum, grouped by location, so you can top it up.",
+          "steps": {
+            "open": "Open <b>Inventory → Low Stock</b>. Each item shows how many are on hand, its minimum and how far below the minimum it is.",
+            "minimum": "To change when an item counts as low, tap <b>Minimum</b>, set the new level and tap <b>Save minimum</b>. Set it to 0 to turn the alert off.",
+            "transferIn": "Tap <b>Transfer in</b> to fill it up from another location. A new transfer opens from the location with the most stock, with a suggested quantity. Check it and tap <b>Dispatch</b>.",
+            "adjust": "If the stock number is wrong, tap <b>Adjust</b> to correct it. This needs a manager's PIN and a reason."
+          },
+          "note": "To order more from a supplier instead, create a purchase order (see Purchasing)."
+        }
+      }
+    },
+    "purchasing": {
+      "title": "Purchasing",
+      "intro": "Purchasing is where you keep your suppliers, order stock from them and check deliveries in. Goods you receive are added to stock straight away. Find it in the <b>Purchasing</b> menu. It is available to owners and managers.",
+      "tasks": {
+        "suppliers": {
+          "title": "Add a supplier",
+          "steps": {
+            "open": "Open <b>Purchasing → Suppliers</b>. The list shows each supplier's contact, open orders, last order and how much you have received from them.",
+            "new": "Tap <b>New supplier</b>.",
+            "fill": "Enter the <b>Supplier name</b> and the <b>Payment terms (days)</b>, where 0 means cash on delivery. Add the contact person, phone, email, address and a note if you have them.",
+            "save": "Tap <b>Save supplier</b>. The supplier's page opens, where you can start a <b>New purchase order</b> for them or tap <b>Edit</b> to change their details.",
+            "deactivate": "If you stop buying from a supplier, tap <b>Deactivate</b> on their page and confirm. They can't be chosen on new orders, but orders already placed can still be received. Tap <b>Reactivate</b> to use them again."
+          },
+          "note": "Only the supplier name is required."
+        },
+        "createPo": {
+          "title": "Create a purchase order",
+          "steps": {
+            "open": "Open <b>Purchasing → Purchase Orders</b> and tap <b>New purchase order</b>.",
+            "supplier": "Choose the <b>Supplier</b>. Check <b>Deliver to</b> (your current location is filled in), and set the <b>Expected</b> delivery date and a <b>Note</b> if you need them.",
+            "items": "Tap <b>Add item</b>, search for an item and tap it. Add as many items as you need, then tap <b>Done adding</b>.",
+            "costs": "Set the quantity and the <b>Unit cost</b> for each item. The last cost you paid is filled in for you. The <b>Order summary</b> shows the number of items, units and the <b>Total</b>.",
+            "save": "Tap <b>Place order</b> to send it now, or <b>Save as draft</b> to check it later."
+          },
+          "note": "Every item needs a quantity and a unit cost. Inactive suppliers can't be chosen."
+        },
+        "placePo": {
+          "title": "Place, track or cancel an order",
+          "steps": {
+            "open": "Open <b>Purchasing → Purchase Orders</b> and tap the order. A draft shows <b>Draft — not sent yet</b>.",
+            "edit": "To change a draft, tap <b>Edit</b>, make your changes and save it again. Once an order is placed it can no longer be edited.",
+            "place": "When the items and costs are right, tap <b>Place order</b>. The status changes to <b>Ordered</b>.",
+            "track": "Back in the list, use the status and supplier filters to follow your orders. Orders show <b>Part received</b> while some items are still to come, and <b>Overdue</b> when the expected date has passed.",
+            "cancel": "To cancel an order that hasn't been delivered yet, tap <b>Cancel order</b>, enter a <b>Reason</b> and confirm. Tell the supplier separately."
+          },
+          "note": "You can only cancel an order while nothing has been received against it."
+        },
+        "receiveGoods": {
+          "title": "Receive goods from a supplier",
+          "intro": "When a delivery arrives, check it in against its purchase order so the stock goes up.",
+          "steps": {
+            "open": "Open <b>Purchasing → Goods Receiving</b>. <b>Awaiting delivery</b> lists every order that is still to come.",
+            "receive": "Tap <b>Receive</b> next to the order. You can also tap <b>Receive goods</b> on the order itself.",
+            "count": "Each item is filled in with the quantity still to come. If less arrived, change it to what you actually received. The app shows the stock now and after this delivery.",
+            "invoice": "Enter the <b>Supplier invoice no.</b> from the delivery note, and add a <b>Note</b> if something was wrong.",
+            "submit": "Tap <b>Receive … units</b>. The goods received note (GRN) opens, and each item is added to stock as a <b>Purchase</b> movement. Tap <b>Stock movements</b> to see them."
+          },
+          "note": "If only part of the order arrives, the rest stays on the order as <b>Part received</b>, and you can receive it when it comes. You can't receive more than is still to come."
+        }
+      }
+    },
+    "recipesKitchen": {
+      "title": "Recipes & kitchen prep",
+      "intro": "Set up the ingredients your kitchen counts, say what one plate of each dish uses, plan the day's ingredient needs and look after cooked food waiting to be resold. Owners and managers use all of it from <b>Production</b> in the sidebar; kitchen staff use <b>Production → Prepared Items</b>.",
+      "tasks": {
+        "ingredients": {
+          "title": "Keep your ingredient list up to date",
+          "intro": "Ingredients are stock-only items that are never sold on the POS. Each one is counted in portions, pieces or packs.",
+          "steps": {
+            "open": "Open <b>Production → Ingredients</b>. The cards at the top show how many ingredients this location tracks and how many are <b>Low or out</b>.",
+            "read": "Check each row: <b>One portion is</b> says what the kitchen weighs or counts out, <b>On hand</b> is the current stock, and <b>Status</b> turns to low or out of stock at or below the <b>Minimum</b>. Click a row to see every stock movement for that ingredient.",
+            "edit": "Click the pencil next to an ingredient to edit it, or click <b>New ingredient</b> to add one. Fill in <b>Name</b>, <b>Code</b>, <b>Counted in</b>, <b>Minimum at</b> this location and <b>One portion is</b>.",
+            "save": "Add <b>Grams per portion</b> and <b>Portions per pack</b> if you know them, then click <b>Save ingredient</b>.",
+            "orderLow": "To restock, click <b>Order the low ones</b> under the <b>Low or out</b> card. A new purchase order opens with the low ingredients already on it."
+          },
+          "note": "A code and a name are required, and two ingredients can't share a name. If you enter grams or portions per pack, you must also describe the portion."
+        },
+        "recipe": {
+          "title": "Set up a recipe",
+          "intro": "A recipe says what one plate of a dish uses. Once it is on, each sale takes those ingredients out of kitchen stock.",
+          "steps": {
+            "open": "Open <b>Production → Recipes</b> and scroll to <b>Menu items without a recipe</b>.",
+            "add": "Click <b>Add recipe</b> next to the dish. You can also click <b>New recipe</b> at the top and choose the dish under <b>Menu item</b>.",
+            "ingredients": "Under <b>One plate uses</b>, pick an ingredient in <b>Choose an ingredient</b> and click <b>Add ingredient</b>. Repeat for each ingredient and set how many portions or pieces one plate takes. The <b>Preview</b> on the right shows how many can be made here right now.",
+            "deduct": "Leave <b>Deduct ingredients when sold</b> on so the dish is made to order. Turn it off to pause the recipe: sales then leave the ingredients alone and the dish is counted as finished stock again.",
+            "save": "Add a <b>Note</b> if it helps the kitchen, then click <b>Save recipe</b>. To change a recipe later, click its row in the <b>Recipes</b> list."
+          },
+          "note": "A recipe needs a menu item and at least one ingredient before it can be saved."
+        },
+        "canMake": {
+          "title": "Check how many dishes can be made",
+          "steps": {
+            "open": "Open <b>Production → Recipes</b>.",
+            "read": "Read the <b>Can make</b> column. It is how many plates the scarcest ingredient allows at this location, and <b>limited by</b> names that ingredient.",
+            "ready": "The <b>Ready</b> column shows cooked plates waiting in <b>Prepared Items</b>. They are included in <b>Can make</b>.",
+            "location": "Use the location box above the list to check another location."
+          },
+          "note": "A 0 shown in red means the dish can't be made until the limiting ingredient is restocked."
+        },
+        "portions": {
+          "title": "Plan today's ingredient needs",
+          "steps": {
+            "open": "Open <b>Production → Portions & Planning</b>. <b>Portion definitions</b> lists what one portion of each ingredient is. Click <b>Edit</b> on a row to change it.",
+            "expected": "Scroll to <b>Today's requirement</b>. Under <b>Expected sales today</b>, each dish starts at its average for the last 30 days. Change the numbers to match what you expect to sell today.",
+            "read": "Read <b>Ingredients needed</b>: <b>Need</b> is expected plates times the recipe, <b>Have</b> is what's in the kitchen, and <b>Buy</b> is the difference. When portions per pack are set, it also suggests how many packs to buy.",
+            "order": "Click <b>Create purchase order</b> to open a purchase order with the items to buy already filled in."
+          },
+          "note": "If nothing is short, the page says there's enough in the kitchen for the expected sales, and no order button appears."
+        },
+        "prepared": {
+          "title": "Resell or dispose of prepared food",
+          "intro": "Cooked food from a cancelled order, or food made extra, waits here. The next order for the same item uses it before a new one is cooked.",
+          "steps": {
+            "open": "Open <b>Production → Prepared Items</b>. Each card shows the dish, when it was prepared and by whom, and how long is left under <b>Sell by</b>.",
+            "filter": "Use the chips to show <b>Ready to sell</b>, <b>Expired</b>, <b>Sold</b> or <b>Disposed</b> items, or <b>All</b>.",
+            "add": "To add food made ahead, click <b>Add prepared item</b>, choose the <b>Menu item</b>, set the <b>Quantity</b> and <b>Sell within (hours)</b>, then click <b>Add to the queue</b>.",
+            "dispose": "If a plate can't be resold, click <b>Dispose</b> on its card. Choose what happened: <b>Wastage</b>, <b>Staff meal</b>, <b>Disposed</b> or <b>Other</b>.",
+            "confirm": "Type a <b>Reason</b> and click <b>Dispose</b>. The reason is kept in the audit log."
+          },
+          "note": "Kitchen staff can see the queue and dispose of items. Only owners and managers can add prepared items. Adding a dish that has a recipe takes its ingredients from stock straight away."
+        }
+      }
+    },
+    "bakeryProduction": {
+      "title": "Bakery production",
+      "intro": "Plan what the bakery bakes each day, run each batch from raw materials to finished goods, and keep track of what is wasted. Owners and managers find it under <b>Production</b> in the sidebar, from <b>Bakery Production</b> to <b>Wastage</b>.",
+      "tasks": {
+        "overview": {
+          "title": "Check today's production",
+          "steps": {
+            "open": "Open <b>Production → Bakery Production</b>. <b>How production works</b> shows the order of work: plan the day, start a batch, record output, and finished goods go into stock.",
+            "shortage": "If a raw material is short for today's plan, a yellow warning names it. Click <b>Order what's short</b> to open a purchase order for it.",
+            "tiles": "The cards show <b>Produced / planned today</b>, <b>Batches baking now</b>, <b>Wastage (7 days)</b> and <b>Finished goods low</b>.",
+            "batches": "Scroll down to see today's batches, with <b>Start</b> and <b>Record output</b> buttons, and a <b>Last 7 days</b> table of units baked and wasted."
+          }
+        },
+        "plan": {
+          "title": "Plan a day's baking",
+          "steps": {
+            "open": "Open <b>Production → Production Plan</b> and click <b>New plan</b>.",
+            "details": "Check the <b>Production location</b> and <b>Plan date</b> (tomorrow is filled in for you), and add a <b>Note</b> if you like.",
+            "quantities": "Under <b>What to bake</b>, enter how many of each product you need. Batches are whole runs of the formula, so the app rounds up and shows how many runs and how many units to expect. <b>Raw materials needed</b> shows what the plan uses and anything that is short.",
+            "save": "Click <b>Save draft</b>. A draft can still be changed with <b>Edit</b>.",
+            "confirm": "Click <b>Confirm plan</b>. The plan creates one batch for each product, listed under <b>Batches</b> and ready to start."
+          },
+          "note": "A plan needs at least one product. Once confirmed, it can't be edited. To stop it, use <b>Cancel plan</b> and give a reason: batches that haven't started are cancelled too."
+        },
+        "startBatch": {
+          "title": "Start a batch",
+          "steps": {
+            "open": "Open <b>Production → Production Batches</b>. Use the chips to show <b>Planned</b>, <b>Baking</b>, <b>Completed</b> or <b>Cancelled</b> batches.",
+            "start": "Click <b>Start</b> on a planned batch.",
+            "used": "Check each raw material. <b>Used</b> starts at the <b>Formula</b> amount; change it to what was actually used.",
+            "confirm": "Click <b>Start batch</b>. The raw materials leave stock now and the batch shows as <b>Baking</b>."
+          },
+          "note": "If you enter more than is on hand, a warning says there's not enough in stock and the batch can't start until the material is received."
+        },
+        "recordOutput": {
+          "title": "Record a batch's output",
+          "steps": {
+            "open": "When the batch comes out of the oven, click <b>Record output</b> on its row.",
+            "counts": "Enter the <b>Good units</b> and the number <b>Rejected</b>.",
+            "reason": "If anything was rejected, choose a reason under <b>Why rejected</b> and add a comment if needed. The line at the bottom shows how many go into stock and how many go to wastage.",
+            "confirm": "Click <b>Record output</b>. Good units go into finished goods and rejects are recorded as wastage.",
+            "detail": "Click the batch row to open it. You can see its progress, the raw materials used, the good and rejected units, and every stock movement."
+          },
+          "note": "A reason is required when anything is rejected. The <b>Other</b> reason also needs a comment. A batch that hasn't started can be cancelled from its page with a reason."
+        },
+        "finishedGoods": {
+          "title": "Check finished goods",
+          "steps": {
+            "open": "Open <b>Production → Finished Goods</b>. The cards show the total <b>On hand</b>, <b>Produced today</b> and how many products are <b>Low or out</b>.",
+            "read": "Each row shows stock on hand against its minimum, <b>Produced today</b>, <b>Wasted today</b> and the <b>Last batch</b>.",
+            "transfer": "To send goods to a shop, click <b>Stock & transfer</b>. This opens the product's stock page, where you can make the transfer."
+          }
+        },
+        "wastage": {
+          "title": "Write off goods and review wastage",
+          "steps": {
+            "writeOff": "On <b>Finished Goods</b>, click <b>Write off</b> on a product. You can also use <b>Write off</b> at the top of the <b>Wastage</b> page. Enter the <b>Quantity to write off</b>, add a <b>Note</b>, then click <b>Write off</b>.",
+            "pin": "A manager enters their PIN to approve.",
+            "reason": "Choose why the goods are being written off, for example <b>Expired</b> or <b>Damaged item</b>, then click <b>Confirm</b>. Stock drops by that amount.",
+            "review": "Open <b>Production → Wastage</b>. It lists batch rejects and write-offs, with the reason, source, who recorded it and who approved it with their PIN. <b>By reason</b> totals each reason.",
+            "filter": "Use <b>Today</b>, <b>7 days</b> or <b>30 days</b>, the <b>Batch reject</b> and <b>Written off</b> chips, or click a reason to narrow the list. The total wasted is shown at the bottom."
+          },
+          "note": "You can't write off more than is on hand. Only someone allowed to manage production can approve a write-off with their PIN."
+        }
+      }
+    },
+    "wholesaleShops": {
+      "title": "External shops",
+      "intro": "External shops are the wholesale customers your van sells to on credit. Here you see what each shop owes, how close it is to its credit limit, and its full history. Open it from <b>Customers → External Shops</b>.",
+      "tasks": {
+        "findShop": {
+          "title": "Find a shop and see what it owes",
+          "steps": {
+            "open": "Open <b>Customers → External Shops</b>. Each row shows the shop, its route and stop number, its phone, what it owes against its credit limit, and the last visit.",
+            "totals": "The cards at the top show the number of <b>Shops</b>, the total <b>Owed to you</b>, and how much is <b>Overdue</b>, with the number of shops over their limit.",
+            "filter": "Use the chips <b>Owes money</b>, <b>Overdue</b> or <b>Over limit</b> to narrow the list, or pick a route in <b>All routes</b>. Type a shop name, owner or area in the search box to find one shop.",
+            "openShop": "Click a shop to open its page."
+          },
+          "note": "A shop is Overdue when part of an invoice is still unpaid after the shop's payment terms. The coloured bar turns amber as the shop gets close to its credit limit."
+        },
+        "statement": {
+          "title": "Check a shop's statement and balance",
+          "steps": {
+            "header": "The top of the shop page shows what it owes (<b>Outstanding</b>) against its credit limit, its <b>Payment terms</b>, phone, route and stop, address and notes.",
+            "read": "The <b>Statement</b> tab lists every invoice, collection and return, newest first, with the running <b>Balance</b> after each one. An invoice adds only the part that was not paid at the time of sale; collections and returns reduce the balance.",
+            "tabs": "Use the <b>Invoices</b>, <b>Collections</b> and <b>Returns</b> tabs to see each kind of document on its own. Click an invoice or return number to open it.",
+            "actions": "Use the buttons at the top to act for this shop: <b>New sale</b>, <b>Collect payment</b>, <b>Record return</b> or <b>Edit shop</b>."
+          },
+          "note": "A red <b>Over the credit limit</b> banner means you should collect a payment before giving more credit. <b>New sale</b> only shows for people who work on the van that serves this shop."
+        },
+        "addShop": {
+          "title": "Add a new shop",
+          "steps": {
+            "open": "On <b>External Shops</b>, click <b>New shop</b>.",
+            "details": "Enter the <b>Shop name</b>, the <b>Owner</b>, <b>Phone</b>, <b>Address</b> and <b>Area</b>.",
+            "route": "Pick the <b>Route</b> the van uses to reach the shop, or leave <b>No route</b>.",
+            "credit": "Set the <b>Credit limit</b> and the <b>Payment terms</b> in days (up to 120). Add any <b>Notes</b>, such as opening days.",
+            "save": "Click <b>Save shop</b>. The new shop's page opens."
+          },
+          "note": "Shops are wholesale customers only. They don't appear on the POS."
+        }
+      }
+    },
+    "wholesaleRoutes": {
+      "title": "Routes",
+      "intro": "A route is the list of shops a van visits on set days, in stop order. The route overview shows the day's progress and what is left in the van. Open it from <b>Wholesale → Routes</b>.",
+      "tasks": {
+        "followRoute": {
+          "title": "Follow today's route",
+          "steps": {
+            "open": "Open <b>Wholesale → Routes</b>. The route that runs today opens on its own, with its rep's name under the title.",
+            "pick": "To see another route or day, change <b>Route</b> or <b>Date</b>. If the route doesn't normally run on that day, a note tells you.",
+            "totals": "The cards show <b>Stops visited</b>, <b>Sales</b> (with how much went <b>On credit</b>), <b>Cash taken</b> (cash at sale plus collections) and <b>Returns</b>.",
+            "stops": "The stops are listed in visiting order. A green <b>Visited</b> badge shows what was sold and collected there; <b>To visit</b> means the stop is still waiting.",
+            "act": "At a stop, tap <b>Sell</b> to start a sale to that shop, or <b>Collect</b> to take a payment. Tap the shop name to open its page."
+          }
+        },
+        "vanStock": {
+          "title": "Check and load the van",
+          "steps": {
+            "check": "The <b>On Van</b> card beside the stops shows how many of each product are left in the van. A number in red means that item has run out.",
+            "load": "To load more stock, click <b>Load the van (transfer)</b>. It opens <b>Inventory → Transfers</b>, where you move stock from the store to the van."
+          },
+          "note": "<b>Load the van (transfer)</b> only appears for people allowed to make stock transfers."
+        }
+      }
+    },
+    "fieldSales": {
+      "title": "Field sales",
+      "intro": "The field sales screen is where the rep sells to a shop from the van, usually on a phone. The goods come out of the van's stock, and the shop can pay now, later on credit, or part of each. Open it from <b>Wholesale → Field Sales</b>.",
+      "tasks": {
+        "sell": {
+          "title": "Sell to a shop from the van",
+          "steps": {
+            "open": "Open <b>Wholesale → Field Sales</b>. Under <b>Which shop?</b>, the shops on <b>Today's route</b> come first, with what each one owes. Tap the shop you are at.",
+            "goods": "Under <b>Goods from the van</b>, enter how many of each item the shop takes, or use <b>+</b> and <b>−</b>. Each item shows its wholesale price and how many are in the van.",
+            "review": "Check the item count and total in the bar at the bottom, then tap <b>Review</b>.",
+            "payment": "Under <b>Payment</b>, enter what the shop pays now in <b>Paid now</b>, or tap <b>Paid in full</b> or <b>All on credit</b>. If money is paid, choose <b>Paid by</b>: <b>Cash</b>, <b>Bank transfer</b> or <b>Cheque</b>. Check <b>On credit</b> and the shop's <b>New balance</b>.",
+            "create": "Tap <b>Create invoice</b>. The invoice opens, ready to give to the shop."
+          },
+          "note": "You can't sell more than is in the van. If the sale takes the shop over its credit limit, you see a warning and must tick <b>Continue anyway</b>; the invoice is then flagged as sold over the limit. Wholesale prices include VAT. Selling needs access to a van: a manager at a shop sees <b>Selling needs a van</b> instead, but can still see shops and take collections."
+        },
+        "share": {
+          "title": "Give the shop its invoice",
+          "steps": {
+            "invoice": "The invoice shows the items, the total with VAT, what was paid now and what is <b>On credit</b>, the <b>Due</b> date, and the shop's <b>Previous balance</b> and <b>Balance now</b>.",
+            "print": "Under <b>Give the shop a copy</b>, tap <b>Print</b> to print it on the receipt printer. Once printed, the button becomes <b>Reprint</b>.",
+            "send": "To send it instead, tap <b>WhatsApp</b> to message it to the shop's number, <b>Share</b> (on phones that support it), or <b>Copy text</b> to paste it anywhere.",
+            "next": "Tap <b>Next sale</b> to go back to the shop list, or <b>Record a return</b> if the shop hands goods back against this invoice."
+          },
+          "note": "Every print and share is recorded on the invoice with who did it and when."
+        }
+      }
+    },
+    "wholesaleCollections": {
+      "title": "Collections",
+      "intro": "A collection is money a shop pays towards what it owes. It is applied to the shop's oldest unpaid invoices first. See all collections in <b>Wholesale → Collections</b>.",
+      "tasks": {
+        "collect": {
+          "title": "Collect a payment from a shop",
+          "steps": {
+            "open": "Tap <b>Collect</b> next to a stop on <b>Wholesale → Routes</b>, click <b>Collect payment</b> on the shop's page, or on <b>Wholesale → Collections</b> click <b>Collect</b> and choose the shop.",
+            "method": "The window shows what the shop owes. Choose <b>Paid by</b>: <b>Cash</b>, <b>Bank transfer</b> or <b>Cheque</b>.",
+            "amount": "Enter the <b>Amount</b>. It starts at the full balance. For a bank transfer or cheque, also enter the <b>Transfer reference</b> or <b>Cheque number</b>.",
+            "confirm": "Check <b>Balance after</b>, then click the <b>Collect</b> button, which shows the amount."
+          },
+          "note": "You can't collect more than the shop owes. <b>Collect</b> is greyed out for a shop that owes nothing."
+        },
+        "review": {
+          "title": "Review collections",
+          "steps": {
+            "open": "Open <b>Wholesale → Collections</b>. The cards show how much was collected in the period and how much shops <b>Still owe</b>.",
+            "filter": "Choose <b>Today</b>, <b>7 days</b> or <b>30 days</b>, and pick a route to see only its shops.",
+            "applied": "Each row shows the shop, the date, how it was paid, and under <b>Applied to</b> which invoices the money paid off."
+          }
+        }
+      }
+    },
+    "wholesaleReturns": {
+      "title": "Returns from shops",
+      "intro": "When a shop gives goods back, record a return. The shop is credited, good stock goes back into the van, and anything damaged, expired or spoiled is written off as wastage. Open it from <b>Wholesale → Returns</b>.",
+      "tasks": {
+        "record": {
+          "title": "Record a return",
+          "steps": {
+            "open": "Open <b>Wholesale → Returns</b> and click <b>New return</b>. You can also use <b>Record return</b> on the shop's page or <b>Record a return</b> on an invoice.",
+            "shop": "Choose the <b>Shop</b>. Under <b>From invoice</b>, pick the invoice the goods came from, or leave <b>Not linked to an invoice</b>.",
+            "items": "Enter how many of each item came back and set its condition: <b>Good — resell</b>, <b>Damaged</b>, <b>Expired</b> or <b>Wastage</b>. The <b>Credit to the shop</b> panel shows the credit and the shop's new balance.",
+            "pin": "Click <b>Record return</b>. An employee who is allowed to accept shop returns enters their PIN.",
+            "reason": "Choose why the shop is returning goods, add a comment if needed, and click <b>Confirm</b>."
+          },
+          "note": "When you pick an invoice, you can't return more than was sold on it (the most is shown as \"up to\"). Items that are not in good condition are recorded as wastage."
+        },
+        "review": {
+          "title": "Review returns",
+          "steps": {
+            "list": "<b>Wholesale → Returns</b> lists returns for <b>Today</b>, <b>7 days</b> or <b>30 days</b>, with the items, their condition, the invoice and the credit.",
+            "detail": "Click a return to open it. It shows the <b>Credit</b>, the shop's <b>Balance</b> afterwards, the <b>Invoice</b>, the <b>Reason</b> with who approved it by PIN, and which van the goods went <b>Back into</b>.",
+            "movements": "Scroll down to <b>Stock movements</b> to see how each item was booked into the van's stock."
+          }
+        }
+      }
+    },
+    "staffEmployees": {
+      "title": "Employees",
+      "intro": "The employee list shows your staff, where they work, who is clocked in now, and how much of their food allowance they have used this month. Owners and managers open it from <b>Staff → Employees</b>.",
+      "tasks": {
+        "find": {
+          "title": "Find an employee",
+          "steps": {
+            "open": "Open <b>Staff → Employees</b>.",
+            "search": "Type a name, employee code, job title or phone in the search box, or pick a location to see only its staff.",
+            "read": "The <b>Status</b> column shows who is in now and where. <b>Meals this month</b> turns red when someone has eaten more than their allowance."
+          }
+        },
+        "detail": {
+          "title": "Open an employee's record",
+          "steps": {
+            "open": "Click an employee. The page shows their phone, the locations they work at (<b>Works at</b>), their <b>Sign-in</b> and when they <b>Joined</b>.",
+            "allowance": "The <b>Food allowance this month</b> card shows what they have eaten against their allowance. Anything over it is marked for salary deduction.",
+            "tabs": "The <b>Attendance</b> tab lists their clock-ins and clock-outs with hours. <b>Staff meals this month</b> lists their meals.",
+            "edit": "Click <b>Edit</b> to change their details, set a new PIN, or turn off <b>Active</b> when someone leaves."
+          }
+        },
+        "add": {
+          "title": "Add an employee",
+          "steps": {
+            "open": "On <b>Staff → Employees</b>, click <b>Add employee</b>.",
+            "details": "Enter the <b>Name</b>, <b>Job title</b>, <b>Phone</b> and <b>Monthly food allowance</b>.",
+            "pin": "Enter a 4-digit <b>PIN</b>. Staff use it to clock in and to approve actions. Each PIN must be different from everyone else's.",
+            "locations": "Under <b>Works at</b>, tick every location this person works at.",
+            "save": "Click <b>Save employee</b>."
+          },
+          "note": "Only owners and managers with permission to manage staff see <b>Add employee</b> and <b>Edit</b>."
+        }
+      }
+    },
+    "staffAttendance": {
+      "title": "Attendance",
+      "intro": "Staff clock in and out with their PIN on a shared device, and the attendance sheet compares that with the roster. Open it from <b>Staff → Attendance</b>.",
+      "tasks": {
+        "clock": {
+          "title": "Clock in or out",
+          "steps": {
+            "open": "Open <b>Staff → Attendance</b> on the shared device at the location.",
+            "pin": "In the <b>Clock in / out</b> panel, the employee taps their 4-digit PIN. Use <b>Clear</b> or the delete key to fix a mistake.",
+            "result": "The panel confirms who clocked in, or who clocked out and how long they worked. If they're more than 10 minutes late for their shift, it says so."
+          },
+          "note": "The same PIN clocks you in, or out if you're already in. Staff can only clock in at a location they work at."
+        },
+        "sheet": {
+          "title": "Check the attendance sheet",
+          "steps": {
+            "pick": "Choose the location and the <b>Date</b> above the sheet.",
+            "counts": "The cards show how many people are <b>In now</b>, <b>Late</b> and <b>Absent</b>.",
+            "status": "Each row shows the rostered shift, the <b>In</b> and <b>Out</b> times, the <b>Hours</b> worked and a status such as <b>On time</b>, <b>Late</b>, <b>Absent</b>, <b>Due</b> or <b>Not rostered</b>."
+          }
+        }
+      }
+    },
+    "staffShifts": {
+      "title": "Shifts and the cash drawer",
+      "intro": "Shifts has two tabs: the weekly work <b>Roster</b>, and the <b>Cash drawer</b> shift on the till you're using. Open it from <b>Staff → Shifts</b>.",
+      "tasks": {
+        "roster": {
+          "title": "Plan the weekly roster",
+          "steps": {
+            "open": "Open <b>Staff → Shifts</b>. The <b>Roster</b> tab shows each employee at the location with a shift for every day of the week.",
+            "week": "Choose the location, and use the arrows beside <b>Week of</b> to move between weeks.",
+            "assign": "Click a day for an employee and choose a shift (for example Morning or Evening, with its hours) or <b>Off</b>. It saves straight away."
+          },
+          "note": "Attendance uses the roster to decide who is late or absent."
+        },
+        "cashMoves": {
+          "title": "Record cash in or out of the drawer",
+          "steps": {
+            "open": "On a till, open <b>Staff → Shifts</b> and click the <b>Cash drawer</b> tab.",
+            "summary": "The open shift shows the <b>Opening float</b>, <b>Cash sales</b>, <b>Cash refunds</b>, each cash movement, and the <b>Expected in drawer</b> total.",
+            "record": "Choose <b>Cash out</b> or <b>Cash in</b>, enter the <b>Amount</b> and <b>What for</b> (for example, milk bought for the kitchen).",
+            "save": "Click <b>Record</b>. The movement is added to the list and the expected total updates."
+          },
+          "note": "You can't take out more cash than is expected in the drawer. The cash drawer only works on a till that is set up as a device for this location."
+        },
+        "closeShift": {
+          "title": "Count and close the drawer",
+          "steps": {
+            "count": "Under <b>Count and close</b>, count the cash and enter the total in <b>Counted</b>. The screen shows whether the drawer is <b>Balanced</b>, short or over.",
+            "pin": "Enter <b>Your PIN</b>.",
+            "close": "Click <b>Close shift</b>. The shift moves to <b>Shift history</b> with its expected cash, the count and the <b>Variance</b>."
+          }
+        },
+        "openShift": {
+          "title": "Open the drawer for a new shift",
+          "steps": {
+            "float": "When no shift is open, the tab shows <b>Open the cash drawer</b>. The <b>Opening float</b> starts at what the last person counted when they closed.",
+            "pin": "Check the float and enter <b>Your PIN</b>.",
+            "open": "Click <b>Open shift</b>."
+          },
+          "note": "Only someone who works at this location can open or close its drawer with their PIN."
+        }
+      }
+    },
+    "staffMeals": {
+      "title": "Staff meals",
+      "intro": "Record food eaten by staff. No payment is taken, but the food leaves stock like a sale and its value counts against the employee's monthly food allowance. Open it from <b>Staff → Staff Meals</b>.",
+      "tasks": {
+        "record": {
+          "title": "Record a staff meal",
+          "steps": {
+            "open": "Open <b>Staff → Staff Meals</b> and click <b>Record staff meal</b>.",
+            "employee": "Under <b>Employee</b>, choose who ate.",
+            "items": "Choose an <b>Item</b>, set the quantity and click <b>Add</b>. Repeat for each item. Use the bin icon to remove one.",
+            "approve": "Click <b>Record</b> (it shows the total value). A manager enters their PIN, chooses a reason such as <b>Staff meal</b> or <b>Meal on shift</b>, and clicks <b>Confirm</b>."
+          },
+          "note": "Meals are valued at the item's selling price at this location."
+        },
+        "review": {
+          "title": "Review staff meals",
+          "steps": {
+            "list": "The list shows each meal, who ate it, the items, where it was recorded (<b>Staff meals</b> or <b>POS</b>), which manager approved it, and the value.",
+            "filter": "Choose the location and use the arrows to move between months. The top card shows the month's total value and number of meals.",
+            "allowance": "Click <b>See who's over</b> to open the food allowance for the same month."
+          }
+        }
+      }
+    },
+    "staffAllowance": {
+      "title": "Food allowance",
+      "intro": "Each employee has a monthly food allowance. This page compares it with what they ate as staff meals, and anything over goes to salary deduction. Open it from <b>Staff → Food Allowance</b>.",
+      "tasks": {
+        "check": {
+          "title": "Check allowances for payroll",
+          "steps": {
+            "open": "Open <b>Staff → Food Allowance</b>. The cards show total <b>Allowances</b>, what was <b>Eaten</b> in the month, and the total <b>For salary deduction</b>, with who is over.",
+            "month": "Use the arrows to choose the month.",
+            "read": "Each row shows the employee's <b>Monthly food allowance</b>, what they ate (<b>Eaten</b>, with the number of meals), what is <b>Left</b>, and the amount to <b>Deduct from salary</b>.",
+            "copy": "Click <b>Copy for payroll</b>, then paste into your payroll sheet."
+          }
+        },
+        "set": {
+          "title": "Change someone's allowance",
+          "steps": {
+            "open": "Click the employee's name to open their record, then click <b>Edit</b>.",
+            "edit": "Change the <b>Monthly food allowance</b>.",
+            "save": "Click <b>Save employee</b>."
+          }
+        }
+      }
+    },
+    "reports": {
+      "title": "Reports",
+      "intro": "Reports show how the business is doing: sales, products, locations, stock, discounts and voids, and a full history of important changes. Owners and managers find them under <b>Reports</b> in the sidebar. Every report can be downloaded as a CSV file or printed.",
+      "tasks": {
+        "salesSummary": {
+          "title": "Check your sales for a period",
+          "intro": "The Sales summary shows net POS sales: orders count on the day they were paid, and refunds count on the day they were refunded.",
+          "steps": {
+            "open": "Open <b>Reports → Sales</b>. The report opens on the <b>Last 7 days</b>. The cards at the top show <b>Net sales</b>, <b>Orders</b>, <b>Average order</b>, <b>Discounts</b> and <b>Refunds</b>.",
+            "period": "To change the period, pick <b>Today</b>, <b>Yesterday</b>, <b>Last 7 days</b>, <b>Last 30 days</b> or <b>This month</b>. You can also set your own dates in <b>From</b> and <b>To</b>.",
+            "location": "To see one outlet only, choose it in the location list. Keep <b>All locations</b> to see the whole business.",
+            "breakdowns": "Scroll down to see sales <b>By payment method</b>, <b>By order type</b>, <b>By cashier</b> and <b>Sales by hour</b>. Hover over a bar in a chart to see that day's or hour's sales.",
+            "addUp": "<b>How net sales add up</b> goes from gross sales to <b>Net sales</b>: discounts come off, service charges and tax are added, and refunds come off. <b>Other channels</b> shows wholesale invoices and staff meals, which are not POS sales.",
+            "export": "Click <b>Download CSV</b> to save the report as a spreadsheet file, or <b>Print</b> to print it. The filters and buttons are left off the printout."
+          },
+          "note": "The start date can't be after the end date, and the period can't end after today. If it does, the app asks you to check the dates and doesn't show the report."
+        },
+        "productSales": {
+          "title": "See which products sell best",
+          "steps": {
+            "open": "Open <b>Reports → Product Sales</b> and pick a period. The cards show <b>Net sales</b>, <b>Units sold</b>, <b>Units returned</b> and <b>Discounts</b>, and the chart shows the <b>Top 10 by net sales</b>.",
+            "category": "To look at one group of products, choose it in the category list. Choose <b>All categories</b> to see everything again.",
+            "table": "Scroll down to the table. For each product you see units <b>Sold</b> and <b>Returned</b>, the <b>Gross</b> amount, <b>Discounts</b>, the <b>Net</b> amount after discounts and refunds, and its <b>Share</b> of net sales.",
+            "export": "Click <b>Download CSV</b> for the full list, including net quantity and refunded amounts."
+          }
+        },
+        "locationSales": {
+          "title": "Compare your locations",
+          "steps": {
+            "open": "Open <b>Reports → Location Sales</b> and pick a period.",
+            "compare": "The table puts each outlet side by side with its <b>Net</b> sales, <b>Orders</b>, <b>Avg order</b>, <b>Discounts</b>, <b>Refunds</b> and <b>Share</b> of POS sales. The POS total is shown under the table.",
+            "trend": "Scroll down to see each location's sales by day. All the charts use the same scale, so you can compare them at a glance."
+          },
+          "note": "Vans are marked <b>Wholesale</b>. Their invoices are listed apart and are not part of the POS total or share."
+        },
+        "stockReport": {
+          "title": "Check stock movement",
+          "steps": {
+            "open": "Open <b>Reports → Inventory</b> and pick a period and location. The cards show how many units were <b>Received</b>, <b>Sold</b>, <b>Wasted</b> and used for <b>Staff meals</b>.",
+            "columns": "Each row is one item at one location. It shows the <b>Opening</b> stock, what came <b>In</b>, what was <b>Sold</b>, <b>Wasted</b>, used for <b>Staff meals</b> or went out in other ways, any <b>Adjusted</b> amount, and the <b>Closing</b> stock.",
+            "filter": "To see only items that need attention, click <b>Low now</b> or <b>Out now</b>. You can also choose a category.",
+            "export": "Click <b>Download CSV</b> for the full detail, with received, produced, returned and transferred amounts in their own columns."
+          },
+          "note": "<b>In</b> means received, produced and returned. <b>Other out</b> means used in production or recipes and transferred out. The <b>Status</b> column shows the stock level right now, not at the end of the period."
+        },
+        "voids": {
+          "title": "Review discounts, voids and refunds",
+          "intro": "This report lists every discount, price change, removed item, cancelled order, voided invoice and refund, with who approved it and why.",
+          "steps": {
+            "open": "Open <b>Reports → Voids & Discounts</b> and pick a period. The cards show the total and the number of times for each kind.",
+            "tabs": "Use the tabs to switch between <b>Discounts</b>, <b>Cancelled</b>, <b>Voided</b>, <b>Removed items</b> and <b>Refunds</b>.",
+            "rows": "Each row shows what happened, when and where, the <b>Reason</b>, the person who approved it with their PIN (<b>Approved by</b>), the cashier who rang it up, and the <b>Amount</b>. Price changes are marked <b>Price</b>.",
+            "summary": "Scroll to the bottom to see the totals <b>By reason</b> and <b>By approving employee</b>. Use these to spot unusual patterns."
+          },
+          "note": "Click <b>Download CSV</b> to save every row from all five tabs in one file."
+        },
+        "audit": {
+          "title": "See who did what in the audit log",
+          "intro": "The audit log keeps a record of every important change: who did it, who approved it with a PIN, and why. Records are never edited or deleted.",
+          "steps": {
+            "open": "Open <b>Reports → Audit</b>. The newest changes are at the top, with <b>When</b>, the <b>Action</b>, <b>What changed</b>, who it was <b>Done by</b> and, if a PIN was needed, who it was <b>Approved by</b>.",
+            "filter": "To narrow the list, click an area such as <b>Sales</b>, <b>Inventory</b> or <b>Customers</b>, choose a location, or pick a time such as <b>Today</b> or <b>Last 7 days</b>. You can also type in <b>Search changes, people or reasons</b>.",
+            "pin": "To see only actions that needed a manager's PIN, click <b>PIN-approved only</b>. To see what one person approved, choose them in the <b>Any approver</b> list. PIN-approved actions have a green shield next to them.",
+            "details": "Click a row to open its details: when it happened, who did it, who approved it, the reason and where it happened.",
+            "changes": "When a record was edited, <b>Change details</b> shows each field with its value <b>Before</b> and <b>After</b> the change.",
+            "export": "Click <b>Download CSV</b> to save all the changes that match your filters, or <b>Print</b> to print the list."
+          }
+        }
+      }
+    }
+  }
+}

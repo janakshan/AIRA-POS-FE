@@ -1,0 +1,34 @@
+{
+  "appName": "RBP වේදිකාව",
+  "actions": {
+    "save": "සුරකින්න",
+    "cancel": "අවලංගු කරන්න",
+    "confirm": "තහවුරු කරන්න",
+    "continue": "ඉදිරියට",
+    "retry": "නැවත උත්සාහ කරන්න",
+    "close": "වසන්න",
+    "back": "ආපසු",
+    "signOut": "පිටවන්න",
+    "clear": "මකන්න"
+  },
+  "states": {
+    "loading": "පූරණය වෙමින්…",
+    "errorTitle": "යම් දෝෂයක් සිදු විය",
+    "goHome": "උපකරණ පුවරුවට යන්න"
+  },
+  "access": {
+    "deniedTitle": "ප්‍රවේශය ප්‍රතික්ෂේප විය"
+  },
+  "shell": {
+    "location": "ස්ථානය",
+    "switchLocation": "ස්ථානය මාරු කරන්න",
+    "language": "භාෂාව",
+    "theme": "තේමාව",
+    "themeLight": "ආලෝකමත්",
+    "themeDark": "අඳුරු",
+    "themeSystem": "පද්ධතිය",
+    "account": "ගිණුම",
+    "operator": "සේවකයා",
+    "userGuide": "පරිශීලක මාර්ගෝපදේශය"
+  }
+}

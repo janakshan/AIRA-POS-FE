@@ -1,0 +1,35 @@
+{
+  "dashboard": "முகப்புப் பலகை",
+  "groups": {
+    "sales": "விற்பனை",
+    "catalog": "பொருட்பட்டியல்",
+    "customers": "வாடிக்கையாளர்கள்",
+    "inventory": "சரக்கு",
+    "purchasing": "கொள்முதல்",
+    "production": "உற்பத்தி",
+    "wholesale": "மொத்த விற்பனை",
+    "staff": "பணியாளர்கள்",
+    "reports": "அறிக்கைகள்",
+    "settings": "அமைப்புகள்"
+  },
+  "items": {
+    "retailPos": "சில்லறை POS",
+    "restaurantPos": "உணவக POS",
+    "orders": "ஆர்டர்கள்",
+    "tables": "மேசைகள்",
+    "kitchen": "KOT / சமையலறை",
+    "deliveries": "விநியோகங்கள்",
+    "products": "பொருட்கள்",
+    "categories": "வகைகள்",
+    "pricing": "விலை நிர்ணயம்",
+    "customers": "வாடிக்கையாளர்கள்",
+    "stock": "கையிருப்பு",
+    "suppliers": "விநியோகஸ்தர்கள்",
+    "recipes": "சமையல் குறிப்புகள்",
+    "employees": "பணியாளர்கள்",
+    "attendance": "வருகை",
+    "locations": "இடங்கள்",
+    "users": "பயனர்கள்",
+    "languages": "மொழிகள்"
+  }
+}

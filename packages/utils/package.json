@@ -1,0 +1,24 @@
+{
+  "name": "@rbp/utils",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.7.0",
+    "ulid": "^3.0.2",
+    "@rbp/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@rbp/config": "workspace:*",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.2"
+  }
+}

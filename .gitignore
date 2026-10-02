@@ -1,0 +1,16 @@
+node_modules
+dist
+dev-dist
+.turbo
+*.log
+.env
+.env.local
+.DS_Store
+coverage
+apps/web/e2e/results
+apps/web/e2e/report
+apps/web/e2e/screenshots
+*.tsbuildinfo
+.env.*.local
+.vscode/
+.idea/

@@ -1,0 +1,93 @@
+{
+  "close": "Close",
+  "status": {
+    "NEW": "New",
+    "CONFIRMED": "Confirmed",
+    "PREPARING": "Preparing",
+    "READY": "Ready",
+    "OUT_FOR_DELIVERY": "Out for delivery",
+    "DELIVERED": "Delivered",
+    "CANCELLED": "Cancelled"
+  },
+  "step": {
+    "CONFIRMED": "Confirm",
+    "PREPARING": "Send to kitchen",
+    "READY": "Mark ready",
+    "OUT_FOR_DELIVERY": "Out for delivery",
+    "DELIVERED": "Delivered",
+    "for": "{{step}}: {{number}}",
+    "done": "{{number}} · {{status}}"
+  },
+  "method": {
+    "CASH": "cash",
+    "CARD": "card",
+    "BANK_TRANSFER": "bank transfer",
+    "CREDIT": "credit"
+  },
+  "fields": {
+    "date": "Date",
+    "rider": "Rider",
+    "status": "Status",
+    "phone": "Phone",
+    "address": "Delivery address",
+    "instructions": "Instructions"
+  },
+  "board": {
+    "title": "Deliveries",
+    "hint": "Today's delivery orders by stage. Confirm, send to the kitchen, assign a rider and track them to the door.",
+    "mine": "My deliveries",
+    "mineHint": "Orders assigned to you. Mark them out for delivery, then delivered.",
+    "anyRider": "All riders",
+    "all": "All",
+    "empty": "No delivery orders for this day",
+    "emptyMine": "Nothing assigned to you"
+  },
+  "card": {
+    "paid": "Paid",
+    "cod": "Collect on delivery",
+    "charge": "Delivery",
+    "noRider": "No rider yet",
+    "age": "{{time}} ago"
+  },
+  "assign": {
+    "action": "Assign rider",
+    "change": "Change rider",
+    "for": "Assign a rider to {{number}}",
+    "title": "Rider for {{number}}",
+    "rider": "Rider",
+    "load": "{{active}} active · {{out}} out now",
+    "none": "No riders at this location",
+    "confirm": "Assign",
+    "done": "{{number}} → {{name}}"
+  },
+  "collect": {
+    "title": "Collect payment · {{number}}",
+    "hint": "{{amount}} to collect before handing it over.",
+    "CASH": "Cash",
+    "CARD": "Card",
+    "tendered": "Cash received",
+    "short": "Not enough cash",
+    "change": "Change: {{amount}}",
+    "confirm": "Paid · delivered",
+    "done": "{{number}} delivered and paid"
+  },
+  "detail": {
+    "print": "Dispatch slip",
+    "cancelled": "This delivery was cancelled",
+    "items": "Order",
+    "subtotal": "Items",
+    "charge": "Delivery charge",
+    "tax": "Tax",
+    "total": "Total",
+    "paidBy": "Paid by {{method}}",
+    "collect": "Collect {{amount}} on delivery",
+    "timeline": "Progress",
+    "notYours": "This delivery is assigned to another rider — you can only open your own deliveries."
+  },
+  "slip": {
+    "title": "Delivery",
+    "paid": "PAID",
+    "collect": "COLLECT {{amount}}",
+    "rider": "Rider: {{name}}"
+  }
+}

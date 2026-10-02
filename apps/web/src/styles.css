@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@rbp/ui/styles.css';
+
+/* Scan shared UI package for class names. */
+@source '../../../packages/ui/src';
+
+/* POS-009: print only the receipt (80mm). */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  [data-print-root],
+  [data-print-root] * {
+    visibility: visible !important;
+  }
+  [data-print-root] {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 80mm;
+    max-width: none;
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+/* REP-*: reports print full width on A4 (the receipt rule above stays 80mm). */
+@media print {
+  [data-print-root='report'] {
+    width: 100%;
+    padding: 0;
+    font-size: 11px;
+  }
+  [data-print-root='report'] [data-slot='card'],
+  [data-print-root='report'] .rounded-xl {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+}

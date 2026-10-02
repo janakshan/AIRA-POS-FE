@@ -1,0 +1,28 @@
+{
+  "name": "rbp-platform",
+  "private": true,
+  "packageManager": "pnpm@11.14.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev --filter=@rbp/web",
+    "build": "turbo run build",
+    "lint": "eslint .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "e2e": "pnpm --filter @rbp/web e2e",
+    "e2e:install": "pnpm --filter @rbp/web e2e:install"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "turbo": "^2.5.8",
+    "typescript": "~5.9.3",
+    "@rbp/config": "workspace:*",
+    "eslint": "^10.11.0"
+  },
+  "type": "module"
+}

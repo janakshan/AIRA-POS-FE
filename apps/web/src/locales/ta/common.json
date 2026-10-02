@@ -1,0 +1,34 @@
+{
+  "appName": "RBP தளம்",
+  "actions": {
+    "save": "சேமி",
+    "cancel": "ரத்து செய்",
+    "confirm": "உறுதிப்படுத்து",
+    "continue": "தொடர்க",
+    "retry": "மீண்டும் முயற்சிக்கவும்",
+    "close": "மூடு",
+    "back": "பின்செல்",
+    "signOut": "வெளியேறு",
+    "clear": "அழி"
+  },
+  "states": {
+    "loading": "ஏற்றுகிறது…",
+    "errorTitle": "ஏதோ தவறு நடந்தது",
+    "goHome": "முகப்புக்குச் செல்"
+  },
+  "access": {
+    "deniedTitle": "அணுகல் மறுக்கப்பட்டது"
+  },
+  "shell": {
+    "location": "இடம்",
+    "switchLocation": "இடத்தை மாற்று",
+    "language": "மொழி",
+    "theme": "தோற்றம்",
+    "themeLight": "வெளிர்",
+    "themeDark": "இருள்",
+    "themeSystem": "கணினி",
+    "account": "கணக்கு",
+    "operator": "பணியாளர்",
+    "userGuide": "பயனர் வழிகாட்டி"
+  }
+}

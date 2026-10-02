@@ -1,0 +1,318 @@
+/*
+ * RBP design tokens (Tailwind v4).
+ * Import after `@import "tailwindcss";` in the app stylesheet.
+ * Colours are semantic — components never use raw palette colours.
+ * Reference: packages/ui/README.md
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --radius: 0.625rem;
+
+  /* ---------- Colour ---------- */
+  --background: oklch(0.985 0.002 250);
+  --foreground: oklch(0.2 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.52 0.19 262);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.955 0.006 255);
+  --secondary-foreground: oklch(0.25 0.02 260);
+  --muted: oklch(0.955 0.006 255);
+  --muted-foreground: oklch(0.48 0.02 260);
+  --accent: oklch(0.94 0.02 262);
+  --accent-foreground: oklch(0.3 0.08 262);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --success: oklch(0.52 0.14 155);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.78 0.16 75);
+  --warning-foreground: oklch(0.25 0.05 70);
+  --border: oklch(0.91 0.006 255);
+  --input: oklch(0.86 0.008 255);
+  --ring: var(--primary);
+
+  --sidebar: oklch(0.21 0.03 262);
+  --sidebar-foreground: oklch(0.88 0.01 262);
+  --sidebar-muted: oklch(0.7 0.02 262);
+  --sidebar-accent: oklch(0.29 0.04 262);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.28 0.03 262);
+
+  /*
+   * Status palette — shared across orders, KOTs, stock, deliveries.
+   * --status-X is the mark/tint colour; --status-X-fg is text on a tint (≥4.5:1).
+   */
+  --status-neutral: oklch(0.55 0.02 260);
+  --status-neutral-fg: oklch(0.4 0.02 260);
+  --status-info: oklch(0.55 0.17 250);
+  --status-info-fg: oklch(0.44 0.16 252);
+  --status-warning: oklch(0.72 0.16 70);
+  --status-warning-fg: oklch(0.47 0.12 60);
+  --status-progress: oklch(0.58 0.18 295);
+  --status-progress-fg: oklch(0.45 0.18 295);
+  --status-success: oklch(0.6 0.15 155);
+  --status-success-fg: oklch(0.43 0.12 155);
+  --status-danger: oklch(0.58 0.22 27);
+  --status-danger-fg: oklch(0.47 0.19 27);
+
+  /* ---------- Touch targets ---------- */
+  --touch-min: 2.75rem; /* 44px — admin/tablet minimum */
+  --touch-pos: 3.5rem; /* 56px — POS primary actions */
+  --touch-pos-lg: 5rem; /* 80px — Quick Pad tiles, keypad keys */
+
+  /* ---------- Spacing rhythm (4px base; semantic tokens below scale by viewport) ---------- */
+  --space-page: 1rem;
+  --space-section: 1.5rem;
+  --space-stack: 0.75rem;
+
+  /* ---------- Layers ---------- */
+  --z-sticky: 10;
+  --z-header: 20;
+  --z-floating: 40;
+  --z-overlay: 50;
+  --z-toast: 60;
+
+  /* ---------- Motion ---------- */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+
+  --font-sans:
+    'Inter', 'Noto Sans Tamil', 'Noto Sans Sinhala', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --space-page: 1.5rem;
+    --space-section: 2rem;
+    --space-stack: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.dark {
+  --background: oklch(0.17 0.015 260);
+  --foreground: oklch(0.95 0.005 260);
+  --card: oklch(0.21 0.018 260);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.23 0.018 260);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.68 0.16 262);
+  --primary-foreground: oklch(0.16 0.02 262);
+  --secondary: oklch(0.27 0.018 260);
+  --secondary-foreground: oklch(0.93 0.005 260);
+  --muted: oklch(0.26 0.016 260);
+  --muted-foreground: oklch(0.74 0.015 260);
+  --accent: oklch(0.3 0.04 262);
+  --accent-foreground: oklch(0.95 0.01 262);
+  --destructive: oklch(0.64 0.2 25);
+  --destructive-foreground: oklch(0.16 0.02 25);
+  --success: oklch(0.7 0.15 155);
+  --success-foreground: oklch(0.16 0.03 155);
+  --warning: oklch(0.8 0.15 75);
+  --warning-foreground: oklch(0.2 0.04 70);
+  --border: oklch(0.3 0.016 260);
+  --input: oklch(0.38 0.016 260);
+
+  --sidebar: oklch(0.14 0.015 260);
+  --sidebar-foreground: oklch(0.86 0.01 262);
+  --sidebar-muted: oklch(0.68 0.015 262);
+  --sidebar-accent: oklch(0.24 0.03 262);
+  --sidebar-border: oklch(0.24 0.016 260);
+
+  --status-neutral: oklch(0.68 0.02 260);
+  --status-neutral-fg: oklch(0.82 0.015 260);
+  --status-info: oklch(0.7 0.14 250);
+  --status-info-fg: oklch(0.8 0.11 250);
+  --status-warning: oklch(0.78 0.15 75);
+  --status-warning-fg: oklch(0.85 0.13 80);
+  --status-progress: oklch(0.72 0.15 295);
+  --status-progress-fg: oklch(0.82 0.11 295);
+  --status-success: oklch(0.72 0.15 155);
+  --status-success-fg: oklch(0.82 0.13 155);
+  --status-danger: oklch(0.68 0.19 25);
+  --status-danger-fg: oklch(0.8 0.13 25);
+}
+
+/* Static theme tokens → generate utilities (text-title, text-caption, …). */
+@theme {
+  /* Typography scale: size / line-height / weight */
+  --text-display: 1.875rem;
+  --text-display--line-height: 2.25rem;
+  --text-display--font-weight: 700;
+  --text-display--letter-spacing: -0.02em;
+  --text-title: 1.5rem;
+  --text-title--line-height: 2rem;
+  --text-title--font-weight: 600;
+  --text-title--letter-spacing: -0.015em;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.75rem;
+  --text-heading--font-weight: 600;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-overline: 0.6875rem;
+  --text-overline--line-height: 1rem;
+  --text-overline--font-weight: 600;
+  --text-overline--letter-spacing: 0.06em;
+  /* POS: large, tabular totals and compact tile labels */
+  --text-pos-total: 2.25rem;
+  --text-pos-total--line-height: 2.5rem;
+  --text-pos-total--font-weight: 700;
+  --text-pos-tile: 0.9375rem;
+  --text-pos-tile--line-height: 1.2rem;
+  --text-pos-tile--font-weight: 600;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --color-status-neutral: var(--status-neutral);
+  --color-status-neutral-fg: var(--status-neutral-fg);
+  --color-status-info: var(--status-info);
+  --color-status-info-fg: var(--status-info-fg);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-fg: var(--status-warning-fg);
+  --color-status-progress: var(--status-progress);
+  --color-status-progress-fg: var(--status-progress-fg);
+  --color-status-success: var(--status-success);
+  --color-status-success-fg: var(--status-success-fg);
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-fg: var(--status-danger-fg);
+
+  --spacing-touch: var(--touch-min);
+  --spacing-touch-pos: var(--touch-pos);
+  --spacing-touch-pos-lg: var(--touch-pos-lg);
+  --spacing-page: var(--space-page);
+  --spacing-section: var(--space-section);
+  --spacing-stack: var(--space-stack);
+
+  --z-index-sticky: var(--z-sticky);
+  --z-index-header: var(--z-header);
+  --z-index-floating: var(--z-floating);
+  --z-index-overlay: var(--z-overlay);
+  --z-index-toast: var(--z-toast);
+}
+
+/* One focus treatment for every interactive element. */
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px color-mix(in oklab, var(--ring) 70%, transparent);
+  }
+}
+
+/* Touch devices: never let a control shrink below the 44px minimum. */
+@utility touch-safe {
+  @media (pointer: coarse) {
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-body text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  /* Tamil and Sinhala glyphs need taller lines to avoid clipped vowel signs. */
+  :lang(ta),
+  :lang(si) {
+    line-height: 1.6;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "dashboard": "උපකරණ පුවරුව",
+  "groups": {
+    "sales": "විකුණුම්",
+    "catalog": "නිෂ්පාදන නාමාවලිය",
+    "customers": "පාරිභෝගිකයින්",
+    "inventory": "තොග",
+    "purchasing": "මිලදී ගැනීම්",
+    "production": "නිෂ්පාදනය",
+    "wholesale": "තොග වෙළඳාම",
+    "staff": "කාර්ය මණ්ඩලය",
+    "reports": "වාර්තා",
+    "settings": "සැකසුම්"
+  },
+  "items": {
+    "retailPos": "සිල්ලර POS",
+    "restaurantPos": "අවන්හල් POS",
+    "orders": "ඇණවුම්",
+    "tables": "මේස",
+    "kitchen": "KOT / මුළුතැන්ගෙය",
+    "deliveries": "බෙදාහැරීම්",
+    "products": "නිෂ්පාදන",
+    "categories": "කාණ්ඩ",
+    "pricing": "මිලකරණය",
+    "customers": "පාරිභෝගිකයින්",
+    "stock": "තොගය",
+    "suppliers": "සැපයුම්කරුවන්",
+    "employees": "සේවකයින්",
+    "attendance": "පැමිණීම",
+    "locations": "ස්ථාන",
+    "users": "පරිශීලකයින්",
+    "languages": "භාෂා"
+  }
+}
