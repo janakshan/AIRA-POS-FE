@@ -212,6 +212,9 @@ export interface ProductionFormulaRecord {
   productId: string;
   yieldQuantity: number;
   lines: ProductionFormulaLine[];
+  /** A-309: last edit. */
+  updatedAt?: string;
+  updatedBy?: string;
 }
 
 export type ProductionPlanRecord = Omit<ProductionPlan, 'progress'> & { tenantId: string };
@@ -238,11 +241,14 @@ export interface MockVerificationRecord {
 /** Reason groups by sensitive action (REQ-268…287). Empty = offered for every action. */
 const ITEM = ['pos.item.quantity.decrease', 'pos.item.remove', 'pos.order.cancel'];
 const RETURN = ['pos.return', 'pos.refund'];
-const VOID = ['pos.invoice.void'];
+/** POS-012 and A-311 (wholesale invoice void). */
+const VOID = ['pos.invoice.void', 'wholesale.void'];
 /** BAK: batch rejects and finished goods written off. */
 const BAKE = ['production.wastage'];
 /** WHO: goods a shop gives back. */
 const WHO = ['wholesale.return'];
+/** HR: a staff meal voided the same day (A-312). */
+const MEAL_VOID = ['staff.meal.void'];
 
 /** Default reasons from REQ-275…285 (+ drawer and discount reasons); tenants can configure their own. */
 const DEFAULT_REASONS: Reason[] = (
@@ -254,7 +260,7 @@ const DEFAULT_REASONS: Reason[] = (
     ['DUPLICATE_SALE', 'Duplicate sale', [...VOID, 'pos.order.cancel']],
     ['CUSTOMER_REQUEST', 'Customer request', ['restaurant.table.transfer']],
     ['CUSTOMER_CANCELLED', 'Customer cancelled item', ITEM],
-    ['WRONG_ITEM', 'Wrong item entered', [...ITEM, ...RETURN]],
+    ['WRONG_ITEM', 'Wrong item entered', [...ITEM, ...RETURN, ...MEAL_VOID]],
     ['WRONG_QTY', 'Wrong quantity entered', ITEM],
     ['KITCHEN_MISTAKE', 'Kitchen mistake', [...ITEM, 'pos.discount.apply']],
     ['UNAVAILABLE', 'Product unavailable', ITEM],
@@ -280,7 +286,8 @@ const DEFAULT_REASONS: Reason[] = (
       'Price correction',
       ['pos.price.override', 'pos.charge.manage', 'pos.discount.apply'],
     ],
-    ['DUPLICATE', 'Duplicate entry', [...ITEM, 'pos.charge.manage']],
+    ['DUPLICATE', 'Duplicate entry', [...ITEM, 'pos.charge.manage', ...MEAL_VOID]],
+    ['WRONG_EMPLOYEE', 'Recorded for the wrong employee', MEAL_VOID],
     ['CHANGE_FOR_CUSTOMER', 'Change for customer', ['pos.drawer.open']],
     ['CASH_PICKUP', 'Cash pickup', ['pos.drawer.open']],
     ['SHIFT_COUNT', 'Shift count', ['pos.drawer.open']],
@@ -295,7 +302,7 @@ const DEFAULT_REASONS: Reason[] = (
 }));
 
 /** Bump whenever the seed shape changes so persisted demo databases reseed. */
-export const DB_VERSION = 25;
+export const DB_VERSION = 27;
 export const DEMO_PASSWORD = 'demo1234';
 
 const id = <T extends string>(value: string) => value as T;

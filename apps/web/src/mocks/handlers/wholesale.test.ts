@@ -313,3 +313,224 @@ describe('mock wholesale: access', () => {
     ).toMatchObject({ id: LAKSHMI });
   });
 });
+
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+async function managerPin(code: string, reasonCode = 'WRONG_ITEM_SOLD') {
+  const { verificationId } = await api.identity.verifyEmployee({
+    pin: code,
+    action: 'wholesale.void',
+  });
+  return { verificationId, reasonCode };
+}
+
+/** Rep sells at the van: 10 loaves, Rs 500 cash, the rest on credit. */
+async function sellToNimal(quantity = 10, paidNow = 50_000) {
+  await signInAs('rep@pilot.demo');
+  return api.wholesale.invoices.create({
+    shopId: NIMAL,
+    lines: [{ productId: BREAD, quantity }],
+    paidNow,
+    ...(paidNow ? { method: 'CASH' as const } : {}),
+  });
+}
+
+describe('mock wholesale: A-310 price list', () => {
+  it('lets the owner and manager change a price; reps cannot', async () => {
+    await signInAs('rep@pilot.demo');
+    expect(await fail(api.wholesale.prices.list())).toMatchObject({ code: 'FORBIDDEN' });
+    expect(await fail(api.wholesale.prices.update(BREAD, { price: 19_000 }))).toMatchObject({
+      code: 'FORBIDDEN',
+    });
+    const old = await api.wholesale.invoices.create({
+      shopId: NIMAL,
+      lines: [{ productId: BREAD, quantity: 1 }],
+      paidNow: 0,
+    });
+    expect(old.lines[0]!.unitPrice.amount).toBe(18_000);
+
+    await signInAs('owner@pilot.demo', 'loc_01MAIN', 'dev_01');
+    const rows = await api.wholesale.prices.list();
+    expect(rows.find((r) => r.productId === BREAD)).toMatchObject({
+      price: { amount: 18_000 },
+      retailPrice: { amount: expect.any(Number) },
+      updatedAt: null,
+    });
+    // Products not on the wholesale list are offered without a price.
+    expect(rows.some((r) => r.price === null)).toBe(true);
+    expect(
+      (await api.wholesale.prices.list({ search: 'sandwich' })).map((r) => r.productId),
+    ).toEqual([BREAD]);
+    expect(await fail(api.wholesale.prices.update(BREAD, { price: 0 }))).toMatchObject({
+      code: 'VALIDATION_FAILED',
+      details: { fieldErrors: { price: 'validation.amountPositive' } },
+    });
+    expect(await api.wholesale.prices.update(BREAD, { price: 19_000 })).toMatchObject({
+      price: { amount: 19_000 },
+      updatedBy: expect.any(String),
+    });
+    const [event] = (await api.audit.list({ action: 'wholesale.price.update' })).items;
+    expect(event).toMatchObject({
+      entityId: BREAD,
+      before: { amount: 18_000 },
+      after: { amount: 19_000 },
+    });
+
+    await signInAs('manager@pilot.demo', 'loc_01MAIN', 'dev_01');
+    await api.wholesale.prices.update(BREAD, { price: 18_500 });
+
+    // Issued invoices keep their price; the next one uses the new price.
+    await signInAs('rep@pilot.demo');
+    expect((await api.wholesale.invoices.get(old.id)).lines[0]!.unitPrice.amount).toBe(18_000);
+    expect(
+      (await api.wholesale.products(VAN)).find((p) => p.productId === BREAD)!.price.amount,
+    ).toBe(18_500);
+    const next = await api.wholesale.invoices.create({
+      shopId: NIMAL,
+      lines: [{ productId: BREAD, quantity: 1 }],
+      paidNow: 0,
+    });
+    expect(next.lines[0]!.unitPrice.amount).toBe(18_500);
+  });
+});
+
+describe('mock wholesale: A-311 void', () => {
+  it('puts the goods back, takes the credit off, refunds the cash and keeps the invoice', async () => {
+    await signInAs('owner@pilot.demo', 'loc_01MAIN', 'dev_01');
+    const period = { from: today(), to: today(), locationId: 'all' };
+    const salesBefore = (await api.reports.sales(period)).channels.wholesale;
+    await signInAs('rep@pilot.demo');
+    const bread = await vanStock(BREAD);
+    const owedBefore = await owed(NIMAL);
+    const invoice = await sellToNimal();
+    expect(invoice.credit.amount).toBe(130_000);
+    expect(await owed(NIMAL)).toBe(owedBefore + 130_000);
+    const route = (await api.wholesale.shops.get(NIMAL)).routeId!;
+    const routeSales = async () =>
+      (await api.wholesale.routes.overview(route, today())).totals.sales.amount;
+    const routeAfterSale = await routeSales();
+
+    // Reps can't approve it: their PIN doesn't carry wholesale.void.
+    expect(await fail(managerPin('7777'))).toMatchObject({ code: 'EMPLOYEE_NOT_AUTHORIZED' });
+
+    // The owner voids it from the office with their own PIN.
+    await signInAs('owner@pilot.demo', 'loc_01MAIN', 'dev_01');
+    expect(
+      await fail(
+        api.wholesale.invoices.void(invoice.id, {
+          verification: { verificationId: 'nope', reasonCode: 'WRONG_ITEM_SOLD' },
+        }),
+      ),
+    ).toMatchObject({ code: 'VERIFICATION_REQUIRED' });
+    const voided = await api.wholesale.invoices.void(invoice.id, {
+      verification: await managerPin('1111'),
+    });
+    expect(voided).toMatchObject({
+      status: 'VOIDED',
+      balance: { amount: 0 },
+      total: { amount: 180_000 },
+      voided: {
+        approvedBy: 'Nirmala Rajan',
+        reason: { code: 'WRONG_ITEM_SOLD' },
+        refunded: { method: 'CASH', amount: { amount: 50_000 } },
+      },
+    });
+    expect(await vanStock(BREAD)).toBe(bread);
+    expect(await owed(NIMAL)).toBe(owedBefore);
+    const { items } = await api.stockMovements.list({ productId: BREAD, locationId: VAN });
+    expect(items[0]).toMatchObject({
+      type: 'RETURN',
+      quantity: 10,
+      reference: { kind: 'WHOLESALE_INVOICE', number: invoice.number },
+    });
+
+    // Kept and badged: lists, statement (invoice + reversal), audit.
+    expect(
+      (await api.wholesale.invoices.list({ shopId: NIMAL, status: 'VOIDED' })).map((i) => i.id),
+    ).toEqual([invoice.id]);
+    const ledger = await api.wholesale.shops.ledger(NIMAL);
+    expect(ledger.map((l) => [l.kind, l.amount.amount, l.voided ?? false])).toEqual([
+      ['INVOICE', 130_000, true],
+      ['VOID', -130_000, false],
+    ]);
+    expect(ledger.at(-1)!.balance.amount).toBe(owedBefore);
+    const [event] = (await api.audit.list({ action: 'wholesale.invoice.void' })).items;
+    expect(event).toMatchObject({ entityId: invoice.id, employee: { fullName: 'Nirmala Rajan' } });
+    expect(event!.reason?.code).toBe('WRONG_ITEM_SOLD');
+
+    // Not a sale any more.
+    expect((await api.reports.sales(period)).channels.wholesale).toMatchObject({
+      invoices: salesBefore.invoices,
+      total: salesBefore.total,
+    });
+    await signInAs('rep@pilot.demo');
+    expect(await routeSales()).toBe(routeAfterSale - 180_000);
+
+    // Once only, and no returns against it.
+    await signInAs('owner@pilot.demo', 'loc_01MAIN', 'dev_01');
+    expect(
+      await fail(
+        api.wholesale.invoices.void(invoice.id, { verification: await managerPin('1111') }),
+      ),
+    ).toMatchObject({ status: 409, details: { reason: 'ALREADY_VOIDED' } });
+    await signInAs('rep@pilot.demo');
+    expect(
+      await fail(
+        api.wholesale.returns.create({
+          shopId: NIMAL,
+          invoiceId: invoice.id,
+          lines: [{ productId: BREAD, quantity: 1, condition: 'GOOD' }],
+          verification: await pin('7777', 'UNSOLD'),
+        }),
+      ),
+    ).toMatchObject({ status: 409, details: { reason: 'INVOICE_VOIDED' } });
+  });
+
+  it('only voids today’s invoices with no returns (POS-012 rule)', async () => {
+    await signInAs('rep@pilot.demo');
+    const old = (await api.wholesale.invoices.list({ shopId: LAKSHMI })).find((i) =>
+      i.lines.every((l) => l.returnedQuantity === 0),
+    )!;
+    const invoice = await sellToNimal(2, 0);
+    await api.wholesale.returns.create({
+      shopId: NIMAL,
+      invoiceId: invoice.id,
+      lines: [{ productId: BREAD, quantity: 1, condition: 'GOOD' }],
+      verification: await pin('7777', 'UNSOLD'),
+    });
+    await signInAs('manager@pilot.demo', 'loc_01MAIN', 'dev_01');
+    const bogus = { verification: { verificationId: 'nope', reasonCode: 'OTHER' } };
+    expect(await fail(api.wholesale.invoices.void(old.id, bogus))).toMatchObject({
+      status: 409,
+      details: { reason: 'NOT_TODAY' },
+    });
+    expect(await fail(api.wholesale.invoices.void(invoice.id, bogus))).toMatchObject({
+      status: 409,
+      details: { reason: 'HAS_RETURNS' },
+    });
+  });
+
+  it('re-applies money paid on a voided invoice to the shop’s other items, oldest first', async () => {
+    const first = await sellToNimal(10, 0);
+    await api.wholesale.collections.create({ shopId: NIMAL, amount: 100_000, method: 'CASH' });
+    const second = await sellToNimal(2, 0);
+    expect(second.credit.amount).toBe(36_000);
+    expect((await api.wholesale.invoices.get(second.id)).status).toBe('OPEN');
+
+    // The manager voids it with their PIN (no van needed).
+    await signInAs('manager@pilot.demo', 'loc_01MAIN', 'dev_01');
+    await api.wholesale.invoices.void(first.id, { verification: await managerPin('2222') });
+    // The Rs 1,000 collected now pays the second invoice; Rs 640 is left in the shop's favour.
+    expect(await api.wholesale.invoices.get(second.id)).toMatchObject({
+      status: 'PAID',
+      balance: { amount: 0 },
+    });
+    expect(await owed(NIMAL)).toBe(-64_000);
+    const third = await sellToNimal(5, 0);
+    expect((await api.wholesale.invoices.get(third.id)).balance.amount).toBe(90_000 - 64_000);
+    expect(await owed(NIMAL)).toBe(90_000 - 64_000);
+  });
+});

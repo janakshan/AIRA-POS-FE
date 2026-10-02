@@ -1,10 +1,13 @@
 import { queryKeys } from '@rbp/api-client';
 import type {
   ShareInvoiceRequest,
+  VoidWholesaleInvoiceRequest,
   WholesaleCollectionListParams,
   WholesaleCollectionRequest,
   WholesaleInvoiceListParams,
   WholesaleInvoiceRequest,
+  WholesalePriceListParams,
+  WholesalePriceRequest,
   WholesaleReturnListParams,
   WholesaleReturnRequest,
   WholesaleShopListParams,
@@ -71,6 +74,17 @@ export function useWholesaleProducts(locationId: string | undefined, enabled = t
     queryKey: queryKeys.wholesale.products(scope, locationId ?? '-'),
     queryFn: ({ signal }) => api.wholesale.products(locationId, signal),
     enabled: ready && enabled,
+  });
+}
+
+/** A-310 the price list (needs wholesale.prices). */
+export function useWholesalePrices(params: WholesalePriceListParams = {}) {
+  const { ready, ...scope } = useQueryScope();
+  return useQuery({
+    queryKey: queryKeys.wholesale.prices(scope, params),
+    queryFn: ({ signal }) => api.wholesale.prices.list(params, signal),
+    enabled: ready,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -156,3 +170,24 @@ export const useCreateCollection = () =>
 
 export const useCreateReturn = () =>
   useWholesaleMutation((body: WholesaleReturnRequest) => api.wholesale.returns.create(body));
+
+/** A-310: prices don't move stock; refresh wholesale (van products, price list) and the audit log. */
+export function useUpdateWholesalePrice() {
+  const queryClient = useQueryClient();
+  const { ready: _r, ...scope } = useQueryScope();
+  return useMutation({
+    mutationFn: ({ productId, body }: { productId: string; body: WholesalePriceRequest }) =>
+      api.wholesale.prices.update(productId, body),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.wholesale.all(scope) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.audit.all(scope) }),
+      ]),
+  });
+}
+
+/** A-311: puts the goods back into the van and changes the shop's balance. */
+export const useVoidInvoice = () =>
+  useWholesaleMutation(({ id, body }: { id: string; body: VoidWholesaleInvoiceRequest }) =>
+    api.wholesale.invoices.void(id, body),
+  );

@@ -49,6 +49,7 @@ import type {
   StaffMeal,
   StaffMealListParams,
   StaffMealRequest,
+  StaffMealVoidRequest,
   DeliveryAssignRequest,
   DeliveryListParams,
   DeliveryRider,
@@ -61,6 +62,9 @@ import type {
   WholesaleInvoice,
   WholesaleInvoiceListParams,
   WholesaleInvoiceRequest,
+  WholesalePriceListParams,
+  WholesalePriceRequest,
+  WholesalePriceRow,
   WholesaleProduct,
   WholesaleReturn,
   WholesaleReturnDetail,
@@ -71,6 +75,7 @@ import type {
   WholesaleShopListParams,
   WholesaleShopListResponse,
   WholesaleShopRequest,
+  VoidWholesaleInvoiceRequest,
   CancelProductionRequest,
   CompleteBatchRequest,
   CreateWastageRequest,
@@ -79,6 +84,8 @@ import type {
   ProductionBatchDetail,
   ProductionBatchListParams,
   ProductionFormula,
+  ProductionFormulaRequest,
+  ProductionMaterial,
   ProductionPlan,
   ProductionPlanListParams,
   ProductionPlanRequest,
@@ -501,6 +508,19 @@ export function createRbpApi(client: ApiClient) {
           query: { locationId },
           signal,
         }),
+      /** A-309: applies to batches created afterwards. */
+      saveFormula: (productId: string, body: ProductionFormulaRequest, locationId?: string) =>
+        client.put<ProductionFormula>(
+          `${API_PREFIX}/production/formulas/${encodeURIComponent(productId)}`,
+          body,
+          { query: { locationId } },
+        ),
+      /** Stock-only raw materials a formula can use. */
+      materials: (locationId?: string, signal?: AbortSignal) =>
+        client.get<ProductionMaterial[]>(`${API_PREFIX}/production/materials`, {
+          query: { locationId },
+          signal,
+        }),
       plans: {
         list: (params: ProductionPlanListParams = {}, signal?: AbortSignal) =>
           client.get<ProductionPlan[]>(`${API_PREFIX}/production/plans`, {
@@ -781,6 +801,9 @@ export function createRbpApi(client: ApiClient) {
         /** No payment; stock moves as STAFF_MEAL (§22). */
         create: (body: StaffMealRequest) =>
           client.post<StaffMeal>(`${API_PREFIX}/staff/meals`, body),
+        /** A-312 same day: stock comes back, the meal stays as VOIDED. */
+        void: (id: string, body: StaffMealVoidRequest) =>
+          client.post<StaffMeal>(`${API_PREFIX}/staff/meals/${encodeURIComponent(id)}/void`, body),
       },
       /** HR-006 §23 for a month (YYYY-MM). */
       allowance: (month?: string, signal?: AbortSignal) =>
@@ -862,6 +885,25 @@ export function createRbpApi(client: ApiClient) {
         print: (id: string) =>
           client.post<WholesaleInvoice>(
             `${API_PREFIX}/wholesale/invoices/${encodeURIComponent(id)}/print`,
+          ),
+        /** A-311 manager PIN + reason: stock back into the van, credit off the balance. */
+        void: (id: string, body: VoidWholesaleInvoiceRequest) =>
+          client.post<WholesaleInvoice>(
+            `${API_PREFIX}/wholesale/invoices/${encodeURIComponent(id)}/void`,
+            body,
+          ),
+      },
+      /** A-310 the wholesale price list (VAT inclusive); changing it needs wholesale.prices. */
+      prices: {
+        list: (params: WholesalePriceListParams = {}, signal?: AbortSignal) =>
+          client.get<WholesalePriceRow[]>(`${API_PREFIX}/wholesale/prices`, {
+            query: { ...params },
+            signal,
+          }),
+        update: (productId: string, body: WholesalePriceRequest) =>
+          client.put<WholesalePriceRow>(
+            `${API_PREFIX}/wholesale/prices/${encodeURIComponent(productId)}`,
+            body,
           ),
       },
       collections: {

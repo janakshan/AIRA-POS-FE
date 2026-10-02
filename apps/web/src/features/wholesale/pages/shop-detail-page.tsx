@@ -53,6 +53,7 @@ const KIND_TONE: Record<ShopLedgerEntry['kind'], StatusTone> = {
   INVOICE: 'warning',
   COLLECTION: 'success',
   RETURN: 'info',
+  VOID: 'danger',
 };
 
 /**
@@ -97,7 +98,7 @@ export function ShopDetailPage() {
           <StatusBadge tone={KIND_TONE[e.kind]} size="sm">
             {t(`ledger.${e.kind}`)}
           </StatusBadge>
-          {e.kind === 'INVOICE' && e.refId ? (
+          {(e.kind === 'INVOICE' || e.kind === 'VOID') && e.refId ? (
             <Link
               to={`/wholesale/field-sales/${e.refId}`}
               className="inline-flex items-center font-medium underline-offset-2 hover:underline pointer-coarse:min-h-11"
@@ -113,6 +114,11 @@ export function ShopDetailPage() {
             </Link>
           ) : (
             <span className="font-medium">{e.number ?? ''}</span>
+          )}
+          {e.voided && (
+            <StatusBadge tone="danger" size="sm">
+              {t('invoiceStatus.VOIDED')}
+            </StatusBadge>
           )}
         </span>
       ),

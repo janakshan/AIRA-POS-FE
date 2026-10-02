@@ -7,6 +7,7 @@ import type {
   DeliveryListParams,
   WholesaleCollectionListParams,
   WholesaleInvoiceListParams,
+  WholesalePriceListParams,
   WholesaleReturnListParams,
   WholesaleShopListParams,
   ProductionBatchListParams,
@@ -168,6 +169,8 @@ export const queryKeys = {
       [...queryKeys.production.all(scope), 'summary', locationId] as const,
     formulas: (scope: QueryScope, locationId: string) =>
       [...queryKeys.production.all(scope), 'formulas', locationId] as const,
+    materials: (scope: QueryScope, locationId: string) =>
+      [...queryKeys.production.all(scope), 'materials', locationId] as const,
     plans: (scope: QueryScope, params: ProductionPlanListParams) =>
       [...queryKeys.production.all(scope), 'plans', params] as const,
     plan: (scope: QueryScope, id: string) =>
@@ -249,6 +252,8 @@ export const queryKeys = {
       [...queryKeys.wholesale.all(scope), 'ledger', id] as const,
     products: (scope: QueryScope, locationId: string) =>
       [...queryKeys.wholesale.all(scope), 'products', locationId] as const,
+    prices: (scope: QueryScope, params: WholesalePriceListParams) =>
+      [...queryKeys.wholesale.all(scope), 'prices', params] as const,
     invoices: (scope: QueryScope, params: WholesaleInvoiceListParams) =>
       [...queryKeys.wholesale.all(scope), 'invoices', params] as const,
     invoice: (scope: QueryScope, id: string) =>

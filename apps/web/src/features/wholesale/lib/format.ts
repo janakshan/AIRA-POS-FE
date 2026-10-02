@@ -11,6 +11,12 @@ export function localDay(days = 0) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/** Local YYYY-MM-DD of an ISO time. */
+export function dayOf(at: string) {
+  const d = new Date(at);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 /** Share of the credit limit used (0–100+), or null without a limit. */
 export const creditUsed = (outstanding: Money, limit: Money) =>
   limit.amount > 0 ? Math.round((Math.max(0, outstanding.amount) / limit.amount) * 100) : null;

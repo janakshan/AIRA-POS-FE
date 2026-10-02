@@ -74,10 +74,13 @@ export function InvoiceTable({
       width: 'w-32',
       cell: (i) => (
         <span className="inline-flex flex-wrap gap-1">
-          <StatusBadge tone={i.status === 'PAID' ? 'success' : 'warning'} size="sm">
+          <StatusBadge
+            tone={i.status === 'VOIDED' ? 'danger' : i.status === 'PAID' ? 'success' : 'warning'}
+            size="sm"
+          >
             {t(`invoiceStatus.${i.status}`)}
           </StatusBadge>
-          {i.creditWarning && (
+          {i.creditWarning && !i.voided && (
             <StatusBadge tone="danger" size="sm">
               {t('invoice.overLimit')}
             </StatusBadge>

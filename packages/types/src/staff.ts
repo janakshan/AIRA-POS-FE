@@ -209,6 +209,17 @@ export interface StaffMeal {
   reason: { code: string; label: string; comment?: string };
   recordedBy: string;
   at: IsoDateTime;
+  /** VOIDED meals stay listed, but their stock came back and they no longer count (A-312). */
+  status: 'RECORDED' | 'VOIDED';
+  voided?: StaffMealVoid;
+}
+
+/** Who voided a meal, who approved it with their PIN, and why. */
+export interface StaffMealVoid {
+  at: IsoDateTime;
+  by: string;
+  approvedBy: string;
+  reason: { code: string; label: string; comment?: string };
 }
 
 export interface StaffMealListParams {
@@ -224,6 +235,11 @@ export interface StaffMealRequest {
   locationId?: string;
   lines: { productId: string; quantity: number }[];
   source?: 'HR' | 'POS';
+  verification: SensitiveActionContext;
+}
+
+/** Same day only; puts back every stock movement the meal made (A-312). */
+export interface StaffMealVoidRequest {
   verification: SensitiveActionContext;
 }
 

@@ -148,3 +148,46 @@ describe('BAK-005 wastage', () => {
     expect(await screen.findByText('9 units wasted')).toBeInTheDocument();
   });
 });
+
+describe('BAK-006 formulas', () => {
+  it('edits a formula: whole units, no duplicate raw materials, audited', async () => {
+    const { user, router } = await openAs('manager@pilot.demo', '/production/formulas');
+    await user.click(
+      await screen.findByRole(
+        'link',
+        { name: 'Edit formula for Sandwich Bread (450g)' },
+        { timeout: 5000 },
+      ),
+    );
+    const yieldInput = await screen.findByRole(
+      'spinbutton',
+      { name: 'Units one run makes' },
+      { timeout: 5000 },
+    );
+    expect(yieldInput).toHaveValue('20');
+    await user.clear(yieldInput);
+    await user.type(yieldInput, '25');
+
+    // The same raw material twice is refused.
+    await user.click(screen.getByRole('button', { name: 'Add raw material' }));
+    await user.click(screen.getByRole('combobox', { name: 'Raw material 5' }));
+    await user.click(await screen.findByRole('option', { name: 'M01 · Wheat Flour' }));
+    await user.click(screen.getByRole('button', { name: 'Save formula' }));
+    expect(
+      await screen.findByText('This raw material is already on the formula'),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Remove raw material 5' }));
+
+    await user.click(screen.getByRole('button', { name: 'Save formula' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/production/formulas'));
+    const bread = (await api.production.formulas(BAKERY)).find((f) => f.productId === 'prd_01B03');
+    expect(bread).toMatchObject({ yieldQuantity: 25 });
+    expect(bread?.lines).toHaveLength(4);
+    const [event] = (await api.audit.list({ entity: 'production-formula' })).items;
+    expect(event).toMatchObject({
+      action: 'production.formula.update',
+      before: { yieldQuantity: 20 },
+      after: { yieldQuantity: 25 },
+    });
+  }, 20_000);
+});

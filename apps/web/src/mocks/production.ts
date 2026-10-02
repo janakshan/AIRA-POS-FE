@@ -71,8 +71,14 @@ export function formulaOf(
         onHand: index.qty.get(settingKey(l.ingredientId, locationId)) ?? 0,
       };
     }),
+    ...(f.updatedAt ? { updatedAt: f.updatedAt } : {}),
+    ...(f.updatedBy ? { updatedBy: f.updatedBy } : {}),
   };
 }
+
+/** Raw materials a formula can use: the tenant's active stock-only ingredients (A-262). */
+export const materialsOf = (state: MockDb, tenantId: string) =>
+  state.products.filter((p) => p.tenantId === tenantId && p.kind === 'INGREDIENT' && p.isActive);
 
 export const batchesOfPlan = (state: MockDb, plan: ProductionPlanRecord) =>
   state.productionBatches.filter((b) => b.tenantId === plan.tenantId && b.planId === plan.id);

@@ -71,6 +71,13 @@ export const wholesaleInvoiceSchema = z
     }
   });
 
+/** A-310: a product's wholesale price, minor units, VAT inclusive. */
+export const wholesalePriceSchema = z.object({ price: amount(1) });
+export type WholesalePriceInput = z.input<typeof wholesalePriceSchema>;
+
+/** A-311: void an invoice with a manager PIN + reason. */
+export const voidWholesaleInvoiceSchema = z.object({ verification: sensitiveActionSchema });
+
 export const shareInvoiceSchema = z.object({ channel: z.enum(['SHARE', 'WHATSAPP', 'COPY']) });
 
 /** WHO-004 */

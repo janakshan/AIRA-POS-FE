@@ -158,6 +158,8 @@
     "productionCancelReasonRequired": "Say why it's being cancelled",
     "outputRequired": "Enter what came out of the oven",
     "productionLocation": "Production runs at bakery locations only",
+    "formulaEmpty": "Add at least one raw material",
+    "materialTwice": "This raw material is already on the formula",
     "shopRequired": "Choose a shop",
     "invoiceEmpty": "Add at least one item",
     "returnEmpty": "Add at least one item being returned",

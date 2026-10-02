@@ -51,13 +51,15 @@
   },
   "invoiceStatus": {
     "OPEN": "Unpaid",
-    "PAID": "Paid"
+    "PAID": "Paid",
+    "VOIDED": "Voided"
   },
   "ledger": {
     "OPENING": "Brought forward",
     "INVOICE": "Invoice",
     "COLLECTION": "Collection",
-    "RETURN": "Return"
+    "RETURN": "Return",
+    "VOID": "Void"
   },
   "range": {
     "today": "Today",
@@ -197,6 +199,45 @@
     "sharedBy": "{{channel}} by {{name}} · {{at}}",
     "nextSale": "Next sale",
     "return": "Record a return"
+  },
+  "void": {
+    "action": "Void invoice",
+    "title": "Why void {{number}}?",
+    "description": "The goods go back into the van, the credit comes off the shop's balance and any cash paid is handed back. The invoice is kept, marked voided.",
+    "done": "{{number}} voided",
+    "doneRefund": "{{number}} voided — hand back {{amount}}",
+    "stamp": "Voided",
+    "voidedTitle": "Voided · approved by {{name}}",
+    "voidedReason": "{{reason}} · {{at}} · by {{by}}.",
+    "refunded": "{{amount}} ({{method}}) paid at the shop was refunded.",
+    "blocked": {
+      "returns": "This invoice has returns — record a return for the rest instead of voiding.",
+      "day": "Only today's invoices can be voided. Record a return for older ones."
+    }
+  },
+  "prices": {
+    "title": "Wholesale prices",
+    "hint": "What shops pay, VAT included. Invoices already made keep their prices.",
+    "caption": "Wholesale prices",
+    "search": "Search products",
+    "searchPlaceholder": "Name or code",
+    "retail": "Retail price",
+    "wholesale": "Wholesale price",
+    "current": "Wholesale now",
+    "changed": "Last changed",
+    "notSold": "Not sold wholesale",
+    "ofRetail": "{{percent}}% of retail",
+    "vatIncl": "VAT included.",
+    "edit": "Edit",
+    "set": "Set price",
+    "editOf": "Edit wholesale price of {{name}}",
+    "editTitle": "Wholesale price · {{name}}",
+    "editHint": "The price shops pay, VAT included.",
+    "issuedKeep": "Invoices already made keep their prices; the next invoice uses the new one.",
+    "save": "Save price",
+    "saved": "{{name}} now {{price}} wholesale",
+    "empty": "No products yet",
+    "noResults": "No products match"
   },
   "collect": {
     "title": "Collect from {{name}}",

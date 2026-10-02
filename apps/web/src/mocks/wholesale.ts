@@ -31,25 +31,76 @@ export function addDays(at: string, days: number) {
   return localDate(d);
 }
 
-const shopDocs = (state: MockDb, shop: WholesaleShopRecord) => ({
-  invoices: state.wholesaleInvoices.filter(
-    (i) => i.tenantId === shop.tenantId && i.shopId === shop.id,
-  ),
-  collections: state.wholesaleCollections.filter(
-    (c) => c.tenantId === shop.tenantId && c.shopId === shop.id,
-  ),
-  returns: state.wholesaleReturns.filter(
-    (r) => r.tenantId === shop.tenantId && r.shopId === shop.id,
-  ),
-});
+/** A-311: a voided invoice is kept for history but owes nothing and isn't a sale. */
+export const isLive = (i: WholesaleInvoiceRecord) => !i.voided;
 
-/** Allocated so far per item id (invoice id or OPENING). */
+const shopDocs = (state: MockDb, shop: WholesaleShopRecord) => {
+  const all = state.wholesaleInvoices.filter(
+    (i) => i.tenantId === shop.tenantId && i.shopId === shop.id,
+  );
+  return {
+    /** Including voided invoices. */
+    all,
+    invoices: all.filter(isLive),
+    collections: state.wholesaleCollections.filter(
+      (c) => c.tenantId === shop.tenantId && c.shopId === shop.id,
+    ),
+    returns: state.wholesaleReturns.filter(
+      (r) => r.tenantId === shop.tenantId && r.shopId === shop.id,
+    ),
+  };
+};
+
+/** What a shop owes, item by item (before payments), oldest first. */
+function itemsOf(state: MockDb, shop: WholesaleShopRecord) {
+  const items: (Omit<OpenItem, 'remaining'> & { amount: number })[] = [];
+  if (shop.openingBalance > 0) {
+    items.push({
+      id: OPENING_ID,
+      number: 'Opening balance',
+      at: shop.openingAt,
+      dueDate: addDays(shop.openingAt, shop.paymentTermsDays),
+      amount: shop.openingBalance,
+    });
+  }
+  for (const i of shopDocs(state, shop).invoices) {
+    items.push({
+      id: i.id,
+      number: i.number,
+      at: i.at,
+      dueDate: i.dueDate,
+      amount: i.credit.amount,
+    });
+  }
+  return items.sort((a, b) => a.at.localeCompare(b.at));
+}
+
+/**
+ * Allocated so far per item id (invoice id or OPENING). Balances are derived, so money that was
+ * applied to an invoice that has since been voided (A-311) is re-applied to the shop's other
+ * unpaid items, oldest first; anything left over is credit the shop has with you.
+ */
 function allocated(state: MockDb, shop: WholesaleShopRecord) {
   const { collections, returns } = shopDocs(state, shop);
+  const items = itemsOf(state, shop);
+  const live = new Set(items.map((i) => i.id));
   const paid = new Map<string, number>();
+  let loose = 0;
   for (const doc of [...collections, ...returns]) {
     for (const a of doc.allocations) {
-      paid.set(a.invoiceId, (paid.get(a.invoiceId) ?? 0) + a.amount.amount);
+      if (live.has(a.invoiceId)) {
+        paid.set(a.invoiceId, (paid.get(a.invoiceId) ?? 0) + a.amount.amount);
+      } else {
+        loose += a.amount.amount;
+      }
+    }
+  }
+  for (const i of items) {
+    if (loose <= 0) break;
+    const take = Math.min(loose, i.amount - (paid.get(i.id) ?? 0));
+    if (take > 0) {
+      paid.set(i.id, (paid.get(i.id) ?? 0) + take);
+      loose -= take;
     }
   }
   return paid;
@@ -66,26 +117,9 @@ export interface OpenItem {
 /** Unpaid items, oldest first. */
 export function openItems(state: MockDb, shop: WholesaleShopRecord): OpenItem[] {
   const paid = allocated(state, shop);
-  const items: OpenItem[] = [];
-  if (shop.openingBalance > 0) {
-    items.push({
-      id: OPENING_ID,
-      number: 'Opening balance',
-      at: shop.openingAt,
-      dueDate: addDays(shop.openingAt, shop.paymentTermsDays),
-      remaining: shop.openingBalance - (paid.get(OPENING_ID) ?? 0),
-    });
-  }
-  for (const i of shopDocs(state, shop).invoices) {
-    items.push({
-      id: i.id,
-      number: i.number,
-      at: i.at,
-      dueDate: i.dueDate,
-      remaining: i.credit.amount - (paid.get(i.id) ?? 0),
-    });
-  }
-  return items.filter((x) => x.remaining > 0).sort((a, b) => a.at.localeCompare(b.at));
+  return itemsOf(state, shop)
+    .map(({ amount, ...i }) => ({ ...i, remaining: amount - (paid.get(i.id) ?? 0) }))
+    .filter((x) => x.remaining > 0);
 }
 
 /** Spread `amount` over open items (a preferred invoice first, then FIFO). */
@@ -132,8 +166,8 @@ export function shopView(
   const overdue = openItems(state, shop)
     .filter((i) => i.dueDate < today)
     .reduce((s, i) => s + i.remaining, 0);
-  const { invoices, collections, returns } = shopDocs(state, shop);
-  const visits = [...invoices, ...collections, ...returns].map((d) => d.at).sort();
+  const { all, collections, returns } = shopDocs(state, shop);
+  const visits = [...all, ...collections, ...returns].map((d) => d.at).sort();
   return {
     ...rest,
     outstanding: m(outstanding, currency),
@@ -146,6 +180,9 @@ export function shopView(
 export function invoiceView(state: MockDb, invoice: WholesaleInvoiceRecord): WholesaleInvoice {
   const { tenantId: _t, ...rest } = invoice;
   const shop = state.wholesaleShops.find((s) => s.id === invoice.shopId);
+  if (invoice.voided) {
+    return { ...rest, balance: m(0, invoice.credit.currency), status: 'VOIDED' };
+  }
   const paid = shop ? (allocated(state, shop).get(invoice.id) ?? 0) : 0;
   const balance = Math.max(0, invoice.credit.amount - paid);
   return {
@@ -158,7 +195,7 @@ export function invoiceView(state: MockDb, invoice: WholesaleInvoiceRecord): Who
 /** WHO-002 statement, oldest first, with a running balance. */
 export function ledgerOf(state: MockDb, shop: WholesaleShopRecord): ShopLedgerEntry[] {
   const currency = shop.creditLimit.currency;
-  const { invoices, collections, returns } = shopDocs(state, shop);
+  const { all, collections, returns } = shopDocs(state, shop);
   const rows: Omit<ShopLedgerEntry, 'balance'>[] = [];
   if (shop.openingBalance) {
     rows.push({
@@ -171,7 +208,7 @@ export function ledgerOf(state: MockDb, shop: WholesaleShopRecord): ShopLedgerEn
       at: shop.openingAt,
     });
   }
-  for (const i of invoices) {
+  for (const i of all) {
     const paidNow = i.paidNow?.amount.amount ?? 0;
     rows.push({
       id: i.id,
@@ -182,7 +219,20 @@ export function ledgerOf(state: MockDb, shop: WholesaleShopRecord): ShopLedgerEn
       description: paidNow ? 'Invoice, part paid at the shop' : 'Invoice on credit',
       amount: i.credit,
       at: i.at,
+      ...(i.voided ? { voided: true } : {}),
     });
+    // A-311: the void takes the invoice's credit back off on the day it was voided.
+    if (i.voided) {
+      rows.push({
+        id: `${i.id}:void`,
+        kind: 'VOID',
+        number: i.number,
+        refId: i.id,
+        description: `Invoice voided · ${i.voided.reason.label}`,
+        amount: m(-i.credit.amount, currency),
+        at: i.voided.at,
+      });
+    }
   }
   for (const c of collections) {
     rows.push({

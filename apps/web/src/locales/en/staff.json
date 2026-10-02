@@ -177,6 +177,16 @@
     "reasonDescription": "Kept with the meal and the audit log.",
     "done": "{{number}} · {{name}} · {{value}}"
   },
+  "voidMeal": {
+    "action": "Void",
+    "actionFor": "Void {{number}}",
+    "onlyToday": "Only today's meals can be voided",
+    "badge": "Voided",
+    "voidedBy": "Voided · PIN: {{name}} · {{reason}}",
+    "reasonTitle": "Void staff meal {{number}}",
+    "reasonDescription": "The food goes back into stock and stops counting against the allowance. The meal stays listed as Voided.",
+    "done": "{{number}} voided · {{value}} back"
+  },
   "allowance": {
     "title": "Food allowance",
     "hint": "Each employee's monthly allowance against their staff meals. Anything over goes to salary deduction.",

@@ -174,7 +174,7 @@ const staffReport = http.get(
 
     for (const m of state.staffMeals) {
       if (m.tenantId !== tenantId || !locationIds.includes(m.locationId)) continue;
-      if (!inPeriod(m.at, period)) continue;
+      if (!inPeriod(m.at, period) || m.status === 'VOIDED') continue;
       const t = tallies.get(m.employeeId);
       if (!t) continue;
       t.meals += 1;

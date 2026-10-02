@@ -372,6 +372,7 @@ export function seedStaff(db: MockDb) {
       reason: { code: 'MEAL_BREAK', label: 'Meal on shift' },
       recordedBy: i % 3 === 0 ? MANAGER : 'Fathima Rizvi',
       at,
+      status: 'RECORDED',
     };
     db.staffMeals.push(meal);
     const reference = { kind: 'STAFF_MEAL' as const, id, number };

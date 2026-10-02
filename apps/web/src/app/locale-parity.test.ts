@@ -78,3 +78,24 @@ describe.each([
     expect(Object.keys(flatten(enNav)).length).toBeGreaterThan(0);
   });
 });
+
+/** Every user-facing namespace ships fully translated (dev-only ones stay English). */
+const EN_ONLY = new Set(['devtools', 'designSystem']);
+const bundles = import.meta.glob<{ default: unknown }>('../locales/*/*.json', { eager: true });
+const load = (lang: string, ns: string) => bundles[`../locales/${lang}/${ns}.json`]?.default;
+const namespaces = Object.keys(bundles)
+  .filter((path) => path.startsWith('../locales/en/'))
+  .map((path) => path.replace('../locales/en/', '').replace('.json', ''))
+  .filter((ns) => !EN_ONLY.has(ns));
+
+describe.each(['ta', 'si'])('%s translation parity', (lang) => {
+  it.each(namespaces)('%s has every English key with the same placeholders', (ns) => {
+    const en = flatten(load('en', ns));
+    const tr = flatten(load(lang, ns) ?? {});
+    expect(Object.keys(tr).sort()).toEqual(Object.keys(en).sort());
+    for (const [key, text] of Object.entries(en)) {
+      expect({ key, vars: placeholders(tr[key]!) }).toEqual({ key, vars: placeholders(text) });
+      expect({ key, translated: tr[key]!.trim().length > 0 }).toEqual({ key, translated: true });
+    }
+  });
+});

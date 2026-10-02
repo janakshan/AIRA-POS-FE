@@ -30,6 +30,7 @@ import { PageBreadcrumbs } from '@/navigation/page-breadcrumbs';
 import { useAttendanceHistory, useStaffEmployee, useStaffMeals } from '../api/queries';
 import { AllowanceMeter } from '../components/allowance-meter';
 import { EmployeeDialog } from '../components/employee-dialog';
+import { VoidedMealBadge, VoidMealButton } from '../components/void-meal-button';
 import { hoursMinutes, thisMonth } from '../lib/dates';
 
 /** HR-002 Employee: profile, this month's food allowance, attendance and staff meals. */
@@ -84,7 +85,18 @@ export function EmployeeDetailPage() {
   ];
 
   const mealColumns: DataTableColumn<StaffMeal>[] = [
-    { id: 'number', header: t('fields.meal'), primary: true, width: 'w-36', cell: (m) => m.number },
+    {
+      id: 'number',
+      header: t('fields.meal'),
+      primary: true,
+      width: 'w-40',
+      cell: (m) => (
+        <span className="flex flex-wrap items-center gap-2">
+          {m.number}
+          <VoidedMealBadge meal={m} />
+        </span>
+      ),
+    },
     { id: 'at', header: t('fields.date'), cell: (m) => formatDateTime(m.at, { locale }) },
     {
       id: 'items',
@@ -97,7 +109,20 @@ export function EmployeeDetailPage() {
       header: t('fields.value'),
       align: 'right',
       width: 'w-32',
-      cell: (m) => <MoneyText value={m.value} locale={locale} />,
+      cell: (m) => (
+        <MoneyText
+          value={m.value}
+          locale={locale}
+          className={m.status === 'VOIDED' ? 'text-muted-foreground line-through' : undefined}
+        />
+      ),
+    },
+    {
+      id: 'actions',
+      header: <span className="sr-only">{t('voidMeal.action')}</span>,
+      align: 'right',
+      width: 'w-28',
+      cell: (m) => <VoidMealButton meal={m} />,
     },
   ];
 

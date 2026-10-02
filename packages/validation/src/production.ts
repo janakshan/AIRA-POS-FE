@@ -42,6 +42,34 @@ export const productionPlanSchema = z
   });
 export type ProductionPlanInput = z.input<typeof productionPlanSchema>;
 
+/** A-309 formula: yield ≥ 1 whole unit; at least one raw material, each once, ≥ 1 whole unit. */
+export const productionFormulaSchema = z
+  .object({
+    yieldQuantity: units(1),
+    lines: z
+      .array(
+        z.object({
+          ingredientId: z.string().min(1, { error: 'validation.itemRequired' }),
+          quantity: units(1),
+        }),
+      )
+      .min(1, { error: 'validation.formulaEmpty' }),
+  })
+  .superRefine((v, ctx) => {
+    const seen = new Set<string>();
+    v.lines.forEach((l, i) => {
+      if (seen.has(l.ingredientId)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'validation.materialTwice',
+          path: ['lines', i, 'ingredientId'],
+        });
+      }
+      seen.add(l.ingredientId);
+    });
+  });
+export type ProductionFormulaInput = z.input<typeof productionFormulaSchema>;
+
 export const cancelProductionSchema = z.object({
   reason: z.string().trim().min(3, { error: 'validation.productionCancelReasonRequired' }).max(200),
 });

@@ -13,7 +13,7 @@ import { db } from './db';
 import type { MockDb } from './db/seed';
 import { minStockOf, statusOf, trackedPairs } from './inventory';
 import type { OrderRecord } from './handlers/orders';
-import { invoiceView } from './wholesale';
+import { invoiceView, isLive } from './wholesale';
 
 /**
  * REP-* definitions in one place (A-287…):
@@ -235,17 +235,25 @@ export function byCashier(orders: OrderRecord[], p: Period) {
 /** Wholesale invoices and staff meals in the period (channels, not POS sales). */
 export function channels(ctx: MockContext, locationIds: string[], p: Period) {
   const state = db.get();
+  // A-311: voided wholesale invoices aren't sales.
   const invoices = state.wholesaleInvoices.filter(
     (i) =>
-      i.tenantId === ctx.me.tenant.id && locationIds.includes(i.locationId) && inPeriod(i.at, p),
+      i.tenantId === ctx.me.tenant.id &&
+      isLive(i) &&
+      locationIds.includes(i.locationId) &&
+      inPeriod(i.at, p),
   );
   const returns = state.wholesaleReturns.filter(
     (r) =>
       r.tenantId === ctx.me.tenant.id && locationIds.includes(r.locationId) && inPeriod(r.at, p),
   );
+  // A-312: voided staff meals don't count.
   const meals = state.staffMeals.filter(
     (m) =>
-      m.tenantId === ctx.me.tenant.id && locationIds.includes(m.locationId) && inPeriod(m.at, p),
+      m.tenantId === ctx.me.tenant.id &&
+      locationIds.includes(m.locationId) &&
+      inPeriod(m.at, p) &&
+      m.status !== 'VOIDED',
   );
   return {
     invoices,

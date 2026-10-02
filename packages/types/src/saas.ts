@@ -45,6 +45,10 @@ export const PERMISSIONS = [
   'purchasing.manage',
   'production.manage',
   'wholesale.manage',
+  /** WHO prices (A-310): change the wholesale price list. Not field sales reps. */
+  'wholesale.prices',
+  /** WHO void (A-311): approve voiding a wholesale invoice (manager PIN). */
+  'wholesale.void',
   'delivery.manage',
   /** DEL: a rider moves their own deliveries (out / delivered). */
   'delivery.deliver',
@@ -82,7 +86,13 @@ export const PERMISSION_GROUPS: { key: string; permissions: Permission[] }[] = [
   { key: 'inventory', permissions: ['inventory.view', 'inventory.adjust', 'inventory.transfer'] },
   {
     key: 'operations',
-    permissions: ['purchasing.manage', 'production.manage', 'wholesale.manage'],
+    permissions: [
+      'purchasing.manage',
+      'production.manage',
+      'wholesale.manage',
+      'wholesale.prices',
+      'wholesale.void',
+    ],
   },
   { key: 'delivery', permissions: ['delivery.manage', 'delivery.deliver'] },
   { key: 'staff', permissions: ['staff.view', 'staff.manage'] },
@@ -102,6 +112,8 @@ export const PERMISSION_FEATURE: Partial<Record<Permission, FeatureCode>> = {
   'purchasing.manage': 'PURCHASING',
   'production.manage': 'BAKERY_PRODUCTION',
   'wholesale.manage': 'WHOLESALE',
+  'wholesale.prices': 'WHOLESALE',
+  'wholesale.void': 'WHOLESALE',
   'delivery.manage': 'DELIVERY',
   'delivery.deliver': 'DELIVERY',
   'staff.view': 'HR',

@@ -241,6 +241,14 @@
       "label": "Wholesale",
       "hint": "Shops, invoices, collections and routes."
     },
+    "wholesale.prices": {
+      "label": "Wholesale prices",
+      "hint": "Change what shops pay. Field sales reps sell at these prices."
+    },
+    "wholesale.void": {
+      "label": "Void wholesale invoices",
+      "hint": "Approve voiding today's wholesale invoices with a PIN."
+    },
     "delivery.manage": {
       "label": "Dispatch deliveries",
       "hint": "Confirm, assign riders and track deliveries."

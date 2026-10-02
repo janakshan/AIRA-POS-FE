@@ -1,0 +1,114 @@
+{
+  "list": {
+    "title": "ඇණවුම්",
+    "hint": "{{location}} හි සෑම විකිණීමක්ම — රිසිට්පත් නැවත මුද්‍රණය කරන්න, අයිතම ආපසු භාර ගන්න හෝ විකිණීමක් ශූන්‍ය කරන්න.",
+    "caption": "ඇණවුම්",
+    "search": "ඇණවුම් සොයන්න",
+    "searchPlaceholder": "ඇණවුම් හෝ ආපසු භාර ගැනීමේ අංකය, පාරිභෝගිකයා හෝ දුරකථනය",
+    "anyStatus": "සියල්ල",
+    "anyType": "සියලු ඇණවුම් වර්ග",
+    "anyPayment": "සියලු ගෙවීම් ක්‍රම",
+    "range": "දින පරාසය",
+    "from": "සිට",
+    "to": "දක්වා",
+    "empty": "තවම ඇණවුම් නැත.",
+    "emptyHint": "POS හි කරන විකුණුම් මෙහි පෙන්වයි.",
+    "noResults": "මෙම පෙරහන්වලට ගැළපෙන ඇණවුම් නැත.",
+    "newSale": "නව විකිණීම"
+  },
+  "range": {
+    "all": "සියලු කාලය",
+    "today": "අද",
+    "week": "පසුගිය දින 7",
+    "month": "පසුගිය දින 30",
+    "custom": "අභිරුචි දින"
+  },
+  "status": {
+    "PAID": "ගෙවා ඇත",
+    "HELD": "රඳවා ඇත",
+    "OPEN": "විවෘත",
+    "CANCELLED": "අවලංගු කළ",
+    "VOIDED": "ශූන්‍ය කළ"
+  },
+  "method": {
+    "CASH": "මුදල්",
+    "CARD": "කාඩ්පත",
+    "BANK_TRANSFER": "බැංකු මාරුව",
+    "CREDIT": "ණය"
+  },
+  "columns": {
+    "number": "ඇණවුම",
+    "time": "වේලාව",
+    "type": "වර්ගය",
+    "customer": "පාරිභෝගිකයා",
+    "items": "අයිතම",
+    "payment": "ගෙවීම",
+    "total": "එකතුව",
+    "status": "තත්ත්වය"
+  },
+  "walkIn": "සාමාන්‍ය පාරිභෝගිකයා",
+  "items_one": "අයිතම {{count}}",
+  "items_other": "අයිතම {{count}}",
+  "returnsCount_one": "ආපසු භාර ගැනීම් {{count}}",
+  "returnsCount_other": "ආපසු භාර ගැනීම් {{count}}",
+  "detail": {
+    "subtitle": "{{type}} · {{location}}",
+    "customer": "පාරිභෝගිකයා",
+    "table": "මේසය",
+    "delivery": "බෙදාහැරීම",
+    "createdBy": "විවෘත කළේ",
+    "paidAt": "ගෙවූයේ",
+    "heldAt": "රඳවූයේ",
+    "holdLabel": "රඳවීමේ ලේබලය",
+    "lines": "අයිතම",
+    "item": "අයිතමය",
+    "qty": "ප්‍රමාණය",
+    "unitPrice": "මිල",
+    "lineTotal": "මුදල",
+    "cancelledQty": "{{count}}ක් අවලංගු කළා",
+    "returnedQty": "{{count}}ක් ආපසු භාර ගත්තා",
+    "note": "සටහන: {{note}}",
+    "totals": "එකතු",
+    "subtotal": "උප එකතුව",
+    "discounts": "වට්ටම්",
+    "serviceCharge": "සේවා ගාස්තුව",
+    "tax": "බදු",
+    "total": "එකතුව",
+    "payments": "ගෙවීම්",
+    "noPayments": "තවම ගෙවීම් නැත.",
+    "refund": "මුදල් ආපසු දීම",
+    "tendered": "ලැබුණේ {{tendered}} · ඉතිරිය {{change}}",
+    "returns": "ආපසු භාර ගැනීම්",
+    "returnBy": "{{amount}} {{method}} මගින් ආපසු දුන්නා · {{name}} අනුමත කළා · {{reason}}",
+    "returnReceipt": "ආපසු භාර ගැනීමේ රිසිට්පත",
+    "cancelledTitle": "{{status}} — {{name}}",
+    "cancelledReason": "{{reason}} · {{at}}"
+  },
+  "actions": {
+    "receipt": "රිසිට්පත",
+    "return": "අයිතම ආපසු භාර ගන්න",
+    "void": "විකිණීම ශූන්‍ය කරන්න",
+    "cancel": "ඇණවුම අවලංගු කරන්න",
+    "openPos": "POS හි විවෘත කරන්න",
+    "more": "තවත් ක්‍රියා"
+  },
+  "blocked": {
+    "returns": "මෙම විකිණීමේ ආපසු භාර ගැනීම් ඇත — ශූන්‍ය කරනවා වෙනුවට ඉතිරි අයිතම ආපසු භාර ගන්න.",
+    "day": "ශූන්‍ය කළ හැක්කේ අද විකුණුම් පමණි. පැරණි විකුණුම් සඳහා ආපසු භාර ගැනීම භාවිත කරන්න.",
+    "kitchen": "අයිතම මුළුතැන්ගෙට යවා ඇත — මෙම ඇණවුම POS හි අවලංගු කරන්න."
+  },
+  "void": {
+    "title": "{{number}} ශූන්‍ය කරන්නේ ඇයි?",
+    "description": "ශූන්‍ය කිරීමෙන් සම්පූර්ණ මුදලම ආපසු දෙන අතර එය විගණන සටහනේ සටහන් වේ.",
+    "done": "{{number}} ශූන්‍ය කළා — {{amount}} ආපසු දුන්නා"
+  },
+  "cancel": {
+    "title": "{{number}} අවලංගු කරන්නේ ඇයි?",
+    "description": "ඇණවුම ගෙවීමකින් තොරව වසා විගණන සටහනේ සටහන් වේ.",
+    "done": "{{number}} අවලංගු කළා"
+  },
+  "summary": "{{total}} න් {{from}}–{{to}}",
+  "previous": "පෙර",
+  "next": "ඊළඟ",
+  "page": "පිටුව {{page}}"
+}

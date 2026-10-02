@@ -334,6 +334,15 @@ export const NAV_GROUPS: NavGroup[] = [
         feature: 'BAKERY_PRODUCTION',
         permission: 'production.manage',
       },
+      {
+        // Not in the screen catalog: assigned BAK-006 (A-309).
+        key: 'productionFormulas',
+        path: '/production/formulas',
+        screenId: 'BAK-006',
+        phase: 'P5',
+        feature: 'BAKERY_PRODUCTION',
+        permission: 'production.manage',
+      },
     ],
   },
   {
@@ -371,6 +380,14 @@ export const NAV_GROUPS: NavGroup[] = [
         phase: 'P5',
         feature: 'WHOLESALE',
         permission: 'wholesale.manage',
+      },
+      {
+        // A-310: owner and manager only; reps sell at these prices but can't change them.
+        key: 'wholesalePrices',
+        path: '/wholesale/prices',
+        phase: 'P5',
+        feature: 'WHOLESALE',
+        permission: 'wholesale.prices',
       },
     ],
   },
